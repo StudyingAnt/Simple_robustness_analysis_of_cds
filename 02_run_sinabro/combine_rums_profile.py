@@ -4,7 +4,7 @@ import pandas as pd
 
 # directory to input and output files
 base_path = "/mnt/c/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_analysis_of_cds_files/" # CHANGE HERE
-input_dir = pathlib.PurePath(base_path, "rus_analysis")
+input_dir = pathlib.PurePath(base_path, "rums_analysis")
 
 signatures = [
         "SBS1", "SBS2", "SBS3", "SBS4", "SBS5", "SBS6", "SBS7a", "SBS7b", 
@@ -21,12 +21,12 @@ signatures = [
         "SBS95"
         ]
 
-with open(pathlib.PurePath(base_path, "all_gencode_rus_profile.csv"), "w") as f:
+with open(pathlib.PurePath(base_path, "all_gencode_rums_profile.csv"), "w") as f:
     line = ",".join(signatures)
     f.write(f"Transcript,{line}\n")
     for child in pathlib.Path(input_dir).iterdir():
-        transcript_name = str(child).split("/")[12].split("_rus_")[0]
-        #print(transcript_name)
+        transcript_name = child.name.split("_rums_")[0]
+        print(transcript_name)
         cnts_transcripts = pd.read_csv(child)
         line_list = [str(item) for item in cnts_transcripts.mean().to_list()]
         line = ",".join(line_list)

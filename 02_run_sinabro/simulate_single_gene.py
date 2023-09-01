@@ -11,12 +11,12 @@ import sinabro.sinabro as snbr
 
 gene_idx = int(sys.argv[1])-1
 
-# CHANGE DIRECTORIES ACCORDINGLY
-exp_dir = pathlib.Path(__file__).parent.parent.resolve()
-in_dir = pathlib.PurePath(exp_dir, "in")
-out_dir = pathlib.PurePath(exp_dir, "out")
+# directory to input and output files
+base_path = "/mnt/c/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_analysis_of_cds_files/" # CHANGE HERE
+out_dir = pathlib.PurePath(base_path, "rums_analysis")
+out_dir.mkdir(parents=True, exist_ok=True)
 
-genes_fasta_file = pathlib.PurePath(in_dir, "gencode.v40.pc_transcripts.nopary.cdsplus.fa")
+genes_fasta_file = pathlib.PurePath(base_path, "gencode.v40.pc_transcripts.nopary.cdsplus.fa")
 
 seq_records = list(SeqIO.parse(genes_fasta_file, "fasta"))
 
@@ -51,5 +51,5 @@ for sbs in signatures:
         sbs_dict[sbs].append(traj._length-1)
 
 out_data = pd.DataFrame(sbs_dict)
-out_file = pathlib.PurePath(out_dir, f"{transcript_name}_rus_profile.csv")
+out_file = pathlib.PurePath(out_dir, f"{transcript_name}_rums_profile.csv")
 out_data.to_csv(out_file, index=False)
