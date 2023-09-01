@@ -11,6 +11,7 @@ import sinabro.sinabro as snbr
 
 gene_idx = int(sys.argv[1])-1
 
+# CHANGE DIRECTORIES ACCORDINGLY
 exp_dir = pathlib.Path(__file__).parent.parent.resolve()
 in_dir = pathlib.PurePath(exp_dir, "in")
 out_dir = pathlib.PurePath(exp_dir, "out")
