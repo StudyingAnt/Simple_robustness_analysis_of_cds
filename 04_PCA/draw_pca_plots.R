@@ -1,0 +1,136 @@
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+# file directories
+base_path <- "C:/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_analysis_of_cds_files/"
+
+# read file
+pca_transformed_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_transformed.csv", sep="")
+pca_transfomred <- read.csv(pca_transformed_file)
+gc_contents_file <- paste(base_path, "gencode.v40.pc_transcripts.nopary.cdsplus.gc_contents.csv", sep="")
+gc_contents <- read.csv(gc_contents_file)
+
+pca_transfomred_sorted <- pca_transfomred %>% arrange(Transcript) 
+gc_contents_sorted <- gc_contents %>% arrange(Transcript_name)
+
+data <- cbind(pca_transfomred_sorted, gc_contents_sorted)
+
+jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+
+for (i in 1:4){
+  for (j in (i+1):5){
+    if (i != j) {
+      pc_x <- paste("PC", as.character(i), sep = "")
+      pc_y <- paste("PC", as.character(j), sep = "")
+      
+      pca_plot <- ggplot(data, aes(x=get(pc_x), y=get(pc_y), color=GC_wobble)) +
+        geom_point(size = 0.0001, shape=20) +
+        scale_color_gradientn(colors = jet.colors(7), limits = c(0, 1)) +
+        xlab(pc_x) +
+        ylab(pc_y) +
+        labs(color="GC Wobble")  +
+        theme_light() +
+        theme(
+          axis.text.x = element_text(size = 6, family = "Arial"),
+          axis.text.y = element_text(size = 6, family = "Arial"),
+          axis.title = element_text(size = 7, family = "Arial"),
+          legend.title = element_text(size = 7, family = "Arial"),
+          legend.text = element_text(size = 6, family = "Arial"),
+          legend.key.height = unit(3, "mm"),
+          legend.key.width = unit(3, "mm"),
+          legend.box.margin = margin(-10,-10,-10,-10),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank()
+        )
+      
+      out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_", pc_x, "_", pc_y, "_GC_wobble.png", sep="")
+      ggsave(out_file, plot = pca_plot, dpi=1200, width = 100, height = 85, units = "mm")
+    }
+  }
+}
+
+
+
+
+
+
+
+
+# file directories
+scripts_dir <- getwd()
+scripts_dir
+dir_names <- strsplit(scripts_dir, split="/")[[1]]
+exp_dir <- paste(head(dir_names, -1), collapse = "/") 
+in_dir <- paste(exp_dir, "in", sep = "/")
+out_dir <- paste(exp_dir, "out", sep = "/")
+fig_dir <- paste(exp_dir, "figures", sep = "/")
+
+input_file <- paste(out_dir, "rus_profile_umap.csv", sep="/")
+
+data <- read.csv(input_file)
+p <- ggplot(data, aes(x=UMAP_1, y=UMAP_2)) +
+  geom_point()
+p
+
+xy_file <- paste(out_dir, "xy.recol.csv", sep = "/")
+pca_xy <- read.csv(xy_file)
+z_file <- paste(out_dir, "z.recol.csv", sep = "/")
+pca_z <- read.csv(z_file, header = FALSE)
+
+x <- pca_xy$PC
+y <- pca_xy$Sorted_SBS
+data <- expand.grid(X=x,Y=y)
+data$Z <- pca_z[[1]]
+
+top5 <- c()
+for (i in 1:5){
+  top5[i] <- paste("PC", as.character(i), sep = "")
+}
+
+top10 <- c()
+for (i in 1:10){
+  top10[i] <- paste("PC", as.character(i), sep = "")
+}
+
+top12 <- c()
+for (i in 1:12){
+  top12[i] <- paste("PC", as.character(i), sep = "")
+}
+
+top17 <- c()
+for (i in 1:17){
+  top17[i] <- paste("PC", as.character(i), sep = "")
+}
+
+top21 <- c()
+for (i in 1:21){
+  top21[i] <- paste("PC", as.character(i), sep = "")
+}
+
+p <- ggplot(data, aes(factor(X),factor(Y),fill=Z)) +
+  geom_tile() +
+  scale_fill_gradient2(midpoint=0, low="blue", mid="white",
+                        high="red") +
+  #xlim(top17)+
+  xlab("Principal Component") +
+  ylab("Signature Sorted by GC Bias") +
+  labs(fill="Coefficient")  +
+  theme(
+    plot.title = element_text(size = 7, hjust = 0.5),
+    axis.text.x = element_text(size = 5, family = "Arial", angle = 90, vjust = 0.5),
+    axis.text.y = element_text(size = 5, family = "Arial"),
+    axis.title = element_text(size = 6, family = "Arial"),
+    legend.title = element_text(size = 6, family = "Arial"),
+    legend.text = element_text(size = 5, family = "Arial"),
+    legend.key.height = unit(3, "mm"),
+    legend.key.width = unit(3, "mm"),
+    legend.box.margin = margin(-10,-10,-10,-10),
+    )
+
+p
+
+out_file <- paste(fig_dir, "pc_all.recol.v2.png", sep="/")
+ggsave(out_file, plot = p, width = 108, height = 95, units = "mm")
+
+
