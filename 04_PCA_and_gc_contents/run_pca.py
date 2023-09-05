@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 
+import sys
+
 from pathlib import Path, PurePath
 from sklearn.decomposition import PCA
 
@@ -64,6 +66,17 @@ signatures_aetiology = [
 data = all_rums.loc[:, all_rums.columns != "Transcript"].to_numpy()
 pca = PCA()
 
+shoulder = np.cumsum(pca.fit(data).explained_variance_ratio_)
+shoulder_out = pd.DataFrame.from_dict(
+    {
+        "N_components": [(i+1) for i in range(0,len(signatures))],
+        "Cumulative_explained_variance": shoulder
+                         
+    }
+)
+shoulder_out_file = PurePath(base_path, f"all_gencode_signatures_PCA_shoulder.csv")
+shoulder_out.to_csv(shoulder_out_file, index=False)
+
 pcm = pca.fit(data).components_
 
 pcs = []
@@ -98,6 +111,17 @@ output.to_csv(output_file, index=False)
 data = noseqerr_rums.loc[:, noseqerr_rums.columns != "Transcript"].to_numpy()
 pca = PCA()
 
+shoulder = np.cumsum(pca.fit(data).explained_variance_ratio_)
+shoulder_out = pd.DataFrame.from_dict(
+    {
+        "N_components": [(i+1) for i in range(0,len(signatures_noseqerr))],
+        "Cumulative_explained_variance": shoulder
+                         
+    }
+)
+shoulder_out_file = PurePath(base_path, f"all_gencode_noseqerr_signatures_PCA_shoulder.csv")
+shoulder_out.to_csv(shoulder_out_file, index=False)
+
 pcm = pca.fit(data).components_
 
 pcs = []
@@ -131,6 +155,17 @@ output.to_csv(output_file, index=False)
 # for known aetiology signatures
 data = aetiology_rums.loc[:, aetiology_rums.columns != "Transcript"].to_numpy()
 pca = PCA()
+
+shoulder = np.cumsum(pca.fit(data).explained_variance_ratio_)
+shoulder_out = pd.DataFrame.from_dict(
+    {
+        "N_components": [(i+1) for i in range(0,len(signatures_aetiology))],
+        "Cumulative_explained_variance": shoulder
+                         
+    }
+)
+shoulder_out_file = PurePath(base_path, f"all_gencode_aetiology_signatures_PCA_shoulder.csv")
+shoulder_out.to_csv(shoulder_out_file, index=False)
 
 pcm = pca.fit(data).components_
 
