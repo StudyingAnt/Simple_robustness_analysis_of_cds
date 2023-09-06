@@ -29,7 +29,7 @@ shoulder_plot <- ggplot(pca_shoulder, aes(x=N_components, y=Cumulative_explained
 shoulder_plot
 
 out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_shoulder.png", sep="")
-ggsave(out_file, plot = shoulder_plot, dpi=1200, width = 75, height = 55, units = "mm")
+ggsave(out_file, plot = shoulder_plot, dpi=1200, width = 70, height = 55, units = "mm")
 
 
 
