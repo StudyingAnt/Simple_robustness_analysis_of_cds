@@ -64,6 +64,7 @@ signatures_aetiology = [
 # run PCA
 # for all signatures
 data = all_rums.loc[:, all_rums.columns != "Transcript"].to_numpy()
+
 pca = PCA()
 
 shoulder = np.cumsum(pca.fit(data).explained_variance_ratio_)

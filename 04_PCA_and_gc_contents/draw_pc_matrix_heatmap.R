@@ -85,6 +85,6 @@ pcm_heatmap.fixed <- set_panel_size(pcm_heatmap,
                                     height = unit(100, "mm"))
 
 out_file <- paste(base_path, "pc_matrix_noseqerr.png", sep="")
-ggsave(out_file, plot = pcm_heatmap.fixed, dpi = 1200, width = 120, height = 115, units = "mm")
+ggsave(out_file, plot = pcm_heatmap.fixed, dpi = 1200, width = 130, height = 115, units = "mm")
 
 

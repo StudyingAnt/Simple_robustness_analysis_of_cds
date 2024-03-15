@@ -16,7 +16,7 @@ shoulder_plot <- ggplot(pca_shoulder, aes(x=N_components, y=Cumulative_explained
   geom_point(size = 0.35) + #, stroke = 0.01) +
   geom_line(linewidth = 0.25) +
   scale_x_continuous(breaks = seq(10, 60, by = 10)) +
-  xlab("Number of principa components") +
+  xlab("Number of principal components") +
   ylab("Cumulative explained variance (%)") +
   theme_light() +
   theme(
@@ -29,7 +29,7 @@ shoulder_plot <- ggplot(pca_shoulder, aes(x=N_components, y=Cumulative_explained
 shoulder_plot
 
 out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_shoulder.png", sep="")
-ggsave(out_file, plot = shoulder_plot, dpi=1200, width = 70, height = 55, units = "mm")
+ggsave(out_file, plot = shoulder_plot, dpi=1200, width = 60, height = 50, units = "mm")
 
 
 

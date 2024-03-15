@@ -45,7 +45,7 @@ for (i in 1:4){
         )
       
       out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_", pc_x, "_", pc_y, "_GC_wobble.png", sep="")
-      ggsave(out_file, plot = pca_plot, dpi=1200, width = 70, height = 60, units = "mm")
+      ggsave(out_file, plot = pca_plot, dpi=1200, width = 70, height = 50, units = "mm")
     }
   }
 }
