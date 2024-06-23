@@ -10,9 +10,9 @@ library(egg)
 base_path <- "C:/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_analysis_of_cds_files/"
 
 # read file
-input_file <- paste(base_path, "all_gencode_rums_profile.csv", sep="")
+rum_file <- paste(base_path, "all_gencode_rums_profile.csv", sep="")
 
-data <- read.csv(input_file)
+rum_data <- read.csv(rum_file)
 n_transcript <- length(data$Transcript)
 
 signatures = c(

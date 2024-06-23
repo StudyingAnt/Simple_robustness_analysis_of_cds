@@ -9,8 +9,8 @@ from Bio.SeqRecord import SeqRecord
 base_path = "/mnt/c/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_analysis_of_cds_files/" # CHANGE HERE
 
 # GENCODE release number
-#release_num = 40
-release_num = "40lift37"
+release_num = 40
+#release_num = "40lift37"
 
 # make files' names and files' pathes
 input_file_name = f"gencode.v{release_num}.pc_transcripts.fa"
