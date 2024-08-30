@@ -1,7 +1,6 @@
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(extrafont)
 library(gridExtra)
 library(egg)
 
@@ -109,15 +108,15 @@ rr_plot <- ggplot(mean_vs_entropy, aes(x=entropy, y=mean_robustness, color=gc_bi
                         mid="#f2cc8f",
                         high="red") +
   xlab("Entropy") +
-  ylab("Robustness") +
+  ylab("Mean robustness") +
   labs(color="GC bias") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size = 5),
+    axis.text.y = element_text(size = 5),
+    axis.title = element_text(size = 7),
+    legend.title = element_text(size = 7),
+    legend.text = element_text(size = 5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -125,8 +124,8 @@ rr_plot <- ggplot(mean_vs_entropy, aes(x=entropy, y=mean_robustness, color=gc_bi
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "entropy_vs_robustness.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "entropy_vs_robustness.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 rr_plot <- ggplot(mean_vs_entropy, aes(x=entropy, y=std_robustness, color=gc_bias_tr)) +
   geom_point(size = 0.35) +
@@ -139,11 +138,11 @@ rr_plot <- ggplot(mean_vs_entropy, aes(x=entropy, y=std_robustness, color=gc_bia
   labs(color="GC bias") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size = 5),
+    axis.text.y = element_text(size = 5),
+    axis.title = element_text(size = 7),
+    legend.title = element_text(size = 7),
+    legend.text = element_text(size = 5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -151,7 +150,7 @@ rr_plot <- ggplot(mean_vs_entropy, aes(x=entropy, y=std_robustness, color=gc_bia
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "entropy_vs_robustness_std.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "entropy_vs_robustness_std.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 

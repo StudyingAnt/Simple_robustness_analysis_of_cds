@@ -20,16 +20,16 @@ shoulder_plot <- ggplot(pca_shoulder, aes(x=N_components, y=Cumulative_explained
   ylab("Cumulative explained variance (%)") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 6, family = "Arial"),
-    axis.text.y = element_text(size = 6, family = "Arial"),
-    axis.title = element_text(size = 7, family = "Arial")
+    axis.text.x = element_text(size = 6),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 7)
   )
 
 
 shoulder_plot
 
-out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_shoulder.png", sep="")
-ggsave(out_file, plot = shoulder_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "all_gencode_noseqerr_signatures_PCA_shoulder_v2.png", sep="")
+ggsave(out_file, plot = shoulder_plot, dpi=600, width = 85, height = 60, units = "mm")
 
 
 

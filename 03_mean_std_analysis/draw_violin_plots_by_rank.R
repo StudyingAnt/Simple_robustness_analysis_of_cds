@@ -2,7 +2,6 @@
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(extrafont)
 library(gridExtra)
 library(egg)
 
@@ -13,7 +12,7 @@ base_path <- "C:/Users/CEEL-PC-005/Desktop/Joon/Final_scripts/Simple_robustness_
 rum_file <- paste(base_path, "all_gencode_rums_profile.csv", sep="")
 
 rum_data <- read.csv(rum_file)
-n_transcript <- length(data$Transcript)
+n_transcript <- length(rum_data$Transcript)
 
 signatures = c(
   "SBS1", "SBS2", "SBS3", "SBS4", "SBS5", "SBS6", "SBS7a", "SBS7b", 
@@ -68,7 +67,7 @@ sbs <- rep(signatures, each=n_transcript)
 
 data_flatten <- c()
 for (i in 1:79) {
-  data_flatten <- c(data_flatten, data[, signatures[i]])
+  data_flatten <- c(data_flatten, rum_data[, signatures[i]])
   }
 
 data_plot <- data.frame(
@@ -273,6 +272,12 @@ data_std_sorted_desc <- data_plot %>%
 idx_starts = c(1, 11, 21, 31, 32)
 idx_ends = c(10, 20, 30, 40, 41)
 
+idx_starts = c(1)
+idx_ends = c(10)
+
+idx_starts = c(32)
+idx_ends = c(41)
+
 for (i in 1:length(idx_starts)){
   sig_mean <- data_mean_sorted_desc$signature[idx_starts[i]:idx_ends[i]]
   sig_std <- data_std_sorted_desc$signature[idx_starts[i]:idx_ends[i]]
@@ -285,8 +290,9 @@ for (i in 1:length(idx_starts)){
                                  y = robustness, 
                                  fill = fct_rev(factor(signature, levels=sig_mean)))) +
     geom_violin(scale = "width", lwd = 0.1, alpha = 0.5) + 
-    geom_jitter(height = 0, width = 0.01, size = 1, shape = ".", stroke = 0.01) +
-    ggtitle("Rank by average") +
+    geom_boxplot(width = 0.3, size = 0.1, outlier.size = 0.3, outlier.stroke = 0) +
+    #geom_jitter(height = 0, width = 0.01, size = 1, shape = ".", stroke = 0.01) +
+    ggtitle("Bottom 10 average") +
     xlab("Signature") +
     ylab("Robustness") +
     ylim(0, 6.5) +
@@ -294,10 +300,10 @@ for (i in 1:length(idx_starts)){
     theme_light() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 8, hjust = 0.5, family = "Arial"),
-      axis.text.x = element_text(size = 6, family = "Arial"),
-      axis.text.y = element_text(size = 6, family = "Arial"),
-      axis.title = element_text(size = 7, family = "Arial"),
+      plot.title = element_text(size = 7, hjust = 0.5),
+      axis.text.x = element_text(size = 5),
+      axis.text.y = element_text(size = 5),
+      axis.title = element_text(size = 7),
       panel.grid.minor = element_blank()
     ) +
     scale_fill_manual(
@@ -305,20 +311,21 @@ for (i in 1:length(idx_starts)){
                  "#DFFF61", "#ABFF61", "#76FF61", "#61FF81", "#61FFB5")
     ) 
   
-  violin.plot.mean.fixed <- set_panel_size(violin.plot.mean,
-                                           width = unit(40, "mm"),
-                                           height = unit(30, "mm"))
+  #violin.plot.mean.fixed <- set_panel_size(violin.plot.mean,
+  #                                         width = unit(31, "mm"),
+  #                                         height = unit(53, "mm"))
   
-  out_file_mean <- paste(base_path, "aetiology_signature_violin_rank_by_mean_", as.character(idx_starts[i]), "_", as.character(idx_ends[i]), ".png", sep="")
-  ggsave(out_file_mean, plot = violin.plot.mean.fixed, dpi = 1200, width = 60, height = 42.5, units = "mm")
+  out_file_mean <- paste(base_path, "aetiology_signature_violin_rank_by_mean_", as.character(idx_starts[i]), "_", as.character(idx_ends[i]), "_bottom.pdf", sep="")
+  ggsave(out_file_mean, plot = violin.plot.mean, width = 44, height = 65, units = "mm")
   
   violin.plot.std <- ggplot(data_std, 
                             aes(x = fct_rev(factor(signature, levels=sig_std)), 
                                 y = robustness, 
                                 fill = fct_rev(factor(signature, levels=sig_std)))) +
     geom_violin(scale = "width", lwd = 0.1, alpha = 0.5) + 
-    geom_jitter(height = 0, width = 0.01, size = 1, shape = ".", stroke = 0.01) +
-    ggtitle("Rank by standard deviation") +
+    geom_boxplot(width = 0.3, size = 0.1, outlier.size = 0.3, outlier.stroke = 0) +
+    #geom_jitter(height = 0, width = 0.01, size = 1, shape = ".", stroke = 0.01) +
+    ggtitle("Bottom 10 standard deviation") +
     xlab("Signature") +
     ylab("Robustness") +
     ylim(0, 6.5) +
@@ -326,10 +333,10 @@ for (i in 1:length(idx_starts)){
     theme_light() +
     theme(
       legend.position = "none",
-      plot.title = element_text(size = 8, hjust = 0.5, family = "Arial"),
-      axis.text.x = element_text(size = 6, family = "Arial"),
-      axis.text.y = element_text(size = 6, family = "Arial"),
-      axis.title = element_text(size = 7, family = "Arial"),
+      plot.title = element_text(size = 7, hjust = 0.5),
+      axis.text.x = element_text(size = 5),
+      axis.text.y = element_text(size = 5),
+      axis.title = element_text(size = 7),
       panel.grid.minor = element_blank()
     ) +
     scale_fill_manual(
@@ -337,11 +344,11 @@ for (i in 1:length(idx_starts)){
                  "#DFFF61", "#ABFF61", "#76FF61", "#61FF81", "#61FFB5")
     )
   
-  violin.plot.std.fixed <- set_panel_size(violin.plot.std,
-                                          width = unit(40, "mm"),
-                                          height = unit(30, "mm"))
+  #violin.plot.std.fixed <- set_panel_size(violin.plot.std,
+  #                                        width = unit(31, "mm"),
+  #                                        height = unit(53, "mm"))
   
-  out_file_std <- paste(base_path, "aetiology_signature_violin_rank_by_std_", as.character(idx_starts[i]), "_", as.character(idx_ends[i]), ".png", sep="")
-  ggsave(out_file_std, plot = violin.plot.std.fixed, dpi = 1200, width = 60, height = 42.5, units = "mm")
+  out_file_std <- paste(base_path, "aetiology_signature_violin_rank_by_std_", as.character(idx_starts[i]), "_", as.character(idx_ends[i]), "_bottom.pdf", sep="")
+  ggsave(out_file_std, plot = violin.plot.std, width = 44, height = 65, units = "mm")
   
 }

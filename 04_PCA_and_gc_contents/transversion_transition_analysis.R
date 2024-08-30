@@ -1,7 +1,6 @@
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(extrafont)
 library(gridExtra)
 library(egg)
 
@@ -116,19 +115,19 @@ mean_vs_trv_trs <- data.frame(
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=entropy, y=mean_robustness, color=trs)) +
   geom_point(size = 0.35) +
   scale_color_gradient2(midpoint=0.4, 
-                        low="blue", 
+                        low="#4b0092", 
                         mid="#f2cc8f",
-                        high="red") +
+                        high="#117733") +
   xlab("Entropy") +
   ylab("Robustness") +
   labs(color="Transition ratio") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -136,26 +135,26 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=entropy, y=mean_robustness, color=trs))
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "entropy_vs_robustness_trs.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 68.6, height = 50, units = "mm")
+out_file <- paste(base_path, "entropy_vs_robustness_trs.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 68.6, height = 50, units = "mm")
 
 ## 2
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=entropy, y=std_robustness, color=trs)) +
   geom_point(size = 0.35) +
   scale_color_gradient2(midpoint=0.4, 
-                        low="blue", 
+                        low="#4b0092", 
                         mid="#f2cc8f",
-                        high="red") +
+                        high="#117733") +
   xlab("Entropy") +
   ylab("SD of robustness") +
   labs(color="Transition\n ratio") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -163,8 +162,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=entropy, y=std_robustness, color=trs)) 
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "entropy_vs_robustness_trs_std.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 62.1, height = 50, units = "mm")
+out_file <- paste(base_path, "entropy_vs_robustness_trs_std.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 62.1, height = 50, units = "mm")
 
 ## 3
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=mean_robustness)) +
@@ -173,11 +172,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=mean_robustness)) +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -185,8 +184,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 4
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
@@ -195,11 +194,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -207,8 +206,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_std.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_std.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ################################################################################
 ############ with line #########################################################
@@ -222,16 +221,16 @@ lb <- as.character(as.expression(eq))
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv, y=mean_robustness)) +
   geom_smooth(method = lm, linewidth=0.5, color="red") +
   geom_point(size = 0.35) +
-  geom_text(x=0.83, y=0.78, label= lb, parse = TRUE, family = "Arial", size = 8/.pt) +
+  #geom_text(x=0.83, y=0.78, label= lb, parse = TRUE, size =7/.pt) +
   xlab("Transversion ratio") +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -239,8 +238,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 2
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv, y=std_robustness)) +
@@ -250,11 +249,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -262,8 +261,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_std_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_std_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 3
 m <- lm(mean_robustness ~ trs, mean_vs_trv_trs)
@@ -274,16 +273,16 @@ lb <- as.character(as.expression(eq))
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=mean_robustness)) +
   geom_smooth(method = lm, linewidth=0.5, color="red") +
   geom_point(size = 0.35) +
-  geom_text(x=0.17, y=0.78, label= lb, parse = TRUE, family = "Arial", size = 8/.pt) +
+  #geom_text(x=0.17, y=0.78, label= lb, parse = TRUE, size =7/.pt) +
   xlab("Transition ratio") +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -291,8 +290,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 4
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
@@ -302,11 +301,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -314,8 +313,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_std_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_std_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ################################################################################
 ############ transformed #######################################################
@@ -327,11 +326,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=mean_robustness)) +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -339,8 +338,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_tr.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_tr.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 2
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
@@ -349,11 +348,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -361,8 +360,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_std_tr.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_std_tr.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 3
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
@@ -371,11 +370,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -383,8 +382,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_tr.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_tr.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 4
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
@@ -393,11 +392,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -405,8 +404,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_std_tr.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_std_tr.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ################################################################################
 ############ transformed with line #############################################
@@ -419,11 +418,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=mean_robustness)) +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -431,8 +430,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_tr_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_tr_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 2
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
@@ -442,11 +441,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -454,8 +453,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trv_tr, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transversion_vs_robustness_std_tr_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transversion_vs_robustness_std_tr_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 3
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
@@ -465,11 +464,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
   ylab("Robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size =5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -477,8 +476,8 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=mean_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_tr_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_tr_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
 
 ## 4
 rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
@@ -488,11 +487,11 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
   ylab("SD of robustness") +
   theme_light() +
   theme(
-    axis.text.x = element_text(size = 7, family = "Arial"),
-    axis.text.y = element_text(size = 7, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 8, family = "Arial"),
-    legend.text = element_text(size = 7, family = "Arial"),
+    axis.text.x = element_text(size = 5),
+    axis.text.y = element_text(size =5),
+    axis.title = element_text(size =7),
+    legend.title = element_text(size =7),
+    legend.text = element_text(size =5),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
@@ -500,5 +499,6 @@ rr_plot <- ggplot(mean_vs_trv_trs, aes(x=trs_tr, y=std_robustness)) +
     panel.grid.minor = element_blank()
   )
 
-out_file <- paste(base_path, "transition_vs_robustness_std_tr_line.png", sep="")
-ggsave(out_file, plot = rr_plot, dpi=1200, width = 60, height = 50, units = "mm")
+out_file <- paste(base_path, "transition_vs_robustness_std_tr_line.pdf", sep="")
+ggsave(out_file, plot = rr_plot, width = 60, height = 50, units = "mm")
+

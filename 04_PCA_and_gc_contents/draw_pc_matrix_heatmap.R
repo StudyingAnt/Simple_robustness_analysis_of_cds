@@ -67,24 +67,24 @@ pcm_heatmap <- ggplot(pc_matrix, aes(x = factor(Principal_component, levels=pcs)
   scale_fill_gradient2(midpoint=0, low="blue", mid="white",
                        high="red") +
   xlab("Principal Component") +
-  ylab("Signature Sorted by GC Bias") +
-  labs(fill="Coefficient")  +
+  ylab("Signature sorted by GC targeting prefernce") +
+  labs(fill="Weight")  +
   theme(
-    axis.text.x = element_text(size = 6, family = "Arial", angle = 90, vjust = 0.5),
-    axis.text.y = element_text(size = 6, family = "Arial"),
-    axis.title = element_text(size = 8, family = "Arial"),
-    legend.title = element_text(size = 7, family = "Arial"),
-    legend.text = element_text(size = 6, family = "Arial"),
+    axis.text.x = element_text(size = 6, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 8),
+    legend.title = element_text(size = 7),
+    legend.text = element_text(size = 6),
     legend.key.height = unit(3, "mm"),
     legend.key.width = unit(3, "mm"),
     legend.box.margin = margin(-10,-10,-10,-10),
   )
 
 pcm_heatmap.fixed <- set_panel_size(pcm_heatmap,
-                                    width = unit(100, "mm"),
-                                    height = unit(100, "mm"))
+                                    width = unit(140, "mm"),
+                                    height = unit(140, "mm"))
 
-out_file <- paste(base_path, "pc_matrix_noseqerr.png", sep="")
-ggsave(out_file, plot = pcm_heatmap.fixed, dpi = 1200, width = 130, height = 115, units = "mm")
+out_file <- paste(base_path, "pc_matrix_noseqerr_v2.png", sep="")
+ggsave(out_file, plot = pcm_heatmap.fixed, dpi = 600, width = 170, height = 155, units = "mm")
 
 
