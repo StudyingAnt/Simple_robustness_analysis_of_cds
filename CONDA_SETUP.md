@@ -41,7 +41,7 @@ If you cloned these branches already, enter each checkout and use `git pull --ff
 ```bash
 conda env create --file environment.yml
 conda activate sinabro-revision
-python -m pip install --no-deps --no-build-isolation -e ../sinabro
+python -m pip install --no-deps --no-build-isolation --force-reinstall ../sinabro
 ```
 
 Create this environment once. On later logins, load the same Conda module if applicable and run `conda activate sinabro-revision`. If the name already exists, check it before proceeding; choose a new name with `conda env create --name YOUR_NEW_NAME --file environment.yml` if needed, then activate that name.
@@ -59,7 +59,11 @@ The [Conda environment guide](https://docs.conda.io/projects/conda/en/stable/use
 
 The recorded full historical environment has Python 3.9.15; an older preprocessing README stated 3.9.16. The checked revision workflow uses 3.9.15. The YAML pins these scientific-library versions, not every transitive dependency or binary build; export the resolved HPC environment as shown below.
 
-Conda installs the dependencies first. Pip installs only the local Sinabro code: `--no-deps` prevents dependency replacement, and `--no-build-isolation` uses the environment's installed build tools. Editable installation means changes in that checkout affect subsequent imports. Record the package commit before each run; keep the checkout fixed while jobs run. No `conda develop` or `import sinabro.sinabro` is needed with this version.
+Conda installs the dependencies first. Pip installs only Sinabro from the local checkout: `--no-deps` prevents dependency replacement, and `--no-build-isolation` uses the environment's installed build tools. `--force-reinstall` replaces any previously installed Sinabro, including an editable installation or another checkout with the same version number. This regular installation copies the package into the environment's `site-packages`; source edits require running the installation command again.
+
+The default PEP 660 editable installation (`pip install -e ...`) can import the outer repository directory as a namespace package when Python runs from the repositories' shared parent directory. The symptom is `sinabro.__file__ is None` and a missing `sinabro.__version__`, even though installation succeeded. Regular installation avoids this reproduced conflict; see the [Setuptools editable-install limitations](https://setuptools.pypa.io/en/latest/userguide/development_mode.html#limitations). No `conda develop` or `import sinabro.sinabro` is needed with this version.
+
+Record the package commit before each run and keep the checkout fixed while jobs run. The pilot and Slurm runners explicitly load the checkout selected by `--sinabro-source` or `SINABRO_SOURCE`, so keep that checkout consistent with the installed package and reinstall after changing it.
 
 ### Optional: install the environment at a specific absolute path
 
@@ -68,7 +72,7 @@ If you need to store the environment outside Conda's default environment directo
 ```bash
 conda env create --prefix /PATH/TO/ENVS/sinabro-revision --file environment.yml
 conda activate /PATH/TO/ENVS/sinabro-revision
-python -m pip install --no-deps --no-build-isolation -e ../sinabro
+python -m pip install --no-deps --no-build-isolation --force-reinstall ../sinabro
 ```
 
 Choose either the default named environment or this path-based installation; you do not need to create both. The explicit `--prefix` takes precedence over `name: sinabro-revision` in `environment.yml`. On later logins, activate this environment by its absolute path:
@@ -117,7 +121,32 @@ PY
 python -m unittest discover -s tests -v
 ```
 
-The last command runs the six preprocessing tests. These commands do not execute the full simulation or submit jobs. Confirm that `Sinabro source` points into the intended sibling checkout. A successful local check does not establish that the same environment has been created on HPC; run it there too.
+The last command runs the six preprocessing tests. These commands do not execute the full simulation or submit jobs. With the regular installation above, `Sinabro source` should point into the activated environment's `lib/python3.9/site-packages/sinabro/__init__.py`. It should not be `None`. A successful local check does not establish that the same environment has been created on HPC; run it there too.
+
+Also verify the import from the repositories' shared parent directory. The subshell returns you to the analysis directory afterward:
+
+```bash
+(
+  cd ..
+  python -c "import sinabro; print(sinabro.__file__); assert sinabro.__file__ is not None; assert sinabro.__version__ == '3.0.0'; from sinabro import Trajectory, RobustnessComputer; print('Parent-directory import: OK')"
+)
+```
+
+### Repair an existing editable installation
+
+Keep the current Conda environment. From the analysis repository root, replace the editable installation and repeat the checks above:
+
+```bash
+python -m pip install --no-deps --no-build-isolation --force-reinstall ../sinabro
+```
+
+If you are instead in the shared parent directory (for example, `sinabro_pub`), the package path is `./sinabro`:
+
+```bash
+python -m pip install --no-deps --no-build-isolation --force-reinstall ./sinabro
+```
+
+These are the same repair command with different relative paths; run the one matching your current directory. Repeating the old `-e` command does not fix this import-precedence conflict. No environment recreation or scientific-library upgrade is required.
 
 ## 5. Record the actual HPC environment
 
@@ -130,7 +159,7 @@ git rev-parse HEAD > results/environment_records/analysis-commit.txt
 git -C ../sinabro rev-parse HEAD > results/environment_records/sinabro-commit.txt
 ```
 
-The explicit Conda export records resolved package builds for the same platform. The separate package commit is required because an editable local package is not reconstructed by the Conda export alone. These files are generated provenance under Git-ignored `results/`; retain them with the run. Use a new recording directory when preserving records from multiple environments.
+The explicit Conda export records resolved package builds for the same platform. The separate package commit is required to reconstruct the local source used for installation and by the simulation runners. These files are generated provenance under Git-ignored `results/`; retain them with the run. Use a new recording directory when preserving records from multiple environments.
 
 ## 6. Prepare the input, then submit manually
 
