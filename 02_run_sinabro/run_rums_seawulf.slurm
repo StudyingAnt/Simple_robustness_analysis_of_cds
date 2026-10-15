@@ -37,7 +37,7 @@ cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID array $SLURM_ARRAY_TASK_ID on $(hostname)"
 echo "Input: $INPUT_FASTA; output: $OUTPUT_ROOT; paths per combination: $N_TRAJ"
 
-"$PYTHON_BIN" "$ANALYSIS_DIR/02_run_sinabro/run_rums_seawulf.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/02_run_sinabro/run_rums.py" \
   --input "$INPUT_FASTA" \
   --out-dir "$OUTPUT_ROOT" \
   --sinabro-source "$PACKAGE_SOURCE" \
@@ -45,4 +45,6 @@ echo "Input: $INPUT_FASTA; output: $OUTPUT_ROOT; paths per combination: $N_TRAJ"
   --seed "$MASTER_SEED" \
   --max-steps "$MAX_STEPS" \
   --workers "$SLURM_CPUS_PER_TASK" \
+  --n-shards 100 \
+  --expected-records 73214 \
   --shard-index "$SLURM_ARRAY_TASK_ID"

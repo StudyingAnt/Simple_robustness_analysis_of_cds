@@ -2,6 +2,8 @@
 
 Use this environment for GENCODE preprocessing, the timing pilots and their evaluation, and the SeaWulf Slurm simulation runner. It installs Sinabro 3.0.0 from its separate Git repository. Later historical analysis and R scripts still require separate review and dependencies.
 
+The [portable simulation and parallel validation](02_run_sinabro/REPRODUCTION.md) also run directly with Python without Slurm; SeaWulf-specific resource/environment settings are confined to the Slurm wrappers.
+
 ## 1. Make Conda available on the HPC login node
 
 If you already use your own working Conda installation, use it. Otherwise, the [SeaWulf package-management guide](https://rci.stonybrook.edu/docs/python-package-management) documents:

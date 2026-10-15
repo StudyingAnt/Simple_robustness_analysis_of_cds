@@ -4,6 +4,8 @@ This repository contains the manuscript-specific analysis scripts. The separate 
 
 Start with [Conda environment setup](CONDA_SETUP.md), using the pinned [environment.yml](environment.yml). For the full human simulation on SeaWulf, see [Slurm submission and resume](02_run_sinabro/HPC_SUBMISSION.md).
 
+The [portable runner and parallel validation](02_run_sinabro/REPRODUCTION.md) run without Slurm. Python filenames describe the analysis; cluster names are reserved for scheduler-specific wrappers. The separate [small SeaWulf validation job](02_run_sinabro/validate_parallel_seawulf.slurm) compares one and eight workers before full submission.
+
 ## Reproduction status
 
 Reproduction is checked one stage at a time. The first stage, **GENCODE v40 download and CDS-plus preprocessing**, has been rerun from a fresh download. The new CDS-plus and fifteen historical rejection files match the preserved original preprocessing script byte for byte.
@@ -14,6 +16,7 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | CDS-plus generation and rejection accounting | Verified |
 | Length-stratified pilot: 12 transcripts × 3 signatures × 20 paths | Verified; 720/720 complete |
 | Same pilot with 100 paths per combination | Verified; 3,600/3,600 complete; prior 720 paths reproduced |
+| Portable one-worker vs eight-worker smoke test | Verified locally; 108 paths per mode matched; SeaWulf test pending |
 | Full human RUMS calculation, statistics, figures | Pending validation |
 | Bat data and analyses | Pending validation |
 

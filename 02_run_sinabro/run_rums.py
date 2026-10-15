@@ -1,7 +1,7 @@
-"""Run one SeaWulf array shard; Slurm configuration lives in the .slurm file."""
+"""Reproduce RUMS on a local computer or a scheduler-managed compute node."""
 import argparse
+from contextlib import contextmanager, ExitStack
 import csv
-import fcntl
 import hashlib
 import heapq
 import json
@@ -13,6 +13,11 @@ import re
 import sys
 import tempfile
 import time
+import uuid
+
+# Each process performs serial numerical work; multiprocessing controls concurrency.
+for _name in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS', 'NUMEXPR_NUM_THREADS'):
+    os.environ[_name] = '1'
 
 import numpy as np
 import Bio
@@ -48,52 +53,106 @@ def atomic_json(path, value):
         Path(name).unlink(missing_ok=True)
 
 
-SHARDS = 100  # Fixed assignment, including when resubmitting selected array indices.
+@contextmanager
+def exclusive_lock(path, blocking=True):
+    """Lock an open file on POSIX or Windows; the OS releases locks after a crash."""
+    with Path(path).open('a+b') as handle:
+        if os.name == 'nt':
+            import msvcrt
+            if handle.seek(0, os.SEEK_END) == 0:
+                handle.write(b'\0')
+                handle.flush()
+            while True:
+                handle.seek(0)
+                try:
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                    break
+                except OSError:
+                    if not blocking:
+                        raise
+                    time.sleep(0.1)
+            try:
+                yield
+            finally:
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            operation = fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB)
+            fcntl.flock(handle, operation)
+            try:
+                yield
+            finally:
+                fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def parse_arguments(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--input', type=Path, required=True)
+    parser.add_argument('--input', type=Path, required=True, help='Preprocessed CDS-plus FASTA')
     parser.add_argument('--out-dir', type=Path, required=True)
-    parser.add_argument('--sinabro-source', type=Path, required=True)
+    parser.add_argument('--sinabro-source', type=Path, help='Optional package checkout; otherwise use installed Sinabro')
     parser.add_argument('--n-traj', type=int, default=1000)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--max-steps', type=int, default=10000)
-    parser.add_argument('--workers', type=int, required=True)
-    parser.add_argument('--shard-index', type=int, required=True)
+    parser.add_argument('--workers', type=int, default=1)
+    parser.add_argument('--n-shards', type=int, default=1)
+    parser.add_argument('--shard-index', type=int, default=0)
+    parser.add_argument('--expected-records', type=int, help='Optional input-record count assertion')
+    parser.add_argument('--signatures', nargs='+', help='Default: all 79 COSMIC v3.3.1 GRCh37 profiles')
+    parser.add_argument('--start-method', choices=mp.get_all_start_methods(), default='spawn')
     args = parser.parse_args(argv)
-    if min(args.n_traj, args.max_steps, args.workers) < 1 or args.seed < 0:
-        parser.error('Repeat count, safety cap and workers must be positive; seed must be nonnegative.')
-    if not 0 <= args.shard_index < SHARDS:
-        parser.error(f'Shard index must be between 0 and {SHARDS - 1}.')
+    if min(args.n_traj, args.max_steps, args.workers, args.n_shards) < 1 or args.seed < 0:
+        parser.error('Repeat count, safety cap, workers and shard count must be positive; seed must be nonnegative.')
+    if not 0 <= args.shard_index < args.n_shards:
+        parser.error('Shard index must be between 0 and n-shards minus one.')
+    if args.expected_records is not None and args.expected_records < 1:
+        parser.error('Expected record count must be positive.')
+    if args.signatures is not None and len(set(args.signatures)) != len(args.signatures):
+        parser.error('Signature names must be unique.')
     return args
 
 
-def configure(args):
-    global source, sinabro, signature_path, full_signature
-    global N_TRAJ, SEED, MAX_STEPS, INPUT, OUTPUT, TASK, WORKERS
-    global PROFILE, SIGNATURES, CONFIG, FINGERPRINT
-
-    source = args.sinabro_source.resolve()
-    if not (source / 'sinabro' / '__init__.py').is_file():
-        raise SystemExit(f'Set --sinabro-source to the Sinabro 3.0.0 checkout: {source}')
-    sys.path.insert(0, str(source))
+def load_package(checkout):
+    global source, sinabro, full_signature, signature_path
+    if checkout is not None:
+        checkout = Path(checkout).resolve()
+        if not (checkout / 'sinabro' / '__init__.py').is_file():
+            raise ValueError(f'Invalid --sinabro-source checkout: {checkout}')
+        sys.path.insert(0, str(checkout))
     import sinabro
-    from sinabro.core import signature_path, full_signature
+    from sinabro.core import full_signature, signature_path
+    if getattr(sinabro, '__version__', None) != '3.0.0' or sinabro.__file__ is None:
+        raise ValueError('This manuscript runner requires an importable Sinabro 3.0.0 package.')
+    source = Path(sinabro.__file__).resolve().parent.parent
 
-    if sinabro.__version__ != '3.0.0':
-        raise SystemExit('This manuscript runner requires Sinabro 3.0.0.')
+
+def initialize_worker(settings):
+    """Initialize spawned workers without reading/hashing the full FASTA again."""
+    global N_TRAJ, SEED, MAX_STEPS, PROFILE
+    load_package(settings['source'])
+    N_TRAJ, SEED, MAX_STEPS = settings['n_traj'], settings['seed'], settings['max_steps']
+    PROFILE = Path(settings['profile'])
+
+
+def configure(args):
+    global N_TRAJ, SEED, MAX_STEPS, INPUT, OUTPUT, TASK, WORKERS, SHARDS, START_METHOD
+    global PROFILE, SIGNATURES, CONFIG, FINGERPRINT
+    load_package(args.sinabro_source)
     N_TRAJ, SEED, MAX_STEPS = args.n_traj, args.seed, args.max_steps
     INPUT, OUTPUT = args.input.resolve(), args.out_dir.resolve()
-    TASK, WORKERS = args.shard_index, args.workers
+    TASK, WORKERS, SHARDS = args.shard_index, args.workers, args.n_shards
+    START_METHOD = args.start_method
     PROFILE = signature_path('3.3.1', 'GRCh37')
     with PROFILE.open() as stream:
-        SIGNATURES = next(csv.reader(stream, delimiter='\t'))[1:]
-    if len(SIGNATURES) != 79 or len(set(SIGNATURES)) != 79:
-        raise SystemExit('Expected the complete 79-profile COSMIC v3.3.1 GRCh37 table.')
+        available = next(csv.reader(stream, delimiter='\t'))[1:]
+    if len(available) != 79 or len(set(available)) != 79:
+        raise ValueError('Expected the complete 79-profile COSMIC v3.3.1 GRCh37 table.')
+    SIGNATURES = args.signatures or available
+    if set(SIGNATURES) - set(available):
+        raise ValueError(f'Unknown signatures: {sorted(set(SIGNATURES) - set(available))}')
 
     CONFIG = dict(
-        runner='seawulf-rums-v2', input_sha256=digest_file(INPUT),
+        runner='rums-v3', input_sha256=digest_file(INPUT),
         runner_python_sha256=digest_file(__file__),
         signature_sha256=digest_file(PROFILE), signatures=SIGNATURES,
         n_trajectories=N_TRAJ, master_seed=SEED, max_steps=MAX_STEPS,
@@ -105,6 +164,19 @@ def configure(args):
         shards=SHARDS, assignment='greedy_length_balance_v1',
     )
     FINGERPRINT = hashlib.sha256(json.dumps(CONFIG, sort_keys=True).encode()).hexdigest()
+
+
+def assign_records(records, n_shards, shard_index):
+    """Greedy length balancing with the original deterministic tie breaking."""
+    heap = [(0, index) for index in range(n_shards)]
+    heapq.heapify(heap)
+    assigned = []
+    for record in sorted(records, key=lambda row: (-(len(row.seq) - 2), row.id)):
+        load, shard = heapq.heappop(heap)
+        if shard == shard_index:
+            assigned.append(record)
+        heapq.heappush(heap, (load + len(record.seq) - 2, shard))
+    return assigned
 
 
 def checkpoint_path(identifier):
@@ -138,6 +210,7 @@ def compute_case(job):
     counts = np.full(N_TRAJ, -1, dtype=np.int32)
     codes = np.zeros(N_TRAJ, dtype=np.uint8)
     started = time.perf_counter()
+    started_epoch, cpu_started = time.time(), time.process_time()
     for index, seed in enumerate(seeds):
         trajectory = sinabro.Trajectory(identifier, sequence, seed=seed,
                                        cds_start=1, cds_end=len(sequence) - 1)
@@ -153,7 +226,9 @@ def compute_case(job):
             codes[index] = 2
         else:
             raise RuntimeError(f'Unexpected terminal reason: {reason}')
-    return identifier, signature, counts, codes, time.perf_counter() - started
+    return (identifier, signature, counts, codes, time.perf_counter() - started,
+            dict(worker_pid=os.getpid(), started_epoch=started_epoch, finished_epoch=time.time(),
+                 cpu_seconds=time.process_time() - cpu_started))
 
 
 def save_transcript(identifier, fasta_id, item):
@@ -188,42 +263,16 @@ def save_transcript(identifier, fasta_id, item):
     return int((codes != 0).sum())
 
 
-def main(argv=None):
-    args = parse_arguments(argv)
-    if not os.environ.get('SLURM_JOB_ID'):
-        raise SystemExit('Run through Slurm; do not start the full simulation on a login node.')
-    configure(args)
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    (OUTPUT / 'transcripts').mkdir(exist_ok=True)
-    (OUTPUT / 'shards').mkdir(exist_ok=True)
-    # Serialize common-manifest creation; reject mixed code/data/settings.
-    with (OUTPUT / '.configuration.lock').open('a+') as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
-        manifest = OUTPUT / 'run_manifest.json'
-        if manifest.exists():
-            existing = json.loads(manifest.read_text())
-            if existing['config_sha256'] != FINGERPRINT:
-                raise RuntimeError('Output belongs to a different run. Choose a new SINABRO_OUTPUT.')
-        else:
-            atomic_json(manifest, dict(config_sha256=FINGERPRINT, configuration=CONFIG,
-                                      input_path=str(INPUT), package_source=str(source)))
-    # Prevent simultaneous duplicate submissions of this same shard.
-    shard_lock = (OUTPUT / 'shards' / f'{TASK:03d}.lock').open('a+')
-    fcntl.flock(shard_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+def run_shard(args, started):
     records = list(SeqIO.parse(INPUT, 'fasta'))
     identifiers = [record.id.split('|')[0] for record in records]
-    if len(records) != 73214 or len(set(identifiers)) != len(records):
-        raise RuntimeError('Expected 73,214 uniquely identified GENCODE v40 CDS-plus records.')
+    if not records or len(set(identifiers)) != len(records):
+        raise ValueError('Input must contain at least one uniquely identified CDS-plus record.')
+    if args.expected_records is not None and len(records) != args.expected_records:
+        raise ValueError(f'Expected {args.expected_records} records; found {len(records)}.')
     if any(not re.fullmatch(r'[A-Za-z0-9_.-]+', identifier) for identifier in identifiers):
-        raise RuntimeError('Unsafe transcript identifier.')
-    heap = [(0, index) for index in range(SHARDS)]
-    heapq.heapify(heap)
-    assigned = []
-    for record in sorted(records, key=lambda row: (-(len(row.seq) - 2), row.id)):
-        load, shard = heapq.heappop(heap)
-        if shard == TASK:
-            assigned.append(record)
-        heapq.heappush(heap, (load + len(record.seq) - 2, shard))
+        raise ValueError('Unsafe transcript identifier.')
+    assigned = assign_records(records, SHARDS, TASK)
     todo = [record for record in assigned
             if not check_checkpoint(checkpoint_path(record.id.split('|')[0]), record.id.split('|')[0])]
     skipped = len(assigned) - len(todo)
@@ -233,8 +282,22 @@ def main(argv=None):
             for record in todo for signature in SIGNATURES)
     pending, processed, incomplete = {}, 0, 0
     signature_indices = {name: index for index, name in enumerate(SIGNATURES)}
-    with mp.get_context('fork').Pool(processes=WORKERS) as pool:
-        for identifier, signature, counts, codes, seconds in pool.imap_unordered(compute_case, jobs, chunksize=1):
+    metrics_path = OUTPUT / 'shards' / f'{TASK:03d}.cases.{uuid.uuid4().hex}.jsonl'
+    simulation_start = time.perf_counter()
+    with ExitStack() as stack:
+        metrics = stack.enter_context(metrics_path.open('x'))
+        if WORKERS == 1:
+            results = map(compute_case, jobs)
+        else:
+            settings = dict(source=str(source), n_traj=N_TRAJ, seed=SEED,
+                            max_steps=MAX_STEPS, profile=str(PROFILE))
+            pool = stack.enter_context(mp.get_context(START_METHOD).Pool(
+                processes=WORKERS, initializer=initialize_worker, initargs=(settings,)))
+            results = pool.imap_unordered(compute_case, jobs, chunksize=1)
+        for identifier, signature, counts, codes, seconds, execution in results:
+            metrics.write(json.dumps(dict(transcript_id=identifier, signature=signature,
+                                          simulation_seconds=seconds, **execution)) + '\n')
+            metrics.flush()
             if identifier not in pending:
                 pending[identifier] = dict(
                     counts=np.full((N_TRAJ, len(SIGNATURES)), -2, dtype=np.int32),
@@ -258,9 +321,33 @@ def main(argv=None):
     atomic_json(OUTPUT / 'shards' / f'{TASK:03d}.done.json',
                 dict(config_sha256=FINGERPRINT, assigned=len(assigned), skipped=skipped,
                      newly_processed=processed, incomplete_paths_in_new_results=incomplete,
-                     slurm_job_id=os.environ['SLURM_JOB_ID']))
+                     workers=WORKERS, start_method=START_METHOD, host=platform.node(),
+                     elapsed_seconds=time.perf_counter() - started,
+                     compute_and_save_seconds=time.perf_counter() - simulation_start,
+                     case_metrics_file=metrics_path.name))
     print(f'Shard {TASK} complete. Output: {OUTPUT}', flush=True)
 
 
+def main(argv=None):
+    args = parse_arguments(argv)
+    started = time.perf_counter()
+    configure(args)
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    (OUTPUT / 'transcripts').mkdir(exist_ok=True)
+    (OUTPUT / 'shards').mkdir(exist_ok=True)
+    with exclusive_lock(OUTPUT / '.configuration.lock'):
+        manifest = OUTPUT / 'run_manifest.json'
+        if manifest.exists():
+            existing = json.loads(manifest.read_text())
+            if existing['config_sha256'] != FINGERPRINT:
+                raise RuntimeError('Output belongs to a different run. Choose a new --out-dir.')
+        else:
+            atomic_json(manifest, dict(config_sha256=FINGERPRINT, configuration=CONFIG,
+                                      input_path=str(INPUT), package_source=str(source)))
+    with exclusive_lock(OUTPUT / 'shards' / f'{TASK:03d}.lock', blocking=False):
+        run_shard(args, started)
+
+
 if __name__ == '__main__':
+    mp.freeze_support()
     main()

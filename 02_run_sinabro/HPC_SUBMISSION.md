@@ -1,12 +1,28 @@
 # SeaWulf submission and resume
 
-The simulation code is in [run_rums_seawulf.py](run_rums_seawulf.py). The [Slurm wrapper](run_rums_seawulf.slurm) requests resources, activates Conda, sets paths and thread limits, and calls the Python file with named arguments. The Python runner handles trajectory generation, node-local multiprocessing, deterministic shard assignment, and checkpoints.
+The portable simulation code is in [run_rums.py](run_rums.py); it also runs without Slurm on another computer. The [full Slurm wrapper](run_rums_seawulf.slurm) handles SeaWulf resource and environment settings. See [portable reproduction](REPRODUCTION.md) for local execution and platform scope.
 
 Default: short-96core, 100 array shards, at most 8 running shards, one 96-core node per shard, 4 hours per shard. Total concurrency is at most 8 nodes / 768 workers. All 73,214 transcripts and 79 COSMIC v3.3.1 GRCh37 profiles are processed with 1,000 independent trajectories per combination, seed 42, protein identity criterion, CDS start 1. Internal-stop records are retained as in the original preprocessing.
 
 The limits follow the [SeaWulf queue guide](https://rci.stonybrook.edu/docs/queue-selection-guide). Actual allocation depends on scheduler availability and account access.
 
-**This is the full-workload runner.** This separation does not add a bounded pilot mode or establish HPC parallel performance. Selecting one array index still runs that shard of the full dataset across all 79 signatures.
+**run_rums_seawulf.slurm is the full-workload wrapper.** Selecting one array index still runs that shard of the full dataset across all 79 signatures. Use the separate small validation job below first.
+
+## Small one-node validation job
+
+[validate_parallel_seawulf.slurm](validate_parallel_seawulf.slurm) requests one node, eight CPUs, 8 GB RAM, and one hour on short-96core-shared. It calls portable validate_parallel.py, which selects the same 12 length-stratified transcripts as the earlier timing pilot and uses SBS1/SBS2/SBS13. It runs one worker and then eight workers, each with 100 trajectories per combination: 3,600 per mode, 7,200 total. No Slurm array or full-dataset simulation is started by this wrapper.
+
+After pulling the analysis branch, submit from the project root:
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+mkdir -p logs
+sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/validate_parallel_seawulf.slurm
+```
+
+The default output is PROJECT/runs/parallel_check_JOBID, including serial/, parallel_8/ and comparison.json. The output directory must be new. A passing report has results_equal, all_paths_complete, observed_parallel_execution and validation_passed all true. Worker PIDs, overlapping case times and observed peak simultaneous cases are included; speedup is measured, not assumed. See REPRODUCTION.md for comparison limits.
+
+The same PROJECT, ANALYSIS_DIR, SINABRO_ENV, SINABRO_SOURCE, SINABRO_FASTA, SINABRO_PYTHON and SINABRO_SEED variables can be exported before submission. The small wrapper has separate SINABRO_TEST_N_TRAJ (default 100) and SINABRO_TEST_OUTPUT (default job-specific validation directory) settings, so previously exported full-run repeat counts or output paths do not change the small test. Test first, then submit the full workload separately when ready.
 
 ## Project layout
 
@@ -64,7 +80,7 @@ You may copy the Slurm wrapper into PROJECT/slurm/ for site-specific changes; it
 To inspect Python arguments without starting a simulation:
 
 ```bash
-python Simple_robustness_analysis_of_cds/02_run_sinabro/run_rums_seawulf.py --help
+python Simple_robustness_analysis_of_cds/02_run_sinabro/run_rums.py --help
 ```
 
 ## Resume
@@ -79,7 +95,7 @@ sbatch --array=3,17,52%8 Simple_robustness_analysis_of_cds/02_run_sinabro/run_ru
 
 Per-shard locks reject simultaneous duplicates. A different input, profile table, seed, trajectory count, package/runner source, or library version requires a fresh SINABRO_OUTPUT directory. Worker count and the current shard index do not change the shared scientific configuration.
 
-The separated runner records the SHA256 of the actual Python file and uses runner identity seawulf-rums-v2. Checkpoints from the previous embedded-Python runner have a different configuration fingerprint and are intentionally rejected. Preserve those outputs and choose a fresh directory; do not remove the configuration checks.
+The portable runner records the SHA256 of the actual Python file and uses runner identity rums-v3. Checkpoints from either earlier runner version have a different configuration fingerprint and are intentionally rejected. Preserve those outputs and choose a fresh directory; do not remove the configuration checks. The generic Python defaults are one shard/index zero; the full SeaWulf wrapper explicitly passes 100 shards and the array index.
 
 ## Outputs
 
@@ -92,4 +108,4 @@ Load checkpoints with numpy.load(path, allow_pickle=False). Signature order is i
 
 Compressed arrays avoid billions of verbose CSV rows. Downstream manuscript scripts require an explicit combination/export step for this format. The runner handles the simulation stage; it does not generate manuscript figures.
 
-Local tests cover Bash/Python syntax, named arguments, checkpoint round trips, configuration mismatches, overwrite protection and incomplete-path handling. No HPC job or additional trajectory was executed during this separation.
+Local tests cover Bash/Python syntax, named arguments, checkpoint round trips, configuration mismatches, overwrite protection, shard coverage and incomplete-path handling. A bounded local one-versus-eight-worker check exercised spawn without scheduler environment variables. Actual SeaWulf submission and hardware performance remain to be verified by the user.
