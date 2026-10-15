@@ -87,7 +87,7 @@ The checks and exports in the following sections apply to either installation me
 export SINABRO_PYTHON="$CONDA_PREFIX/bin/python"
 ```
 
-For this path-based installation, it resolves to `/PATH/TO/ENVS/sinabro-revision/bin/python` after replacing the placeholder. If following the separate submission guide, replace its `conda activate sinabro-revision` command with the absolute-path activation above.
+For this path-based installation, it resolves to `/PATH/TO/ENVS/sinabro-revision/bin/python` after replacing the placeholder. Export `SINABRO_ENV="$CONDA_PREFIX"` before submitting the Slurm wrapper so it activates the same custom environment inside the batch job.
 
 ## 4. Check the environment without running simulations
 
@@ -121,7 +121,7 @@ PY
 python -m unittest discover -s tests -v
 ```
 
-The last command runs the six preprocessing tests. These commands do not execute the full simulation or submit jobs. With the regular installation above, `Sinabro source` should point into the activated environment's `lib/python3.9/site-packages/sinabro/__init__.py`. It should not be `None`. A successful local check does not establish that the same environment has been created on HPC; run it there too.
+The last command runs the preprocessing and HPC-runner checkpoint/argument tests. These commands do not execute the full simulation or submit jobs. With the regular installation above, `Sinabro source` should point into the activated environment's `lib/python3.9/site-packages/sinabro/__init__.py`. It should not be `None`. A successful local check does not establish that the same environment has been created on HPC; run it there too.
 
 Also verify the import from the repositories' shared parent directory. The subshell returns you to the analysis directory afterward:
 
@@ -170,9 +170,10 @@ Before following [HPC_SUBMISSION.md](02_run_sinabro/HPC_SUBMISSION.md), activate
 ```bash
 export SINABRO_PYTHON="$CONDA_PREFIX/bin/python"
 export SINABRO_SOURCE="$(cd ../sinabro && pwd)"
+export SINABRO_ENV="$CONDA_PREFIX"
 export SINABRO_FASTA="$PWD/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa"
 export SINABRO_OUTPUT="$PWD/results/hpc_gencode_v40_n1000"
 mkdir -p logs
 ```
 
-Replace input/output paths if using other shared storage. The Slurm runner uses `SINABRO_PYTHON` explicitly, so it does not depend on interactive shell activation inside the batch job. The environment, source and input paths must all be visible from compute nodes. Submit with `sbatch` only when you are ready, as described in the submission guide.
+The paths above illustrate the analysis repository's local layout. On HPC, use the project-level `data/processed/` and `runs/` paths in the submission guide. The Slurm wrapper activates `SINABRO_ENV` inside each batch job and uses `SINABRO_PYTHON` if specified. The environment, source and input paths must all be visible from compute nodes. Submit from the project root only when ready, as described in the submission guide.
