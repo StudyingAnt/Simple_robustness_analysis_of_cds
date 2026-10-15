@@ -161,3 +161,7 @@ cython_debug/
 
 .RData
 .Rhistory
+
+# Reproduction inputs and generated outputs.
+/data/
+/results/
