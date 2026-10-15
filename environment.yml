@@ -1,0 +1,15 @@
+# Scientific-library versions used for the checked manuscript-revision pilots.
+# Install Sinabro separately from the sibling Git checkout; see CONDA_SETUP.md.
+name: sinabro-revision
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.9.15
+  - numpy=1.21.6
+  - biopython=1.79
+  - scipy=1.8.1
+  - matplotlib=3.6.2
+  - pip
+  - setuptools>=59.6
+  - wheel

@@ -8,20 +8,21 @@ The limits follow the [SeaWulf queue guide](https://rci.stonybrook.edu/docs/queu
 
 ## Submit on the cluster
 
-Log in through milan.seawulf.stonybrook.edu. First copy the FASTA and Sinabro 3.0.0 source to the cluster. The package branch work/package-refactor-2026-10-14 contains that version.
+Log in through milan.seawulf.stonybrook.edu. First follow [Conda environment setup](../CONDA_SETUP.md), then transfer or regenerate the FASTA on the cluster. The package branch work/package-refactor-2026-10-14 contains Sinabro 3.0.0.
 
 From the analysis directory:
 
 ```bash
-conda activate sinabro
+conda activate sinabro-revision
 mkdir -p logs
+export SINABRO_PYTHON="$CONDA_PREFIX/bin/python"
 export SINABRO_SOURCE=/absolute/path/to/sinabro
 export SINABRO_FASTA=/absolute/path/to/gencode.v40.pc_transcripts.nopary.cdsplus.fa
 export SINABRO_OUTPUT=/absolute/path/to/results/hpc_gencode_v40_n1000
 sbatch 02_run_sinabro/run_rums_seawulf.slurm
 ```
 
-The environment name is illustrative; activate the environment you prepared. Recorded versions: Python 3.9.15, NumPy 1.21.6, Biopython 1.79. The script records actual versions and rejects mixing them within one output directory. It does not install packages. SINABRO_PYTHON can specify an absolute Python executable.
+The environment name matches the analysis repository's environment.yml; use your own name if you selected a different one. Recorded versions: Python 3.9.15, NumPy 1.21.6, Biopython 1.79. The script records actual versions and rejects mixing them within one output directory. It does not install packages. SINABRO_PYTHON selects the activated environment's absolute Python executable; the environment and all input/source paths must be accessible from compute nodes.
 
 For a standalone copy, submit sbatch /path/to/run_rums_seawulf.slurm from a directory containing logs/. No other analysis Python script is required.
 

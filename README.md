@@ -2,6 +2,8 @@
 
 This repository contains the manuscript-specific analysis scripts. The separate [Sinabro package](https://github.com/StudyingAnt/sinabro) provides the sequential mutation simulator.
 
+Start with [Conda environment setup](CONDA_SETUP.md), using the pinned [environment.yml](environment.yml). For the full human simulation on SeaWulf, see [Slurm submission and resume](02_run_sinabro/HPC_SUBMISSION.md).
+
 ## Reproduction status
 
 Reproduction is checked one stage at a time. The first stage, **GENCODE v40 download and CDS-plus preprocessing**, has been rerun from a fresh download. The new CDS-plus and fifteen historical rejection files match the preserved original preprocessing script byte for byte.
