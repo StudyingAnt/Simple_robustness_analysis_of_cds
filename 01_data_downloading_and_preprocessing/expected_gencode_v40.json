@@ -1,0 +1,14 @@
+{
+  "release": 40,
+  "assembly": "GRCh38.p13",
+  "input_records": 108573,
+  "accepted_records": 73214,
+  "rejected_by_original_filters": 31340,
+  "otherwise_valid_but_missing_flank": 4019,
+  "file_sha256": {
+    "gencode.v40.pc_transcripts.fa.gz": "99b75373d52bcf4af6121b4f3b86b5bb843583e70a42f5148bc511449665f78b",
+    "gencode.v40.pc_transcripts.fa": "3c4cbe647a97eed0fb98073a29b947d6528b5e3d3bae7a6f51e504b85d907670",
+    "gencode.v40.pc_transcripts.nopary.cdsplus.fa": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751"
+  },
+  "verification": "Fresh download plus independent run of preserved historical preprocessing source"
+}
