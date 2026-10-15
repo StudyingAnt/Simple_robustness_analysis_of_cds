@@ -61,6 +61,30 @@ The recorded full historical environment has Python 3.9.15; an older preprocessi
 
 Conda installs the dependencies first. Pip installs only the local Sinabro code: `--no-deps` prevents dependency replacement, and `--no-build-isolation` uses the environment's installed build tools. Editable installation means changes in that checkout affect subsequent imports. Record the package commit before each run; keep the checkout fixed while jobs run. No `conda develop` or `import sinabro.sinabro` is needed with this version.
 
+### Optional: install the environment at a specific absolute path
+
+If you need to store the environment outside Conda's default environment directory, use `--prefix` instead of the default creation command above. Replace `/PATH/TO/ENVS` with your actual absolute directory on storage accessible to both login and compute nodes. Run these commands from the analysis repository root:
+
+```bash
+conda env create --prefix /PATH/TO/ENVS/sinabro-revision --file environment.yml
+conda activate /PATH/TO/ENVS/sinabro-revision
+python -m pip install --no-deps --no-build-isolation -e ../sinabro
+```
+
+Choose either the default named environment or this path-based installation; you do not need to create both. The explicit `--prefix` takes precedence over `name: sinabro-revision` in `environment.yml`. On later logins, activate this environment by its absolute path:
+
+```bash
+conda activate /PATH/TO/ENVS/sinabro-revision
+```
+
+The checks and exports in the following sections apply to either installation method. Before job submission, use the same command shown in section 6:
+
+```bash
+export SINABRO_PYTHON="$CONDA_PREFIX/bin/python"
+```
+
+For this path-based installation, it resolves to `/PATH/TO/ENVS/sinabro-revision/bin/python` after replacing the placeholder. If following the separate submission guide, replace its `conda activate sinabro-revision` command with the absolute-path activation above.
+
 ## 4. Check the environment without running simulations
 
 ```bash
