@@ -11,10 +11,11 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | GENCODE v40 download and gzip integrity | Verified |
 | CDS-plus generation and rejection accounting | Verified |
 | Length-stratified pilot: 12 transcripts × 3 signatures × 20 paths | Verified; 720/720 complete |
+| Same pilot with 100 paths per combination | Verified; 3,600/3,600 complete; prior 720 paths reproduced |
 | Full human RUMS calculation, statistics, figures | Pending validation |
 | Bat data and analyses | Pending validation |
 
-The next decision is whether to expand the pilot to 100 trajectories per combination. No such run has been performed. See [pilot commands and instrumentation](02_run_sinabro/README.md).
+The 100-path pilot is complete. Larger simulations, including the historical 1,000-path setting, remain separate checkpoints. See [pilot commands and instrumentation](02_run_sinabro/README.md).
 
 Follow [the first-stage commands and checks](01_data_downloading_and_preprocessing/README.md). Reference counts and hashes are stored in [expected_gencode_v40.json](01_data_downloading_and_preprocessing/expected_gencode_v40.json).
 

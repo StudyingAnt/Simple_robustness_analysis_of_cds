@@ -10,11 +10,13 @@ import statistics
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--results', type=Path, required=True)
+    parser.add_argument('--baseline', type=Path, help='Earlier pilot for prefix and precision comparison')
     args = parser.parse_args()
     directory = args.results
     manifest = json.loads((directory / 'manifest.json').read_text())
     rows = json.loads((directory / 'summary.json').read_text())
-    assert manifest['n_traj_per_case'] == 20
+    n = manifest['n_traj_per_case']
+    assert isinstance(n, int) and n > 0
     assert manifest['repeats'] == 1 and manifest['trajectory_warmup_count'] == 0
     assert manifest['successful_cases'] == 36 and manifest['failed_cases'] == 0
     assert len(rows) == 36
@@ -25,16 +27,54 @@ def main():
     total_steps = 0
     for row in rows:
         case = json.loads((directory / 'cases' / f"{row['transcript_id']}_{row['signature']}.json").read_text())
-        assert len(case['paths']) == 20 and case['all_path_checks_passed']
-        assert case['n_complete'] == 20 and case['n_incomplete'] == 0
-        assert [path['trajectory_id'] for path in case['paths']] == list(range(20))
+        assert len(case['paths']) == n and case['all_path_checks_passed']
+        assert case['n_complete'] == n and case['n_incomplete'] == 0
+        assert [path['trajectory_id'] for path in case['paths']] == list(range(n))
         assert all(path['terminal_reason'] == 'nonsynonymous' for path in case['paths'])
         accepted = [path['accepted_steps'] for path in case['paths']]
         assert statistics.mean(accepted) == row['mean_accepted']
         assert all(path['n_steps'] == path['accepted_steps'] + 1 for path in case['paths'])
         audited += len(case['paths'])
         total_steps += sum(path['n_steps'] for path in case['paths'])
-    assert audited == 720
+    assert audited == 36 * n
+    comparison = None
+    if args.baseline:
+        before_manifest = json.loads((args.baseline / 'manifest.json').read_text())
+        before_rows = json.loads((args.baseline / 'summary.json').read_text())
+        before_n = before_manifest['n_traj_per_case']
+        assert before_n < n
+        assert before_manifest['selected_fasta_sha256'] == manifest['selected_fasta_sha256']
+        assert before_manifest['package_commit'] == manifest['package_commit']
+        assert before_manifest['signatures'] == manifest['signatures']
+        prefix_count = 0
+        differences, se_ratios = [], []
+        zero_baseline_now_positive = []
+        for row in rows:
+            name = f"{row['transcript_id']}_{row['signature']}.json"
+            before = json.loads((args.baseline / 'cases' / name).read_text())
+            after = json.loads((directory / 'cases' / name).read_text())
+            assert before['case_seed'] == after['case_seed']
+            assert before['paths'] == after['paths'][:before_n]
+            prefix_count += before_n
+            differences.append(abs(after['mean_accepted'] - before['mean_accepted']))
+            if before['accepted_mc_se'] > 0:
+                se_ratios.append(after['accepted_mc_se'] / before['accepted_mc_se'])
+            elif after['mean_accepted'] > 0:
+                zero_baseline_now_positive.append(dict(gene=row['gene'], signature=row['signature'],
+                                                       before=before['mean_accepted'], after=after['mean_accepted']))
+        comparison = dict(
+            baseline_n=before_n, current_n=n, matching_prefix_paths=prefix_count,
+            all_prefix_paths_identical=True,
+            baseline_total_driver_wall_seconds=before_manifest['total_driver_wall_seconds'],
+            baseline_simulation_seconds=sum(row['simulation_seconds'] for row in before_rows),
+            baseline_median_mc_se=statistics.median(row['accepted_mc_se'] for row in before_rows),
+            current_median_mc_se=statistics.median(row['accepted_mc_se'] for row in rows),
+            median_mc_se_ratio_for_positive_baseline=statistics.median(se_ratios),
+            median_absolute_mean_change=statistics.median(differences),
+            maximum_absolute_mean_change=max(differences),
+            baseline_zero_mean_now_positive=zero_baseline_now_positive,
+            means_are_nested_samples=True,
+        )
     grouped = []
     for name in ['short', 'medium', 'long', 'very_long']:
         group = [row for row in rows if row['bin'] == name]
@@ -42,16 +82,17 @@ def main():
                             sampled_transcripts=len({row['transcript_id'] for row in group}),
                             sampled_cds_min=min(row['cds_nt'] for row in group),
                             sampled_cds_max=max(row['cds_nt'] for row in group),
-                            seconds_20_min=min(row['simulation_seconds'] for row in group),
-                            seconds_20_median=statistics.median(row['simulation_seconds'] for row in group),
-                            seconds_20_max=max(row['simulation_seconds'] for row in group),
+                            seconds_min=min(row['simulation_seconds'] for row in group),
+                            seconds_median=statistics.median(row['simulation_seconds'] for row in group),
+                            seconds_max=max(row['simulation_seconds'] for row in group),
                             peak_worker_rss_mib_max=max(row['peak_rss_mib'] for row in group)))
     simulation = sum(row['simulation_seconds'] for row in rows)
     validation = sum(row['validation_seconds'] for row in rows)
     ttn_seconds = sum(row['simulation_seconds'] for row in rows if row['gene'] == 'TTN')
+    projection_target = 1000 if n >= 100 else 100
     assessment = dict(
-        measured_n_traj_per_case=20, measured_total_trajectories=audited,
-        total_mutation_steps=total_steps, all_720_trajectory_audits_passed=True,
+        measured_n_traj_per_case=n, measured_total_trajectories=audited,
+        total_mutation_steps=total_steps, all_trajectory_audits_passed=True,
         simulation_seconds=simulation,
         simulation_cpu_seconds=sum(row['simulation_cpu_seconds'] for row in rows),
         validation_seconds=validation, total_driver_wall_seconds=manifest['total_driver_wall_seconds'],
@@ -60,9 +101,12 @@ def main():
         ttn_fraction_of_sample_simulation_time=ttn_seconds / simulation,
         median_accepted_mc_se=statistics.median(row['accepted_mc_se'] for row in rows),
         maximum_accepted_mc_se=max(row['accepted_mc_se'] for row in rows),
-        estimated_100_same_design_seconds=manifest['total_driver_wall_seconds'] + 4 * (simulation + validation),
-        estimate_100_method='Fixed overhead held constant; simulation and validation scaled fivefold.',
-        estimate_100_is_measured=False, repeated_timing_runs_per_case=1,
+        projected_n_traj_per_case=projection_target,
+        estimated_larger_pilot_seconds=manifest['total_driver_wall_seconds'] +
+            (projection_target / n - 1) * (simulation + validation),
+        projection_method='Fixed overhead held constant; simulation and validation scaled by trajectory count.',
+        projection_is_measured=False, repeated_timing_runs_per_case=1,
+        comparison_with_baseline=comparison,
         groups=grouped,
         cpu_model=next(line.split(':', 1)[1].strip()
                        for line in Path('/proc/cpuinfo').read_text().splitlines()
@@ -92,33 +136,37 @@ def main():
         axis.set_xlabel('CDS length (nt)')
         axis.grid(True, which='major', alpha=.25)
     axes[0].set_yscale('log')
-    axes[0].set_ylabel('Simulation time for 20 trajectories (s)')
+    axes[0].set_ylabel(f'Simulation time for {n} trajectories (s)')
     axes[0].set_title('Time: profile cache prepared before timing')
     axes[0].legend(frameon=False)
     axes[1].set_ylabel('Peak worker RSS (MiB)')
     axes[1].set_title('Memory: imports, simulation and validation')
-    fig.suptitle('Sinabro 3.0.0 pilot: 12 transcripts, 3 signatures, 20 trajectories each')
+    fig.suptitle(f'Sinabro 3.0.0 pilot: 12 transcripts, 3 signatures, {n} trajectories each')
     fig.savefig(directory / 'length_time_memory.png', dpi=200)
     fig.savefig(directory / 'length_time_memory.svg')
     plt.close(fig)
 
     lines = [
-        '# 20개 경로 파일럿 결과',
+        f'# {n}개 경로 파일럿 결과',
         '',
-        '12개 전사체 × SBS1/SBS2/SBS13 × 조합당 20개 = 720개 경로를 실행했다. '
-        '36개 조합 모두 정상 완료했고, 720개 모두 첫 단백질 변화로 종료했다. '
-        '100개 경로 실행과 추가 난수 반복은 수행하지 않았다.',
+        f'12개 전사체 × SBS1/SBS2/SBS13 × 조합당 {n}개 = {audited:,}개 경로를 실행했다. '
+        f'36개 조합 모두 정상 완료했고, {audited:,}개 모두 첫 단백질 변화로 종료했다. '
+        '추가 난수 반복은 수행하지 않았다.',
+        '',
+        '논문 원본 simulate_single_gene.py의 n_traj는 1,000이다. '
+        f'이번에는 조합당 반복 경로 수를 {n}개로 낮췄다. '
+        '각 경로는 첫 아미노산 변화까지 진행하며, RUMS는 마지막 비동의적 변이를 제외한 변이 수의 평균이다.',
         '',
         f"실제 시뮬레이션 합계: {simulation:.3f}초. "
         f"표본 선정·각 작업 프로세스 시작·검증·저장을 포함한 전체: {manifest['total_driver_wall_seconds']:.3f}초.",
         '',
-        '| 구간 | 전체 전사체 수 | 표본 CDS 길이 (nt) | 조합당 20개 계산 시간 범위 (초) |',
+        f'| 구간 | 전체 전사체 수 | 표본 CDS 길이 (nt) | 조합당 {n}개 계산 시간 범위 (초) |',
         '|---|---:|---:|---:|',
     ]
     for group in grouped:
         lines.append(f"| {group['bin']} | {group['population']:,} | "
                      f"{group['sampled_cds_min']:,}–{group['sampled_cds_max']:,} | "
-                     f"{group['seconds_20_min']:.3f}–{group['seconds_20_max']:.3f} |")
+                     f"{group['seconds_min']:.3f}–{group['seconds_max']:.3f} |")
     lines += [
         '',
         f"작업 프로세스의 최고 RSS는 {assessment['worker_rss_mib_min']:.1f}–"
@@ -131,17 +179,15 @@ def main():
         '- 이번 범위에서는 입력·프레임·단일 치환·종료 조건 오류나 미완료 경로를 발견하지 못했다. '
         '각 경로의 모든 중간 단백질, 마지막 변화, cDNA 좌표, flanking base와 accepted count를 검증했다.',
         '- 계산 시간은 대체로 CDS 길이와 실제 누적 변이 단계 수에 따라 증가한다. '
-        '가장 긴 TTN은 107,976 nt이며, 20개당 1.94–2.71초였다.',
+        '가장 긴 TTN은 107,976 nt다.',
         f"- TTN 세 조합이 표본 계산 시간의 {100 * ttn_seconds / simulation:.1f}%를 차지했다. "
         '길이 구간을 같은 개수로 뽑고 최장 서열도 포함했으므로 이 평균을 전체 전사체 수에 그대로 곱하면 안 된다.',
         f"- RUMS 평균의 Monte Carlo 표준오차는 조합별 중앙값 {assessment['median_accepted_mc_se']:.3f}, "
         f"최대 {assessment['maximum_accepted_mc_se']:.3f}였다. "
-        '20개는 속도와 정상 동작을 살펴보는 데 유용하지만 생물학적 평균과 시그니처 순위를 정밀하게 판단하기에는 작다.',
-        f"- 동일 36개 조합을 100개씩 돌린다면 단순 선형 환산은 약 "
-        f"{assessment['estimated_100_same_design_seconds']:.0f}초다. "
-        '이는 계산·검증만 5배로 하고 고정 비용을 유지한 추정이며 실제 측정값이나 신뢰구간이 아니다.',
-        '- 현재 범위에서 100개로 늘릴 계산 부담은 작아 보인다. '
-        '평균 추정의 정밀도를 확인하려면 확대할 가치가 있고, 속도만 대략 확인하려는 목적은 이번 측정으로 상당 부분 달성했다.',
+        '이는 Monte Carlo 표준오차이며 시간 측정의 오차가 아니다.',
+        f"- 동일 36개 조합을 {projection_target:,}개씩 돌린다면 단순 선형 환산은 약 "
+        f"{assessment['estimated_larger_pilot_seconds']:.0f}초다. "
+        '고정 비용을 유지한 추정이며 실제 측정값이나 신뢰구간이 아니다. 전체 유전체 실행의 추정도 아니다.',
         '',
         '## 조건과 한계',
         '',
@@ -155,6 +201,27 @@ def main():
         '정확성 검증 시간은 simulation 시간에서 분리했다.',
         '- 각 조합의 시간 반복 측정은 1회다. 기계 부하에 따른 시간 변동과 병렬 확장성은 아직 평가하지 않았다.',
         '- 세 시그니처와 strict 기준의 결과다. 다른 76개 SBS 시그니처나 BLOSUM 기준의 시간은 이 결과로 확정하지 않는다.',
+    ]
+    if comparison:
+        lines += [
+            '',
+            f"이전 {comparison['baseline_n']}개 측정과 비교:",
+            '',
+            f"- 동일 조합의 앞 {comparison['baseline_n']}개 경로, 총 "
+            f"{comparison['matching_prefix_paths']:,}개가 이전과 모두 동일하다. "
+            '단계 수, 종료 이유, accepted count 및 전체 DNA 경로 해시를 대조했다.',
+            f"- Monte Carlo 표준오차의 조합별 중앙값: {comparison['baseline_median_mc_se']:.3f} → "
+            f"{comparison['current_median_mc_se']:.3f}.",
+            f"- RUMS 평균 변화의 절댓값: 중앙값 {comparison['median_absolute_mean_change']:.3f}, "
+            f"최대 {comparison['maximum_absolute_mean_change']:.3f}.",
+            '- 두 표본은 앞부분을 공유한다. 독립적인 반복 실험으로 해석하지 않는다.',
+            '',
+        ]
+        if comparison['baseline_zero_mean_now_positive']:
+            lines.append('이전에는 0이었으나 추가 경로에서 양수가 관찰된 조합: ' +
+                         json.dumps(comparison['baseline_zero_mean_now_positive'], ensure_ascii=False))
+            lines.append('')
+    lines += [
         '',
         '## 세부 결과',
         '',

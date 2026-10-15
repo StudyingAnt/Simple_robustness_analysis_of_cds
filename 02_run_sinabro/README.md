@@ -1,6 +1,8 @@
 # Small timing pilot with the refactored package
 
-The current checked stage uses Sinabro 3.0.0, the recorded scientific-library environment, and the freshly reproduced GENCODE v40 CDS-plus file.
+The checked pilots use Sinabro 3.0.0, the recorded scientific-library environment, and the freshly reproduced GENCODE v40 CDS-plus file. Both 20 and 100 trajectories per combination have been measured. The 1,000-trajectory manuscript setting has not been run in this pilot.
+
+## Preserved 20-path reference
 
 ```bash
 python 02_run_sinabro/benchmark_pilot.py \
@@ -19,7 +21,25 @@ There are 12 transcripts × SBS1/SBS2/SBS13 × 20 trajectories = **720 trajector
 
 Outputs include selection CSV/FASTA, input and source hashes, seeds, environment, per-combination wall/CPU time, peak worker RSS, per-path stopping reasons, mutation counts, and trajectory hashes. Every path is checked for a single substitution per step, correct CDS coordinates, preserved flanks, protein identity before the terminal event, and correct accepted-step counts. The output directory must be new to protect previous measurements.
 
-The evaluator audits the 720-path result and writes CSV/JSON summaries, a report and time/memory plots. It **does not simulate any trajectories**. Its 100-path figure is a rough estimate from the 20-path measurement, rather than an executed benchmark. A larger run is a separate user decision.
+The evaluator audits a completed result and writes CSV/JSON summaries, a report and time/memory plots. It **does not simulate any trajectories**. The original 20-path report remains preserved in its output directory.
+
+## 100 paths per combination
+
+```bash
+python 02_run_sinabro/benchmark_pilot.py \
+  --input data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
+  --sinabro-source ../sinabro \
+  --out-dir results/benchmark100_2026-10-14 \
+  --n-traj 100 --seed 42 --max-steps 10000 --case-timeout 180
+
+python 02_run_sinabro/evaluate_benchmark_pilot.py \
+  --results results/benchmark100_2026-10-14 \
+  --baseline results/benchmark20_2026-10-14
+```
+
+The same 12 transcripts and 3 signatures produce 3,600 trajectories. The case seed does not depend on the requested count, allowing the first 20 paths in each 100-path case to be compared with the earlier measurement. All 720 prefix paths matched in this run.
+
+The historical simulate_single_gene.py sets n_traj = 1000. This parameter is the number of independent trajectories per transcript/signature pair; each trajectory stops at the first protein-sequence change. The pilot reduces that repeat count to 100. A 1,000-path estimate in the 100-path report applies only to the same 12 transcripts and 3 signatures, and is not a measured result or a whole-genome projection.
 
 ## Preserved historical full-analysis instructions
 
