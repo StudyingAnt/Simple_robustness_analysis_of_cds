@@ -106,7 +106,7 @@ The portable runner records the SHA256 of the actual Python file and uses runner
 
 Load checkpoints with numpy.load(path, allow_pickle=False). Signature order is in metadata. Terminal codes are 0: first nonsynonymous event, 1: no available mutation, 2: safety cap. Incomplete paths have accepted_steps=-1; a profile containing any incomplete path has NaN aggregate statistics. A finished shard means all cases were attempted, so inspect incomplete counts before downstream analysis.
 
-Compressed arrays avoid billions of verbose CSV rows. Downstream manuscript scripts require an explicit combination/export step for this format. The runner handles the simulation stage; it does not generate manuscript figures.
+Compressed arrays avoid billions of verbose CSV rows. Use [the audited export](AGGREGATION.md) to prepare downstream analysis tables. The runner handles the simulation stage; it does not generate manuscript figures.
 
 ## Audit the completed simulation
 
@@ -132,4 +132,29 @@ cat runs/results_check_JOBID/validation_summary.json
 
 Expected manuscript audit: validation_passed=true, completed_shards=100, structurally_valid_files=73214, checked_paths=5783906000, complete_paths=5783906000, invalid_files=0, no_available_event_paths=0, max_steps_paths=0, and issues=[]. Detailed per-transcript checksums/errors are in transcript_audit.csv. For the exact checks and their limits, see [REPRODUCTION.md](REPRODUCTION.md#validate-saved-results-before-downstream-analysis). Diagnostics remain available on failure; a failed audit does not modify or repair simulation outputs.
 
-Local tests cover Bash/Python syntax, named arguments, checkpoint round trips, configuration mismatches, overwrite protection, shard coverage and incomplete-path handling. A bounded local one-versus-eight-worker check exercised spawn without scheduler environment variables. The user has reported a successful 12-transcript / three-signature / 100-path-per-case SeaWulf comparison, and full-run completion markers for 100 shards and 73,214 result files with zero reported incomplete paths. Full archive auditing remains to be performed on HPC with the separate job above.
+## Export audited analysis tables
+
+After the audit passes, submit [aggregate_results_seawulf.slurm](aggregate_results_seawulf.slurm). For the passing audit reported in this project (job 2304985):
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+mkdir -p logs
+export SINABRO_AGGREGATE_RUN="$PWD/runs/hpc_gencode_v40_n1000_seed42"
+export SINABRO_AGGREGATE_VALIDATION="$PWD/runs/results_check_2304985"
+sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/aggregate_results_seawulf.slurm
+```
+
+The job uses one shared node, eight CPUs, 8 GB RAM, and a four-hour walltime limit. This limit is not a runtime estimate. It activates the revision environment, compares every NPZ hash with the passing audit, and writes the matrices, annotation mapping and descriptive signature summary described in [AGGREGATION.md](AGGREGATION.md). No trajectories or figures are generated. The existing runner, validator and package sources remain unchanged.
+
+Default output: PROJECT/runs/aggregation_JOBID; override with SINABRO_AGGREGATE_OUTPUT to select another new directory. SINABRO_AGGREGATE_VALIDATION is required and has no guessed default. SINABRO_AGGREGATE_RUN explicitly selects the saved simulation independently of other output variables. PROJECT, ANALYSIS_DIR, SINABRO_ENV, SINABRO_FASTA and SINABRO_PYTHON have their usual meanings.
+
+After the job ends, replacing JOBID with the number returned by sbatch:
+
+```bash
+cat runs/aggregation_JOBID/aggregation_manifest.json
+```
+
+Expected: aggregation_passed=true, transcripts=73214, checkpoint_hashes_matched=73214, signatures=79, trajectories_per_combination=1000, total_trajectories=5783906000, unique_genes=19309, internal_stop_transcripts_retained=73. The Slurm output log prints these counts in a compact summary. Keep all NPZ files and the passing audit; the export does not replace them.
+
+Local tests cover preprocessing, resume/checkpoint safety, full archive auditing, exported ID correspondence and signature subsets, distinct path/across-transcript dispersion, source-hash mismatches, output preservation and spawned workers. The user reported successful bounded parallel validation and a full audit of all 73,214 transcript files / 5,783,906,000 paths on 2026-10-16 (job 2304985): no missing, invalid or incomplete results, validation_passed=true. Full-workload table export and manuscript figure reproduction remain subsequent stages.

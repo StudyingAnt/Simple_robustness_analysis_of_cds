@@ -6,6 +6,7 @@ The Python entry points have no SeaWulf paths, module commands, or required sche
 - validate_parallel.py: a bounded comparison of one worker versus multiple workers, using run_rums.py for both.
 - pilot_selection.py: the same deterministic 12-transcript selection used by the earlier serial timing pilot.
 - validate_results.py: read-only audit of all checkpoints against the input FASTA, completion records and recomputed statistics.
+- aggregate_results.py: export audited checkpoints into ID/name-mapped analysis tables; see [AGGREGATION.md](AGGREGATION.md).
 
 Use [CONDA_SETUP.md](../CONDA_SETUP.md) to install Sinabro 3.0.0 and the recorded library versions. Run examples from the analysis repository root. Replace /PATH/TO paths with paths on your computer.
 

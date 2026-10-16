@@ -1,5 +1,7 @@
 # Small timing pilot with the refactored package
 
+For the current full-run workflow, use [portable execution and audit](REPRODUCTION.md), [SeaWulf submission](HPC_SUBMISSION.md), and [audited NPZ-to-table export](AGGREGATION.md). The user reported that the full human saved-output audit passed on 2026-10-16: 73,214 transcripts, 79 signatures and 1,000 trajectories per pair. The pilot descriptions and historical instructions below are retained as earlier stages.
+
 The checked pilots use Sinabro 3.0.0, the recorded scientific-library environment, and the freshly reproduced GENCODE v40 CDS-plus file. Both 20 and 100 trajectories per combination have been measured. The 1,000-trajectory manuscript setting has not been run in this pilot.
 
 ## Preserved 20-path reference
@@ -43,7 +45,7 @@ The historical simulate_single_gene.py sets n_traj = 1000. This parameter is the
 
 ## Preserved historical full-analysis instructions
 
-The instructions below describe the original cluster workflow. Their import paths and fixed paths must be reviewed before use with Sinabro 3.0.0. The full dataset has not been rerun.
+The instructions below describe the original cluster workflow. Their import paths and fixed paths must be reviewed before use with Sinabro 3.0.0. For current audited NPZ results, use aggregate_results.py rather than the historical CSV combiner below.
 
 # Run Sinabro
 

@@ -16,11 +16,13 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | CDS-plus generation and rejection accounting | Verified |
 | Length-stratified pilot: 12 transcripts × 3 signatures × 20 paths | Verified; 720/720 complete |
 | Same pilot with 100 paths per combination | Verified; 3,600/3,600 complete; prior 720 paths reproduced |
-| Portable one-worker vs eight-worker smoke test | Verified locally; 108 paths per mode matched; SeaWulf test pending |
-| Full human RUMS calculation, statistics, figures | Pending validation |
+| Portable one-worker vs eight-worker smoke test | Verified locally; user-reported SeaWulf comparison also passed (3,600 paths per mode) |
+| Full human RUMS calculation and saved-output audit | User-reported full audit passed: 73,214 transcripts × 79 signatures × 1,000 paths, no incomplete paths |
+| Audited NPZ-to-table export | Implemented and checked on a small real local run; full HPC export pending |
+| Downstream statistics, PCA and figures | Pending reproduction |
 | Bat data and analyses | Pending validation |
 
-The 100-path pilot is complete. Larger simulations, including the historical 1,000-path setting, remain separate checkpoints. See [pilot commands and instrumentation](02_run_sinabro/README.md).
+The full human calculation and archive audit were reported complete on 2026-10-16 (audit job 2304985). Next, use [the audited table export](02_run_sinabro/AGGREGATION.md), preserving the checkpoint files and audit reports. The export prepares inputs for the historical analysis scripts; reproducing manuscript conclusions and figures remains a separate stage. See [pilot commands and instrumentation](02_run_sinabro/README.md) for the earlier bounded measurements.
 
 Follow [the first-stage commands and checks](01_data_downloading_and_preprocessing/README.md). Reference counts and hashes are stored in [expected_gencode_v40.json](01_data_downloading_and_preprocessing/expected_gencode_v40.json).
 
