@@ -5,6 +5,7 @@ The Python entry points have no SeaWulf paths, module commands, or required sche
 - run_rums.py: simulation, optional input/signature subsets, deterministic sharding, multiprocessing and resume.
 - validate_parallel.py: a bounded comparison of one worker versus multiple workers, using run_rums.py for both.
 - pilot_selection.py: the same deterministic 12-transcript selection used by the earlier serial timing pilot.
+- validate_results.py: read-only audit of all checkpoints against the input FASTA, completion records and recomputed statistics.
 
 Use [CONDA_SETUP.md](../CONDA_SETUP.md) to install Sinabro 3.0.0 and the recorded library versions. Run examples from the analysis repository root. Replace /PATH/TO paths with paths on your computer.
 
@@ -49,6 +50,26 @@ One worker calculates one transcript/signature combination at a time; its indepe
 For multiple computers or scheduler array jobs, split the same input using --n-shards N and give each job a different --shard-index between 0 and N-1. Each machine runs its local pool; Python does not launch remote machines or require MPI.
 
 The 100-shard full SeaWulf wrapper additionally passes --expected-records 73214. Its default remains at most eight concurrent jobs, each with one 96-CPU node. See [HPC_SUBMISSION.md](HPC_SUBMISSION.md) for the separate small SeaWulf job.
+
+## Validate saved results before downstream analysis
+
+After all simulation jobs have ended, audit the saved files on a compute node or your own computer. This performs no simulations and does not import Sinabro. NumPy and Biopython from the revision environment are sufficient. Keep the input FASTA and simulation output unchanged while the audit runs.
+
+~~~bash
+python 02_run_sinabro/validate_results.py \
+  --run-dir /PATH/TO/PROJECT/runs/hpc_gencode_v40_n1000_seed42 \
+  --input /PATH/TO/PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
+  --report-dir /PATH/TO/PROJECT/runs/results_check_001 \
+  --workers 8 --expected-records 73214
+~~~
+
+The report directory must be new and outside the simulation run directory. The input path defaults to the recorded manifest path if --input is omitted; an override must have the same SHA256. A validation of a small or custom run can omit --expected-records. Array dimensions, signatures, maximum steps and shard count come from the saved configuration, not hardcoded manuscript settings.
+
+The audit checks the manifest fingerprint, input hash, exact transcript file set and FASTA identifiers, deterministic shard assignment and completion counts, archive readability/CRC, metadata and signature order, integer array dimensions/dtypes, terminal codes and accepted-step bounds, per-signature complete/incomplete counts, and timings. Mean, sample SD (ddof=1), median and Monte Carlo SE are recomputed from every trajectory and compared with rtol=1e-10 and atol=1e-12. A signature with an incomplete path must have NaN summary statistics; with one trajectory, SD and SE must be NaN. No-event and safety-cap paths are counted from saved arrays even after resume.
+
+Outputs are validation_summary.json, transcript_audit.csv (file SHA256, validity, terminal counts and errors), and file_set.json (missing/extra checkpoint names). Success requires validation_passed=true, all_paths_complete=true and no invalid/missing/extra files or inconsistent shard records. Failures return exit code 1 and retain diagnostics. SHA256 values form an inventory for future comparison; they are not proof of biological correctness or an independent reproduction of trajectory generation. The audit does not compare against historical manuscript figures, rerun mutations, or authenticate historical source hashes against an external archive. It records the original simulation configuration and its own script hash and environment version.
+
+For the SeaWulf compute-node wrapper and submission commands, see [HPC_SUBMISSION.md](HPC_SUBMISSION.md).
 
 ## Reproducibility, resume and platform scope
 

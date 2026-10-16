@@ -108,4 +108,28 @@ Load checkpoints with numpy.load(path, allow_pickle=False). Signature order is i
 
 Compressed arrays avoid billions of verbose CSV rows. Downstream manuscript scripts require an explicit combination/export step for this format. The runner handles the simulation stage; it does not generate manuscript figures.
 
-Local tests cover Bash/Python syntax, named arguments, checkpoint round trips, configuration mismatches, overwrite protection, shard coverage and incomplete-path handling. A bounded local one-versus-eight-worker check exercised spawn without scheduler environment variables. Actual SeaWulf submission and hardware performance remain to be verified by the user.
+## Audit the completed simulation
+
+After all simulation jobs have ended, pull this analysis branch and submit the separate read-only audit. No package reinstall is required for these additional scripts. The simulation runner and Sinabro package are unchanged by this addition.
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+mkdir -p logs
+export SINABRO_VALIDATE_RUN="$PWD/runs/hpc_gencode_v40_n1000_seed42"
+sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/validate_results_seawulf.slurm
+```
+
+The wrapper requests one node / eight CPUs, 8 GB RAM, and at most four hours on short-96core-shared. It activates PROJECT/sinabro-revision regardless of the submit shell's active Conda environment. It reads every checkpoint and recomputes statistics; it does not launch simulations. Runtime depends on filesystem throughput and is not yet measured for the full dataset.
+
+Default output: PROJECT/runs/results_check_JOBID. Override with SINABRO_VALIDATE_OUTPUT, which must name a new directory outside the simulation directory. SINABRO_VALIDATE_RUN explicitly selects the existing simulation; it is independent of previously exported simulation/test output variables. PROJECT, ANALYSIS_DIR, SINABRO_ENV, SINABRO_FASTA and SINABRO_PYTHON have their usual meanings. The wrapper asserts 73,214 input transcripts; use the portable Python CLI without that assertion for a custom dataset.
+
+After the job ends, replacing JOBID with the job number returned by sbatch:
+
+```bash
+cat runs/results_check_JOBID/validation_summary.json
+```
+
+Expected manuscript audit: validation_passed=true, completed_shards=100, structurally_valid_files=73214, checked_paths=5783906000, complete_paths=5783906000, invalid_files=0, no_available_event_paths=0, max_steps_paths=0, and issues=[]. Detailed per-transcript checksums/errors are in transcript_audit.csv. For the exact checks and their limits, see [REPRODUCTION.md](REPRODUCTION.md#validate-saved-results-before-downstream-analysis). Diagnostics remain available on failure; a failed audit does not modify or repair simulation outputs.
+
+Local tests cover Bash/Python syntax, named arguments, checkpoint round trips, configuration mismatches, overwrite protection, shard coverage and incomplete-path handling. A bounded local one-versus-eight-worker check exercised spawn without scheduler environment variables. The user has reported a successful 12-transcript / three-signature / 100-path-per-case SeaWulf comparison, and full-run completion markers for 100 shards and 73,214 result files with zero reported incomplete paths. Full archive auditing remains to be performed on HPC with the separate job above.
