@@ -1,0 +1,42 @@
+{
+  "source": "Bat1K Pilot Project, Jebb et al. 2020; assemblies HLmolMol2 and HLmyoMyo6",
+  "verified_on": "2026-10-17",
+  "source_index": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/",
+  "annotation_policy": "allAnnotatedIsoforms, matching the filenames referenced by historical scripts; CDS extraction must use BED thickStart/thickEnd",
+  "note": "Expected sizes are the official index sizes verified on this date. Genome hashes are recorded after download; they are not preverified reference checksums.",
+  "assets": [
+    {
+      "filename": "README.txt",
+      "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/README.txt",
+      "role": "documentation",
+      "expected_bytes": 1429,
+      "sha256": "577c5f2621f7ccecfe722d21bea87262b0c224f40c23e4c9cdac416d44dfdd8c"
+    },
+    {
+      "filename": "HLmolMol2.Bat1Kannotation.bed",
+      "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/allAnnotatedIsoforms/HLmolMol2.Bat1Kannotation.bed",
+      "role": "annotation",
+      "expected_bytes": 9410845,
+      "sha256": "bcd3de866d7e17ab9ca23cde4e7cd5daae0dc87208136fc5f87e4b1168875886"
+    },
+    {
+      "filename": "HLmyoMyo6.Bat1Kannotation.bed",
+      "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/allAnnotatedIsoforms/HLmyoMyo6.Bat1Kannotation.bed",
+      "role": "annotation",
+      "expected_bytes": 7966676,
+      "sha256": "dcd3e0e54afac9bf2d893a71fdf952afb2e43d4aec13faf392828f059dcbafb5"
+    },
+    {
+      "filename": "HLmolMol2.fa.gz",
+      "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/HLmolMol2.fa.gz",
+      "role": "genome",
+      "expected_bytes": 744312877
+    },
+    {
+      "filename": "HLmyoMyo6.fa.gz",
+      "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/HLmyoMyo6.fa.gz",
+      "role": "genome",
+      "expected_bytes": 649691321
+    }
+  ]
+}
