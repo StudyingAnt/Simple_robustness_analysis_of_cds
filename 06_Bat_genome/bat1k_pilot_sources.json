@@ -2,8 +2,8 @@
   "source": "Bat1K Pilot Project, Jebb et al. 2020; assemblies HLmolMol2 and HLmyoMyo6",
   "verified_on": "2026-10-17",
   "source_index": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/",
-  "annotation_policy": "allAnnotatedIsoforms, matching the filenames referenced by historical scripts; CDS extraction must use BED thickStart/thickEnd",
-  "note": "Expected sizes are the official index sizes verified on this date. Genome hashes are recorded after download; they are not preverified reference checksums.",
+  "annotation_policy": "allAnnotatedIsoforms; reproduce the frozen historical transcript cohorts, with BED coding intersections and transcript/CDS outer-boundary agreement checks",
+  "note": "Expected sizes are the official index sizes. Genome SHA256s are pinned to the gzip-validated local official-source download on 2026-10-17; they are not independent publisher-provided checksums.",
   "assets": [
     {
       "filename": "README.txt",
@@ -30,13 +30,17 @@
       "filename": "HLmolMol2.fa.gz",
       "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/HLmolMol2.fa.gz",
       "role": "genome",
-      "expected_bytes": 744312877
+      "expected_bytes": 744312877,
+      "sha256": "20c64a06114c96a6bacf286b07b99485eb7947fc2329983d785301fb17026afb",
+      "sha256_origin": "Measured from the official HTTPS download on 2026-10-17 after full gzip integrity validation; not a publisher-supplied checksum."
     },
     {
       "filename": "HLmyoMyo6.fa.gz",
       "url": "https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/HLmyoMyo6.fa.gz",
       "role": "genome",
-      "expected_bytes": 649691321
+      "expected_bytes": 649691321,
+      "sha256": "6c69564d8f501d6c454afb8a258a4d0b25c56b6c04c6b154ca6fc0b6e9e3aee4",
+      "sha256_origin": "Measured from the official HTTPS download on 2026-10-17 after full gzip integrity validation; not a publisher-supplied checksum."
     }
   ]
 }

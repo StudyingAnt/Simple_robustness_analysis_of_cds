@@ -2,9 +2,11 @@
 
 This stage is separate from the completed human COSMIC run. The manuscript uses Molossus molossus assembly HLmolMol2 and Myotis myotis assembly HLmyoMyo6 from the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/). Keep these assemblies and annotation versions for the initial reproduction rather than silently replacing them with newer assemblies.
 
+For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). This does not yet reproduce the entire bat section or the six experimental-enzyme analyses.
+
 ## Download raw references independently
 
-The portable download_bat_inputs.py uses only the Python standard library. bat1k_pilot_sources.json records official URLs, expected index sizes and verified checksums for the small annotation/documentation assets. The two genome checksums are recorded after download; they are not independently preverified reference checksums. Downloads check sizes, known hashes and gzip CRC, then publish a new raw-data directory with download_manifest.json. No CDS extraction or simulation is performed. A failed download publishes no completed directory; rerun into a new destination after fixing the failure.
+The portable download_bat_inputs.py uses only the Python standard library. bat1k_pilot_sources.json records official URLs, expected index sizes and checksums. Both genome hashes are now pinned to a completed, gzip-validated official-source download on 2026-10-17; they are not independent publisher-provided checksums. Downloads check sizes, configured hashes and gzip CRC, then publish a new raw-data directory with download_manifest.json. No CDS extraction or simulation is performed by the downloader. A failed download publishes no completed directory; rerun into a new destination after fixing the failure.
 
 From the HPC project root:
 
@@ -26,7 +28,7 @@ python 06_Bat_genome/download_bat_inputs.py \
 
 For the small files alone, use --annotations-only and a separate new output directory. Genomes remain compressed in this stage. CDS extraction and scientific input validation are separate steps.
 
-## Preprocessing issue to resolve before simulation
+## Historical cohort and checked CDS extraction
 
 The historical make_sinabro_input_*_all.py scripts concatenate every BED exon without clipping to thickStart/thickEnd. BED block definitions describe exons, while thickStart/thickEnd delimit the coding segment in these gene annotations; see [UCSC BED documentation](https://genome.ucsc.edu/FAQ/FAQformat.html#format1). A transcript can therefore have untranslated exon sequence outside its CDS.
 
@@ -37,9 +39,9 @@ Inspection of the official annotation snapshots downloaded on 2026-10-17 found:
 | HLmolMol2 | 55,697 | 23,975 |
 | HLmyoMyo6 | 47,391 | 23,665 |
 
-These counts do not establish that every affected transcript was used incorrectly in the historical paper: the original execution inputs have not been recovered. They show that the currently published preprocessing code must be checked/corrected before a new run. Its downstream start/stop/length filters can exclude valid CDSs when UTRs were included, and can in principle admit an incorrect interval. Exact effects require genome extraction and comparison.
+However, every ID in the historical result tables (31,185 Molossus and 23,213 Myotis transcripts) matches a BED record with equal transcript/CDS outer bounds. No outer-boundary UTR discrepancy was found in these retained cohorts. The versioned lists in cohorts/ preserve those populations explicitly. extract_bat_cds.py checks the source/cohort hashes and coordinate agreement, extracts coding exon blocks and genomic flanks on both strands, and requires every frozen transcript to pass sequence validation. It does not admit additional isoforms from the larger annotation. The original make_sinabro_input_* files remain unchanged.
 
-Before launching RUMS, use exon/CDS intersections, correct negative-strand orientation and a defined flank policy; record completeness/internal-stop/ambiguous-base exclusions, transcript and gene correspondence, and all accepted/rejected IDs. Verify translation and compare legacy-versus-corrected retained sets. Do not force the old accepted count or mix allAnnotatedIsoforms/intactIsoforms policies without recording the change.
+Local extraction from both actual genomes passed with the original transcript counts. Internal stops were found in 383 Molossus and 79 Myotis transcripts; these remain in the full FASTAs and are flagged in QC, matching the historical filtering policy. The bounded pilot omits them and records that exclusion. The original historical FASTAs have not been recovered, so this is not a claim of byte identity with archived original inputs. Transcript IDs do not constitute gene or orthologue mappings.
 
 NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. Strand expansion, mutation-target bounds and available flanks must be checked explicitly when connecting the custom profiles to the revised runner. The current human runner supports selected COSMIC signatures; the custom-profile orchestration and bat aggregation/annotation adapter still need implementation and bounded validation.
 
@@ -49,7 +51,7 @@ Under a descriptive revision that retains the bat results but withdraws unsuppor
 
 | Work item | Additional trajectory simulation? | Scope/dependency |
 | --- | --- | --- |
-| Two bat genomes under the manuscript COSMIC controls | Yes | Eight signatures: SBS1, SBS2, SBS3, SBS4, SBS6, SBS9, SBS13, SBS18. The human values for these are already available from the 79-signature run. Start after corrected bat CDS inputs pass checks. |
+| Two bat genomes under the manuscript COSMIC controls | Yes | Eight signatures: SBS1, SBS2, SBS3, SBS4, SBS6, SBS9, SBS13, SBS18. The human values for these are already available from the 79-signature run. Local CDS extraction and bounded three-signature pilot passed; full production execution is a later stage. |
 | Human plus both bats under six bat enzyme profiles | Yes | The same six profiles on all three species, including own/foreign enzymes and human controls. Requires source-profile normalization and custom runner validation. Human SBS2 is not a replacement for these six empirical enzyme profiles. |
 | Monte Carlo sample-size sensitivity, SD/SE/zero fraction/CI | Usually no | Reuse saved per-path counts and N=100/250/500/1000 prefixes or resampling. A small independent-seed confirmation is possible; it does not require another whole-human run. |
 | Weighted/unweighted one-step baselines, GC3/codon covariates, PCA, descriptive/inferential statistics, CGC comparison | No full RUMS rerun | Use sequence-derived features and existing matrices. Implement/check the revised statistical design separately. |
@@ -57,13 +59,13 @@ Under a descriptive revision that retains the bat results but withdraws unsuppor
 | Synonymous-codon null | Conditional | Needed to support retained adaptation claims or if specifically required after reframing. Define a bounded prespecified design first rather than launching a whole-genome null by default. |
 | Orthologue-matched species-by-process comparison | Conditional | Required to support stronger coevolution claims; define one-to-one orthologues/one transcript per gene first. Existing per-transcript results can be subsetted if the exact sequences are retained; new sequence representatives require only the missing cases. |
 
-The historical result CSVs inspected locally have 31,185 Molossus and 23,213 Myotis rows. If those cohort sizes stayed unchanged, two bats x eight signatures x 1,000 paths would be 435,184,000 paths. Six profiles on 73,214 human + 31,185 Molossus + 23,213 Myotis transcripts would be 765,672,000 paths. Their sum is approximately 21% of the completed human 79-signature path count. These are workload illustrations using old counts, not validated new cohorts or runtime estimates. Corrected CDS extraction may change the cohorts, and NNC preference, sequence length and path length affect runtime.
+The frozen cohorts contain 31,185 Molossus and 23,213 Myotis transcripts, all successfully extracted locally. Two bats x eight signatures x 1,000 paths would be 435,184,000 paths. Six profiles on 73,214 human + 31,185 Molossus + 23,213 Myotis transcripts would be 765,672,000 paths. Their sum is approximately 21% of the completed human 79-signature path count. These are path-count illustrations, not runtime estimates; NNC preference, sequence length and path length affect runtime.
 
 ## Independently preparable tasks
 
 1. Download the raw two-assembly references using the job above while human downstream analyses proceed.
 2. Review the original six-enzyme workbook, map source IDs/species, preserve raw values and define normalization. Raw experimental data remain outside Git. The source workbook contains motif-average counts/percentages; they must not be silently treated as summed raw mutation counts. Source metadata, background/replicate information and the original conversion code determine which uncertainty claims can be made.
-3. Inspect bat annotation/CDS extraction and the old-to-new transcript mapping before requesting expensive jobs.
+3. Follow HPC_REPRODUCTION.md to download, extract and check the small bat COSMIC pilot before requesting expensive jobs.
 4. Prepare GC3/codon/one-step baselines and human PCA/statistical scripts against the completed human export, independently of the bat download/profile work.
 5. Use the existing local CGC v99 GRCh38 snapshot for initial annotation/mapping checks rather than automatically changing releases or redownloading it. The historical CGC shell script's embedded authentication has been replaced with COSMIC_USERNAME/COSMIC_PASSWORD variables; its legacy network workflow is not part of the current validated pipeline and has not been executed.
 
