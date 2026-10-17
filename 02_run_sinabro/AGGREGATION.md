@@ -56,7 +56,8 @@ manuscript_signature_groups.json copies membership and order from the preserved 
 
 | Existing script | Input supplied by this stage | Work remaining before executing that script |
 | --- | --- | --- |
-| 03_mean_std_analysis/draw_violin_plots_by_rank.R | all_gencode_rums_profile.csv | Replace the fixed Windows paths with explicit input/output arguments; verify figures against the new descriptive summary. |
+| 03_mean_std_analysis/analyze_signature_distributions.py | Completed export directory with canonical/legacy matrices, annotations, summary and manifest. | Use the portable [descriptive analysis workflow](../03_mean_std_analysis/README.md) to check ranks and render distributions in the revision environment. |
+| 03_mean_std_analysis/draw_violin_plots_by_rank.R (historical reference) | all_gencode_rums_profile.csv | Original paths/layout are preserved; use the Python workflow above for the current analysis. |
 | 04_PCA_and_gc_contents/reduce_signatures.py | Its two outputs are already exported when the manuscript groups JSON is provided. | No need to rerun the historical reduction script. |
 | 04_PCA_and_gc_contents/run_pca.py | The full, noseqerr and aetiology matrices, with the expected names and column order. | Make paths portable, record the PCA fitting/standardization policy and check outputs before plotting. |
 | 04_PCA_and_gc_contents/compute_gc_contents_sequences.py and draw_pca_plots.R | transcript_annotations.csv provides the explicit ID/name correspondence. | Compute/check GC features from the same CDS-plus file and join by an explicit key; do not assume that independently sorted rows match. |

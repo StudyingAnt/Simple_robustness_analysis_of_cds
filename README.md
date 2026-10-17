@@ -18,11 +18,12 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | Same pilot with 100 paths per combination | Verified; 3,600/3,600 complete; prior 720 paths reproduced |
 | Portable one-worker vs eight-worker smoke test | Verified locally; user-reported SeaWulf comparison also passed (3,600 paths per mode) |
 | Full human RUMS calculation and saved-output audit | User-reported full audit passed: 73,214 transcripts × 79 signatures × 1,000 paths, no incomplete paths |
-| Audited NPZ-to-table export | Implemented and checked on a small real local run; full HPC export pending |
-| Downstream statistics, PCA and figures | Pending reproduction |
+| Audited NPZ-to-table export | User-reported full export passed: 73,214 checksums matched; 19,309 genes and 73 internal-stop transcripts retained |
+| Descriptive signature ranks and distribution figures | Portable analysis/plotting job implemented and checked locally; full HPC execution pending |
+| PCA and subsequent figures/inferential analyses | Pending reproduction |
 | Bat data and analyses | Pending validation |
 
-The full human calculation and archive audit were reported complete on 2026-10-16 (audit job 2304985). Next, use [the audited table export](02_run_sinabro/AGGREGATION.md), preserving the checkpoint files and audit reports. The export prepares inputs for the historical analysis scripts; reproducing manuscript conclusions and figures remains a separate stage. See [pilot commands and instrumentation](02_run_sinabro/README.md) for the earlier bounded measurements.
+The full human calculation and archive audit were reported complete on 2026-10-16 (audit job 2304985), followed by a successful full table export reported on 2026-10-17 (job 2305071). Preserve the checkpoint files, audit reports and [exported tables](02_run_sinabro/AGGREGATION.md). Next, run [descriptive signature ranks and distribution figures](03_mean_std_analysis/README.md); reproducing manuscript conclusions, PCA and inferential analyses remains separate. See [pilot commands and instrumentation](02_run_sinabro/README.md) for the earlier bounded measurements.
 
 Follow [the first-stage commands and checks](01_data_downloading_and_preprocessing/README.md). Reference counts and hashes are stored in [expected_gencode_v40.json](01_data_downloading_and_preprocessing/expected_gencode_v40.json).
 
