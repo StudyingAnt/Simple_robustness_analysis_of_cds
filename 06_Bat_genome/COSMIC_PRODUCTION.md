@@ -15,27 +15,31 @@ are unchanged. Python scripts are portable; only Slurm wrappers target SeaWulf.
 | Total trajectories | 435,184,000 |
 | Master seed | 42 |
 | Maximum steps per trajectory | 10,000; capped paths fail the final audit |
-| Shards | 100 per species, 200 array elements |
-| Submission batch | 50 elements; submit four batches sequentially |
+| Scientific shards | 100 per species, 200 species/shard cases |
+| Submitted array jobs | 50; one submission covers the entire analysis |
+| Work per array job | Two shard numbers, each processed for both species sequentially |
 | Maximum simultaneous array elements | 8 |
 | Resources per element | One node, 96 workers, four-hour wall limit |
 | Maximum concurrent allocated workers | 768 across up to 8 nodes |
 
 The four-hour limit is per array element, not a whole-run time estimate. Actual
 allocation depends on the scheduler. Numerical threads are limited to one per
-worker. Elements alternate species: 0=Molossus shard 0, 1=Myotis shard 0,
-2=Molossus shard 1, ..., 199=Myotis shard 99. Each node runs independent Python
-multiprocessing; this is not a single shared multi-node Python process.
+worker. Allocation task 0 processes Molossus shard 0, Myotis shard 0, Molossus
+shard 50 and Myotis shard 50, in that order. Task 1 handles shard numbers 1 and
+51 for both species, through task 49 handling shard numbers 49 and 99. Each case
+finishes and closes its worker pool before the next starts in the same allocated
+node. All 50 tasks together cover all 200 scientific cases. Each node runs
+independent multiprocessing; this is not one shared multi-node Python process.
 
 SeaWulf's [queue guide](https://rci.stonybrook.edu/docs/queue-selection-guide)
 specifies at most 100 queued jobs per person. Slurm counts each array element
 against submit limits; `%8` limits running tasks, not submitted tasks (see
 [Slurm job arrays](https://slurm.schedmd.com/job_array.html)). Therefore the default
-submission covers only indices 0-49. The complete analysis needs four batches,
-with the previous batch ended before submitting the next one. Other running or
-pending jobs also consume the user's available submit slots. Fifty is a smaller
-submission batch, not a guarantee of free slots; if rejected, inspect
-`squeue -r -u "$USER"` and wait for existing jobs or choose a smaller index range.
+submission contains 50 allocation tasks, indices 0-49, which process the complete
+analysis without later range submissions. Other running/pending jobs still use
+submit slots; if fewer than 50 slots are available, inspect `squeue -r -u "$USER"`
+and wait for enough existing jobs to end. A dependency chain of additional queued
+batches would still consume submit slots and is unnecessary with this arrangement.
 
 Protein sequence identity is the stopping criterion. The COSMIC v3.3.1 GRCh37
 profile table is the same fixed table used by the checked human runner. GRCh37
@@ -59,27 +63,15 @@ export SINABRO_SEED=42
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
 ```
 
-This submits the first 50 elements, indices 0-49. After that entire batch ends,
-inspect its status/logs and submit the next batch with the same exported variables,
-code and output root. Run the following commands at separate times, only after
-the preceding batch has ended, not all at once:
-
-```bash
-# After indices 0-49 end:
-sbatch --array=50-99%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
-
-# After indices 50-99 end:
-sbatch --array=100-149%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
-
-# After indices 100-149 end:
-sbatch --array=150-199%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
-```
-
-Do not pre-submit later batches with dependencies: pending dependent jobs also
-count against submit limits. When continuing in another shell, restore the same
-SINABRO_BAT_PILOT/count/seed/run settings first. Command-line `--array` overrides
-the Slurm header without changing the Python species/shard mapping. A rejected
-200-element submission started no calculation and requires no output cleanup.
+This single submission covers both species completely. **Do not submit later
+50-99 / 100-149 / 150-199 ranges from the earlier instructions.** The submitted
+array index now identifies an allocation task, not a single species/shard case.
+run_bat_cosmic_tasks.py assigns multiple cases to each allocation while retaining
+the original run_bat_cosmic.py scientific shard mapping and checkpoint logic.
+The Slurm wrapper fixes task-count=50; it does not infer that value from the
+number of array elements when retrying a subset. When continuing in another
+shell, restore the same pilot/count/seed/run settings first. A rejected earlier
+submission started no calculation and requires no output cleanup.
 
 The driver requires a passing pilot with at least 100 paths per combination and
 checks both extraction-manifest and selected-FASTA hashes. It verifies frozen
@@ -106,7 +98,7 @@ later audit/export. Scientific changes require a documented new run.
 
 ## 2. Completion and continuation
 
-Wait for all four batches to end before auditing. Inspect each batch's logs and
+Wait for the single 50-task array to end before auditing. Inspect logs and
 scheduler state:
 
 ```bash
@@ -120,18 +112,20 @@ Done markers alone do not prove all paths are complete; stage 3 reads every path
 If interrupted, wait for old elements to stop, then resubmit the same command
 with unchanged code, package, environment, pilot, inputs, seed, repeat/shard counts
 and output root. Completed transcript files are checked/skipped; interrupted
-transcripts are recomputed. Existing checkpoints are not overwritten. Configuration
+transcripts are recomputed. Each retried allocation task visits the same four
+scientific cases and skips already completed transcripts in each. Existing
+checkpoints are not overwritten. Configuration
 or provenance mismatches are rejected. Stored incomplete scientific paths are not
 silently converted into successes by a resume; investigate before changing a cap.
 
-For failed elements only, keep the mapping and override submitted indices, e.g.
-`sbatch --array=3,8%8 .../run_bat_cosmic_seawulf.slurm`. Do not change the 100-shard
-mapping to the number of failed elements. New scientific settings/package/driver
+For failed allocation tasks only, override indices within 0-49, e.g.
+`sbatch --array=3,8%8 .../run_bat_cosmic_seawulf.slurm`. Keep both task-count=50 and
+the 100-shard scientific mapping unchanged, even for a two-element retry. New scientific settings/package/driver
 versions should use a new SINABRO_BAT_RUN root. Earlier outputs remain intact.
 
 ## 3. Audit every saved path
 
-After all four batches complete (all indices 0-199):
+After all 50 allocation tasks complete (all 100 shards per species):
 
 ```bash
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/validate_bat_results_seawulf.slurm
@@ -180,7 +174,8 @@ eight profiles with two paths per combination: 480 records, 7,680 paths, no inco
 paths. Both archive audits and bat-specific table exports passed. CDS lengths ranged
 from 78 to 104,835 nt. This is a bounded check, not production computation.
 
-Portable entrypoints: run_bat_cosmic.py --help, process_bat_results.py --help and
+Portable entrypoints: run_bat_cosmic_tasks.py --help (complete submission plan),
+run_bat_cosmic.py --help (one scientific case), process_bat_results.py --help and
 aggregate_bat_results.py --help. For bounded export checks only, --input together
 with --allow-subset requires exact sequence identity to the full validated cohort
 and explicitly labels a subset population. Production Slurm never selects subsets.

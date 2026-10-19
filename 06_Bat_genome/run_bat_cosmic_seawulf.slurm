@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Full mapping: 100 shards/species, indices 0-199. Submit 50 indices at a time.
-# After each batch finishes, submit 50-99, 100-149, then 150-199 via --array.
-# At most 8 single-node jobs run at once; pending array tasks also count as jobs.
+# One complete submission: 50 allocation tasks cover all 100 shards of both species.
+# Each task runs two shard pairs sequentially, reusing the same 96-worker allocation.
+# At most 8 nodes run at once; task-count stays fixed when retrying selected tasks.
 #SBATCH --job-name=sinabro-bat-cosmic
 #SBATCH --partition=short-96core
 #SBATCH --nodes=1
@@ -37,9 +37,9 @@ PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID array $SLURM_ARRAY_TASK_ID on $(hostname); bat COSMIC production: $OUTPUT_ROOT"
-echo "Full calculation requires indices 0-199 across all submissions; default batch covers only 0-49."
-"$PYTHON_BIN" "$ANALYSIS_DIR/06_Bat_genome/run_bat_cosmic.py" \
+echo "All 50 allocation tasks together cover the full two-species calculation; no later range submission is needed."
+"$PYTHON_BIN" "$ANALYSIS_DIR/06_Bat_genome/run_bat_cosmic_tasks.py" \
   --processed-root "$PROCESSED_ROOT" --pilot-dir "$SINABRO_BAT_PILOT" \
-  --out-root "$OUTPUT_ROOT" --array-index "$SLURM_ARRAY_TASK_ID" --shards-per-species 100 \
+  --out-root "$OUTPUT_ROOT" --task-index "$SLURM_ARRAY_TASK_ID" --task-count 50 --shards-per-species 100 \
   --sinabro-source "$PACKAGE_SOURCE" --workers "$SLURM_CPUS_PER_TASK" \
   --n-traj "$N_TRAJ" --seed "$MASTER_SEED" --max-steps "$MAX_STEPS"

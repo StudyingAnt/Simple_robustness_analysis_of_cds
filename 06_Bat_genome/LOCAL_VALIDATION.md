@@ -87,3 +87,12 @@ A local 100-path serial/four-worker pilot passed for the final extraction inputs
 The production driver also dispatched one real shard per species with reduced
 path counts; resubmitting the completed Molossus shard skipped its checkpoint.
 No full bat production run or cluster submission was performed by the assistant.
+
+The complete submission now uses run_bat_cosmic_tasks.py: 50 allocation tasks
+each process four scientific species/shard cases sequentially. All 200 original
+cases are covered once, retaining the existing per-species 100-shard assignment,
+seeds, provenance and checkpoint paths. Four additional allocation-plan checks
+bring the suite to 88 passing tests. A real-data four-case local orchestration
+check skipped two previously completed cases and completed two more small cases
+with no incomplete paths. The Slurm wrapper passed Bash syntax checking.
+Manual later-range submissions are no longer part of this workflow.
