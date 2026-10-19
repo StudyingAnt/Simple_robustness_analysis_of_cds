@@ -69,3 +69,21 @@ bat Slurm wrappers passed bash -n. Existing original scripts remain unchanged.
 Large reference FASTAs, processed CDSs and generated pilot archives remain outside
 Git. Versioned code, cohort ID lists and instructions are sufficient to regenerate
 them on another computer with the same references and environment.
+
+## Production preparation checks, 2026-10-19
+
+The full eight-profile launch/audit/export workflow is documented in
+[COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md). New automated checks bring the
+analysis suite to 84 passing tests; they cover species/shard array mapping,
+pilot/input provenance, scientific configuration guards, resume mismatches,
+bat-specific audited export and changed-file rejection. All three new Slurm
+wrappers passed bash -n. The human runner and exporter remain unchanged.
+
+All 462 internal-stop transcripts plus short/long boundary examples were checked
+with two paths under each of the eight COSMIC profiles: 392 Molossus and 88 Myotis
+records, 7,680 complete paths, both archive audits and species-specific table
+exports passed. These bounded exports explicitly label their subset population.
+A local 100-path serial/four-worker pilot passed for the final extraction inputs.
+The production driver also dispatched one real shard per species with reduced
+path counts; resubmitting the completed Molossus shard skipped its checkpoint.
+No full bat production run or cluster submission was performed by the assistant.

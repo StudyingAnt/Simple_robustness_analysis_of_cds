@@ -122,6 +122,8 @@ python 06_Bat_genome/validate_bat_pilot.py --processed-root /PATH/TO/PROJECT/dat
 ```
 
 Choose new output directories for a repeat. A failed or existing output is not
-automatically deleted. The full historical eight-signature run and six experimental
-enzyme profiles need separate preparation after this pilot is reviewed. The human
-GENCODE-specific aggregator must not be applied directly to these bat identifiers.
+automatically deleted. After this pilot passes, continue with
+[COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) for the full eight-signature array,
+archive audit and bat-specific table export. The six experimental enzyme profiles
+remain a separate workflow. aggregate_bat_results.py preserves bat IDs and reuses
+the audited checkpoint reader; the GENCODE-only exporter must not be used directly.

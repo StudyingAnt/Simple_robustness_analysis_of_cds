@@ -2,7 +2,7 @@
 
 This stage is separate from the completed human COSMIC run. The manuscript uses Molossus molossus assembly HLmolMol2 and Myotis myotis assembly HLmyoMyo6 from the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/). Keep these assemblies and annotation versions for the initial reproduction rather than silently replacing them with newer assemblies.
 
-For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). This does not yet reproduce the entire bat section or the six experimental-enzyme analyses.
+For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). The full production run has not been performed by the assistant; the experimental-enzyme analyses remain separate.
 
 ## Download raw references independently
 
@@ -43,7 +43,7 @@ However, every ID in the historical result tables (31,185 Molossus and 23,213 My
 
 Local extraction from both actual genomes passed with the original transcript counts. Internal stops were found in 383 Molossus and 79 Myotis transcripts; these remain in the full FASTAs and are flagged in QC, matching the historical filtering policy. The bounded pilot omits them and records that exclusion. The original historical FASTAs have not been recovered, so this is not a claim of byte identity with archived original inputs. Transcript IDs do not constitute gene or orthologue mappings.
 
-NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. Strand expansion, mutation-target bounds and available flanks must be checked explicitly when connecting the custom profiles to the revised runner. The current human runner supports selected COSMIC signatures; the custom-profile orchestration and bat aggregation/annotation adapter still need implementation and bounded validation.
+NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. Strand expansion, mutation-target bounds and available flanks must be checked explicitly when connecting the custom profiles to the revised runner. The current runner supports selected COSMIC signatures. Bat-specific audited aggregation is implemented; custom experimental-profile orchestration still needs implementation and bounded validation.
 
 ## Remaining long trajectory calculations
 
