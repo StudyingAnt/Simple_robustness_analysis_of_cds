@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# 100 shards per species, interleaved; at most 8 single-node jobs at once.
+# Full mapping: 100 shards/species, indices 0-199. Submit 50 indices at a time.
+# After each batch finishes, submit 50-99, 100-149, then 150-199 via --array.
+# At most 8 single-node jobs run at once; pending array tasks also count as jobs.
 #SBATCH --job-name=sinabro-bat-cosmic
 #SBATCH --partition=short-96core
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=96
-#SBATCH --array=0-199%8
+#SBATCH --array=0-49%8
 #SBATCH --time=04:00:00
 #SBATCH --output=logs/bat-cosmic-%A_%a.out
 #SBATCH --error=logs/bat-cosmic-%A_%a.err
@@ -35,6 +37,7 @@ PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID array $SLURM_ARRAY_TASK_ID on $(hostname); bat COSMIC production: $OUTPUT_ROOT"
+echo "Full calculation requires indices 0-199 across all submissions; default batch covers only 0-49."
 "$PYTHON_BIN" "$ANALYSIS_DIR/06_Bat_genome/run_bat_cosmic.py" \
   --processed-root "$PROCESSED_ROOT" --pilot-dir "$SINABRO_BAT_PILOT" \
   --out-root "$OUTPUT_ROOT" --array-index "$SLURM_ARRAY_TASK_ID" --shards-per-species 100 \

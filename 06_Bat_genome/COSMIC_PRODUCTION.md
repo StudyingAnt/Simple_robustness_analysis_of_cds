@@ -16,6 +16,7 @@ are unchanged. Python scripts are portable; only Slurm wrappers target SeaWulf.
 | Master seed | 42 |
 | Maximum steps per trajectory | 10,000; capped paths fail the final audit |
 | Shards | 100 per species, 200 array elements |
+| Submission batch | 50 elements; submit four batches sequentially |
 | Maximum simultaneous array elements | 8 |
 | Resources per element | One node, 96 workers, four-hour wall limit |
 | Maximum concurrent allocated workers | 768 across up to 8 nodes |
@@ -25,6 +26,16 @@ allocation depends on the scheduler. Numerical threads are limited to one per
 worker. Elements alternate species: 0=Molossus shard 0, 1=Myotis shard 0,
 2=Molossus shard 1, ..., 199=Myotis shard 99. Each node runs independent Python
 multiprocessing; this is not a single shared multi-node Python process.
+
+SeaWulf's [queue guide](https://rci.stonybrook.edu/docs/queue-selection-guide)
+specifies at most 100 queued jobs per person. Slurm counts each array element
+against submit limits; `%8` limits running tasks, not submitted tasks (see
+[Slurm job arrays](https://slurm.schedmd.com/job_array.html)). Therefore the default
+submission covers only indices 0-49. The complete analysis needs four batches,
+with the previous batch ended before submitting the next one. Other running or
+pending jobs also consume the user's available submit slots. Fifty is a smaller
+submission batch, not a guarantee of free slots; if rejected, inspect
+`squeue -r -u "$USER"` and wait for existing jobs or choose a smaller index range.
 
 Protein sequence identity is the stopping criterion. The COSMIC v3.3.1 GRCh37
 profile table is the same fixed table used by the checked human runner. GRCh37
@@ -47,6 +58,28 @@ export SINABRO_SEED=42
 
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
 ```
+
+This submits the first 50 elements, indices 0-49. After that entire batch ends,
+inspect its status/logs and submit the next batch with the same exported variables,
+code and output root. Run the following commands at separate times, only after
+the preceding batch has ended, not all at once:
+
+```bash
+# After indices 0-49 end:
+sbatch --array=50-99%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
+
+# After indices 50-99 end:
+sbatch --array=100-149%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
+
+# After indices 100-149 end:
+sbatch --array=150-199%8 Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
+```
+
+Do not pre-submit later batches with dependencies: pending dependent jobs also
+count against submit limits. When continuing in another shell, restore the same
+SINABRO_BAT_PILOT/count/seed/run settings first. Command-line `--array` overrides
+the Slurm header without changing the Python species/shard mapping. A rejected
+200-element submission started no calculation and requires no output cleanup.
 
 The driver requires a passing pilot with at least 100 paths per combination and
 checks both extraction-manifest and selected-FASTA hashes. It verifies frozen
@@ -73,7 +106,8 @@ later audit/export. Scientific changes require a documented new run.
 
 ## 2. Completion and continuation
 
-Wait for the array to end before auditing. Inspect logs and scheduler state:
+Wait for all four batches to end before auditing. Inspect each batch's logs and
+scheduler state:
 
 ```bash
 # Replace ARRAY_JOB_ID with the sbatch response.
@@ -97,7 +131,7 @@ versions should use a new SINABRO_BAT_RUN root. Earlier outputs remain intact.
 
 ## 3. Audit every saved path
 
-After the full array completes:
+After all four batches complete (all indices 0-199):
 
 ```bash
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/validate_bat_results_seawulf.slurm
