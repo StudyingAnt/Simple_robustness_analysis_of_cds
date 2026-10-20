@@ -2,7 +2,7 @@
 
 This stage is separate from the completed human COSMIC run. The manuscript uses Molossus molossus assembly HLmolMol2 and Myotis myotis assembly HLmyoMyo6 from the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/). Keep these assemblies and annotation versions for the initial reproduction rather than silently replacing them with newer assemblies.
 
-For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). The full production run has not been performed by the assistant; the experimental-enzyme analyses remain separate.
+For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). The user reported successful full COSMIC audit (job 2327882) and export (job 2328086), with both frozen transcript populations and zero incomplete paths. The separate [six-enzyme experimental workflow](experimental_apobec/README.md) is now implemented and locally checked, ready for preparation and execution on HPC.
 
 ## Download raw references independently
 
@@ -43,7 +43,7 @@ However, every ID in the historical result tables (31,185 Molossus and 23,213 My
 
 Local extraction from both actual genomes passed with the original transcript counts. Internal stops were found in 383 Molossus and 79 Myotis transcripts; these remain in the full FASTAs and are flagged in QC, matching the historical filtering policy. The bounded pilot omits them and records that exclusion. The original historical FASTAs have not been recovered, so this is not a claim of byte identity with archived original inputs. Transcript IDs do not constitute gene or orthologue mappings.
 
-NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. Strand expansion, mutation-target bounds and available flanks must be checked explicitly when connecting the custom profiles to the revised runner. The current runner supports selected COSMIC signatures. Bat-specific audited aggregation is implemented; custom experimental-profile orchestration still needs implementation and bounded validation.
+NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. The [experimental runner](experimental_apobec/README.md) checks strand expansion, mutation-target bounds and available flanks explicitly. It preserves the original one-base CDS flanks and requires the full NNC context. Experimental profiles are handled separately from the COSMIC runner.
 
 ## Remaining long trajectory calculations
 
@@ -51,8 +51,8 @@ Under a descriptive revision that retains the bat results but withdraws unsuppor
 
 | Work item | Additional trajectory simulation? | Scope/dependency |
 | --- | --- | --- |
-| Two bat genomes under the manuscript COSMIC controls | Yes | Eight signatures: SBS1, SBS2, SBS3, SBS4, SBS6, SBS9, SBS13, SBS18. The human values for these are already available from the 79-signature run. Local CDS extraction and bounded three-signature pilot passed; full production execution is a later stage. |
-| Human plus both bats under six bat enzyme profiles | Yes | The same six profiles on all three species, including own/foreign enzymes and human controls. Requires source-profile normalization and custom runner validation. Human SBS2 is not a replacement for these six empirical enzyme profiles. |
+| Two bat genomes under the manuscript COSMIC controls | Completed; no repeat needed | Eight signatures: SBS1, SBS2, SBS3, SBS4, SBS6, SBS9, SBS13, SBS18. The human values for these are already available from the 79-signature run. User-reported full bat audit and table export passed. |
+| Human plus both bats under six bat enzyme profiles | Yes; scripts ready | The same six profiles on all three species, including own/foreign enzymes and human controls. Source preparation and a 43,200-path serial/parallel pilot passed locally; follow experimental_apobec/README.md for HPC execution. Exact historical probability CSVs remain unavailable; the workbook reconstruction policy is explicit. Human SBS2 is not a replacement for these profiles. |
 | Monte Carlo sample-size sensitivity, SD/SE/zero fraction/CI | Usually no | Reuse saved per-path counts and N=100/250/500/1000 prefixes or resampling. A small independent-seed confirmation is possible; it does not require another whole-human run. |
 | Weighted/unweighted one-step baselines, GC3/codon covariates, PCA, descriptive/inferential statistics, CGC comparison | No full RUMS rerun | Use sequence-derived features and existing matrices. Implement/check the revised statistical design separately. |
 | BLOSUM criterion sensitivity | Limited subset if retained/needed | Reproduce the supporting sensitivity analysis on prespecified genes/signatures. Full-genome BLOSUM is not necessary solely to present a conservative sequence-identity criterion; long alignments can be expensive. |
@@ -69,4 +69,4 @@ The frozen cohorts contain 31,185 Molossus and 23,213 Myotis transcripts, all su
 4. Prepare GC3/codon/one-step baselines and human PCA/statistical scripts against the completed human export, independently of the bat download/profile work.
 5. Use the existing local CGC v99 GRCh38 snapshot for initial annotation/mapping checks rather than automatically changing releases or redownloading it. The historical CGC shell script's embedded authentication has been replaced with COSMIC_USERNAME/COSMIC_PASSWORD variables; its legacy network workflow is not part of the current validated pipeline and has not been executed.
 
-No whole-genome bat/custom APOBEC simulation has yet been performed by the revised workflow. Downloads, candidate source-profile review, and old aggregate CSVs must not be labelled as completed biological reproduction.
+The bat COSMIC calculations have completed on the user's HPC according to the supplied audit/export logs. The whole-genome experimental APOBEC campaign remains pending HPC execution. Downloads, source-profile review, a bounded pilot and old aggregate CSVs do not establish completed experimental reproduction.
