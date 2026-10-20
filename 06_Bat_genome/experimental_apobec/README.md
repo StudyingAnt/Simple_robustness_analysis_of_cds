@@ -9,7 +9,7 @@ This workflow applies each of the six measured bat enzyme preferences to the sam
 | HLmyoMyo6 | 23,213 | 6 | 1,000 | 139,278,000 |
 | Total | 127,612 | 6 | 1,000 | 765,672,000 |
 
-The full experimental campaign has not been run by the assistant. Existing COSMIC outputs are reused as separate controls and are not recomputed here. Plotting and comparative statistics follow the full experimental archive audit.
+The user reported successful full HPC archive audit on 2026-10-20 (job 2336448): all three populations and 765,672,000 paths passed, with zero invalid files and zero incomplete paths. The assistant reviewed the supplied log; the HPC archives have not been accessed directly. Existing COSMIC outputs are reused as separate controls and are not recomputed here. Table export below reads the existing experimental archives; agreement with historical biological results still requires a numerical comparison.
 
 ## Source workbook and reconstruction policy
 
@@ -119,7 +119,46 @@ After all production array tasks finish:
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/validate_experimental_results_seawulf.slurm
 ```
 
-Require `stage_passed: true` in `runs/experimental_apobec_audit_JOBID/experimental_audit_manifest.json`. The audit reads every archive and checks populations, configuration fingerprints, all shard completion records, individual path completion and stored statistics. It performs no new simulation. Table export, plots and statistical comparisons are subsequent stages.
+Require `stage_passed: true` in `runs/experimental_apobec_audit_JOBID/experimental_audit_manifest.json`. The audit reads every archive and checks populations, configuration fingerprints, all shard completion records, individual path completion and stored statistics. It performs no new simulation.
+
+### 6. Export audited values and a numerical summary
+
+For the passing full audit job 2336448, run from the HPC project root:
+
+```bash
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+export SINABRO_APOBEC_AUDIT="$PWD/runs/experimental_apobec_audit_2336448"
+export SINABRO_N_TRAJ=1000
+export SINABRO_SEED=42
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/export_experimental_results_seawulf.slurm
+```
+
+For another audited run, set `SINABRO_APOBEC_AUDIT` to its passing audit directory and retain matching input/run settings. The job uses eight shared CPUs, 8 GB and a requested two-hour limit, activates the revision environment, and performs no simulation or plotting. It requires the campaign audit, verifies each dataset's audit-summary hash, scientific settings and every checkpoint hash, and preserves full enzyme labels including APOBEC3A3. All three datasets must use the same simulation source, package, environment, seed and step cap. Partial or failed exports do not publish a completed output directory.
+
+Default output:
+
+```text
+runs/experimental_apobec_export_JOBID/
+  export_manifest.json
+  profile_comparison_summary.csv
+  human/
+  molMol2/
+  myoMyo6/
+```
+
+Each dataset directory contains `rums_mean_by_transcript_id.csv`, `rums_sd_by_transcript_id.csv`, `rums_median_by_transcript_id.csv`, `rums_mc_se_by_transcript_id.csv`, `transcript_annotations.csv`, `signature_summary.csv` and `aggregation_manifest.json`, plus a historical-style mean table. Canonical table rows retain transcript IDs; the human historical-style table uses transcript names. Bat coordinates/QC remain linked to the frozen extraction, with no invented gene or orthologue mapping.
+
+`profile_comparison_summary.csv` has 18 rows: three datasets × six enzymes. It includes the mean and sample SD of transcript-level RUMS means, within-dataset descriptive ranks, source enzyme species/sample code and relation (`human_control`, `same_species`, `other_species`). Each retained transcript has equal weight; isoforms are not collapsed. Across-transcript SD describes heterogeneity, while `rums_sd_by_transcript_id.csv` describes individual path-count variation and `rums_mc_se_by_transcript_id.csv` describes uncertainty in a simulated transcript mean. These are different quantities and do not create independent biological replicates.
+
+After completion, replace `EXPORT_JOBID` with the export job number:
+
+```bash
+tail -n 60 logs/apobec-export-EXPORT_JOBID.out
+cat logs/apobec-export-EXPORT_JOBID.err
+cut -d, -f1-5 runs/experimental_apobec_export_EXPORT_JOBID/profile_comparison_summary.csv
+```
+
+Require `stage_passed: true`, `total_transcripts: 127612`, `total_trajectories: 765672000` and `summary_rows: 18`. Send this summary for numerical comparison with the historical results before drawing conclusions about reproduction. `SINABRO_APOBEC_EXPORT_OUTPUT` can select a different new output directory. Existing results are never overwritten.
 
 ## Other computers
 
@@ -140,8 +179,10 @@ python 06_Bat_genome/experimental_apobec/validate_experimental_pilot.py \
   --sinabro-source /PATH/TO/PROJECT/sinabro --workers 4 --n-traj 100
 ```
 
-`run_experimental_apobec.py --help` provides a single-dataset runner. `run_campaign.py --help` provides the allocation-independent task driver; call all task indices for the chosen plan. Input manifests contain local absolute paths, so prepare them on each machine rather than copying a manifest with paths from another machine.
+`run_experimental_apobec.py --help` provides a single-dataset runner. `run_campaign.py --help` provides the allocation-independent task driver; call all task indices for the chosen plan. `export_results.py --help` provides the portable read-only three-dataset exporter; specify `--inputs-dir`, `--run-root`, `--audit-root`, `--out-root`, `--n-traj` and `--workers`. The exporter needs the revision numerical libraries but does not import Sinabro. Input manifests contain local absolute paths, so prepare them on each machine rather than copying a manifest with paths from another machine. Only a labelled bounded demonstration may use `--allow-subset`; the normal HPC export requires all three complete frozen populations.
 
 ## Local validation before handoff
 
 The original workbook and all three actual cohorts passed preparation locally on 2026-10-19. The complete bounded pilot passed: 43,200 paths, all six independent archive audits passed, serial/four-worker results identical path by path, four simultaneous cases observed and no incomplete paths. An independent sampler check drew 2,000 events per profile and checked event eligibility, substitutions and observed counts against separately computed per-position probabilities. A further bounded production-driver check completed six dataset/shard cases (132 transcripts, 1,584 paths), including the longest input per dataset, and independent checkpoint auditing passed; resume skipped all completed transcripts and preserved every checkpoint hash. The analysis repository's 104 unit tests passed, including source corruption, identities, normalization, immutable outputs, checkpoint statistics, incomplete paths, pilot provenance and the complete 50-task allocation plan. All four new Slurm files passed bash syntax checks. These checks establish bounded implementation validation, not full experimental reproduction.
+
+The new export stage was also exercised locally on all three actual pilot datasets (36 transcripts, 21,600 already-computed paths), including spawned archive readers. Full-model synthetic archive tests check all 18 summary rows, retained internal stops, source-file preservation, failed/mismatched audits, changed checkpoints, wrong profiles/criteria, inconsistent seeds and atomic failure without partial publication. The full analysis test suite, including these seven new tests, passed (111 tests). The historical COSMIC export configuration checks remain the default; the shared bat CSV writer accepts an explicit experimental configuration checker only for this separate workflow.

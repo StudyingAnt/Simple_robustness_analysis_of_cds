@@ -1,4 +1,4 @@
-"""Export audited bat COSMIC checkpoints without inventing gene identifiers."""
+"""Export audited bat checkpoints without inventing gene identifiers."""
 import argparse
 from contextlib import ExitStack
 import csv
@@ -22,7 +22,7 @@ import numpy as np
 
 def aggregate_bat(run_dir, validation_dir, processed_dir, out_dir, species,
                   workers=1, n_traj=1000, input_path=None, allow_subset=False,
-                  cohort_manifest=HERE / 'cohorts/manifest.json'):
+                  cohort_manifest=HERE / 'cohorts/manifest.json', configuration_checker=check_config):
     started = time.perf_counter()
     run_dir, validation_dir, processed_dir, out_dir = [Path(p).resolve() for p in
                                                     (run_dir, validation_dir, processed_dir, out_dir)]
@@ -40,7 +40,7 @@ def aggregate_bat(run_dir, validation_dir, processed_dir, out_dir, species,
     config, fingerprint = manifest['configuration'], manifest['config_sha256']
     require(hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest() == fingerprint,
             'Invalid run configuration fingerprint')
-    check_config(config, inputs, n_traj)
+    configuration_checker(config, inputs, n_traj)
     report_path = validation_dir / 'validation_summary.json'
     report_bytes = report_path.read_bytes()
     report = json.loads(report_bytes)
