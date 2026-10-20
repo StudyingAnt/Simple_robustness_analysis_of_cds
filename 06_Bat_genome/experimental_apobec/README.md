@@ -13,7 +13,7 @@ The full experimental campaign has not been run by the assistant. Existing COSMI
 
 ## Source workbook and reconstruction policy
 
-The original private workbook is `C to T Mutation data of six bat enzymes.xlsx`, SHA256 `af2e8dad39b7ebb3e36d4e55d388c7550967610398b7361dc06cdddaae5add5a`. Its values and generated probability tables are excluded from Git. The supplied Drive link required sign-in in the download check; transfer the original file privately rather than relying on an anonymous HPC download.
+The original workbook is versioned at [source_data/C to T Mutation data of six bat enzymes.xlsx](source_data/C%20to%20T%20Mutation%20data%20of%20six%20bat%20enzymes.xlsx), SHA256 `af2e8dad39b7ebb3e36d4e55d388c7550967610398b7361dc06cdddaae5add5a`. The project owner authorized publication of this source file for reproduction. Git pull retrieves the workbook together with the code; no Drive sign-in or separate file transfer is required. Generated probability tables and analysis outputs remain excluded from Git.
 
 | Source sample | Profile ID |
 | --- | --- |
@@ -38,30 +38,17 @@ This models relative sequence preference, not absolute enzyme activity or biolog
 
 Use the existing revision environment (Python 3.9.15, NumPy 1.21.6, Biopython 1.79), existing extracted CDS inputs, and the refactored Sinabro package source. All sbatch commands below are issued from the HPC project root so relative log paths resolve correctly.
 
-### 1. Update code and copy the workbook once
+### 1. Update code and source data
 
 On HPC:
 
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
-mkdir -p logs data/raw/bat_apobec
+mkdir -p logs
 ```
 
-Transfer the original XLSX using the same file-transfer connection used for this HPC account. The required destination is:
-
-```text
-/gpfs/projects/DamaghiGroup/projects/sinabro_pub/data/raw/bat_apobec/C to T Mutation data of six bat enzymes.xlsx
-```
-
-For example, from a **local WSL terminal**, replacing `YOUR_HPC_LOGIN_HOST` with your usual SSH login hostname:
-
-```bash
-scp '/home/ceel/projects/sinabro_all/Simple_robustness_analysis_of_cds/data/raw/bat_apobec/C to T Mutation data of six bat enzymes.xlsx' \
-  joonsong@YOUR_HPC_LOGIN_HOST:/gpfs/projects/DamaghiGroup/projects/sinabro_pub/data/raw/bat_apobec/
-```
-
-The source path is local to the assistant's current WSL workspace. Other computers should use their own copy of this workbook.
+The preparation job below copies the bundled workbook into `PROJECT/data/raw/bat_apobec/` if it is absent and verifies its original SHA256. An existing destination is preserved and must match the expected checksum. No manual workbook copy is needed.
 
 ### 2. Prepare and verify profiles and inputs
 
@@ -82,7 +69,7 @@ data/processed/experimental_apobec_inputs_v1/
   inputs_manifest.json
 ```
 
-Preparation refuses to overwrite an existing campaign input directory. Existing prepared profiles are verified before use. For a separate preparation, set `SINABRO_APOBEC_PROFILES` and `SINABRO_APOBEC_INPUTS` to new locations and keep those environment variables consistent in later stages. `SINABRO_APOBEC_WORKBOOK`, `SINABRO_HUMAN_FASTA` and `SINABRO_BAT_PROCESSED` override input locations. Raw and processed data remain outside both Git checkouts.
+Preparation refuses to overwrite an existing campaign input directory. Existing prepared profiles are verified before use. For a separate preparation, set `SINABRO_APOBEC_PROFILES` and `SINABRO_APOBEC_INPUTS` to new locations and keep those environment variables consistent in later stages. `SINABRO_APOBEC_WORKBOOK`, `SINABRO_HUMAN_FASTA` and `SINABRO_BAT_PROCESSED` override input locations. Staged raw data and processed outputs remain outside both Git checkouts; the small original workbook is also preserved as versioned source data.
 
 ### 3. Check execution on HPC
 
@@ -136,11 +123,11 @@ Require `stage_passed: true` in `runs/experimental_apobec_audit_JOBID/experiment
 
 ## Other computers
 
-Activate the revision environment and use the portable programs directly. Paths below are examples; supply the local copies of the same frozen inputs:
+Activate the revision environment and use the portable programs directly, from the analysis repository root. Paths below are examples; supply the local copies of the same frozen FASTA inputs. The workbook is included in the checkout:
 
 ```bash
 python 06_Bat_genome/experimental_apobec/prepare_profiles.py \
-  --workbook '/PATH/TO/PROJECT/data/raw/bat_apobec/C to T Mutation data of six bat enzymes.xlsx' \
+  --workbook '06_Bat_genome/experimental_apobec/source_data/C to T Mutation data of six bat enzymes.xlsx' \
   --out-dir /PATH/TO/PROJECT/data/processed/experimental_apobec_v1
 python 06_Bat_genome/experimental_apobec/prepare_inputs.py \
   --human-input /PATH/TO/PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
