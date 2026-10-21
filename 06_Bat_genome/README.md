@@ -1,8 +1,8 @@
-# Bat input preparation and remaining simulation scope
+# Bat references, COSMIC controls and experimental APOBEC profiles
 
 This stage is separate from the completed human COSMIC run. The manuscript uses Molossus molossus assembly HLmolMol2 and Myotis myotis assembly HLmyoMyo6 from the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/). Keep these assemblies and annotation versions for the initial reproduction rather than silently replacing them with newer assemblies.
 
-For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). The user reported successful full COSMIC audit (job 2327882) and export (job 2328086), with both frozen transcript populations and zero incomplete paths. The separate [six-enzyme experimental workflow](experimental_apobec/README.md) passed its full three-dataset HPC audit (job 2336448); follow its export stage to obtain numerical tables without resimulation.
+For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [LOCAL_VALIDATION.md](LOCAL_VALIDATION.md). The user reported successful full COSMIC audit (job 2327882) and export (job 2328086), with both frozen transcript populations and zero incomplete paths. The separate [six-enzyme experimental workflow](experimental_apobec/README.md) passed its full three-dataset HPC audit (job 2336448); the table export (job 2338741) provides all 18 dataset/profile summaries without resimulation.
 
 ## Download raw references independently
 
@@ -45,28 +45,12 @@ Local extraction from both actual genomes passed with the original transcript co
 
 NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. The [experimental runner](experimental_apobec/README.md) checks strand expansion, mutation-target bounds and available flanks explicitly. It preserves the original one-base CDS flanks and requires the full NNC context. Experimental profiles are handled separately from the COSMIC runner.
 
-## Remaining long trajectory calculations
+## Analysis and provenance
 
-Under a descriptive revision that retains the bat results but withdraws unsupported adaptive claims:
+The two bat COSMIC runs contain 435,184,000 paths in total. Applying all six experimental enzyme profiles to human and both bats contains 765,672,000 paths. Full HPC audit logs for both campaigns report no invalid or incomplete paths. These counts describe completed simulation scope, not biological replicates or evidence of agreement with every manuscript claim.
 
-| Work item | Additional trajectory simulation? | Scope/dependency |
-| --- | --- | --- |
-| Two bat genomes under the manuscript COSMIC controls | Completed; no repeat needed | Eight signatures: SBS1, SBS2, SBS3, SBS4, SBS6, SBS9, SBS13, SBS18. The human values for these are already available from the 79-signature run. User-reported full bat audit and table export passed. |
-| Human plus both bats under six bat enzyme profiles | Completed; no repeat needed | The same six profiles on all three species, including own/foreign enzymes and human controls. User-reported full audit 2336448 passed 765,672,000 paths. Export and historical numerical comparison follow without resimulation. Exact historical probability CSVs remain unavailable; the workbook reconstruction policy is explicit. Human SBS2 is not a replacement for these profiles. |
-| Monte Carlo sample-size sensitivity, SD/SE/zero fraction/CI | Usually no | Reuse saved per-path counts and N=100/250/500/1000 prefixes or resampling. A small independent-seed confirmation is possible; it does not require another whole-human run. |
-| Weighted/unweighted one-step baselines, GC3/codon covariates, PCA, descriptive/inferential statistics, CGC comparison | No full RUMS rerun | Use sequence-derived features and existing matrices. Implement/check the revised statistical design separately. |
-| BLOSUM criterion sensitivity | Limited subset if retained/needed | Reproduce the supporting sensitivity analysis on prespecified genes/signatures. Full-genome BLOSUM is not necessary solely to present a conservative sequence-identity criterion; long alignments can be expensive. |
-| Synonymous-codon null | Conditional | Needed to support retained adaptation claims or if specifically required after reframing. Define a bounded prespecified design first rather than launching a whole-genome null by default. |
-| Orthologue-matched species-by-process comparison | Conditional | Required to support stronger coevolution claims; define one-to-one orthologues/one transcript per gene first. Existing per-transcript results can be subsetted if the exact sequences are retained; new sequence representatives require only the missing cases. |
+Use [the manuscript analysis workflow](../07_manuscript_validation/README.md) to compare the audited exports, generate PCA/statistical tables and plot the species panels. The native-process panel compares human COSMIC SBS2 with Molossus APOBEC3A and Myotis APOBEC3A3; applying a single fixed enzyme profile to all three genomes is a different comparison. Both are reported explicitly.
 
-The frozen cohorts contain 31,185 Molossus and 23,213 Myotis transcripts, all successfully extracted locally. Two bats x eight signatures x 1,000 paths would be 435,184,000 paths. Six profiles on 73,214 human + 31,185 Molossus + 23,213 Myotis transcripts would be 765,672,000 paths. Their sum is approximately 21% of the completed human 79-signature path count. These are path-count illustrations, not runtime estimates; NNC preference, sequence length and path length affect runtime.
+The owner-authorized source workbook is included under `experimental_apobec/source_data/`. Preparation stages a verified copy into project `data/raw/`, preserves its motif-average values and normalizes per-site NNC preferences. The exact historical probability CSV was not recovered, so the generated profiles are labelled as a documented reconstruction. See [profile preparation and execution](experimental_apobec/README.md) for the conversion policy, profile names, checksums and commands.
 
-## Independently preparable tasks
-
-1. Download the raw two-assembly references using the job above while human downstream analyses proceed.
-2. Review the original six-enzyme workbook, map source IDs/species, preserve raw values and define normalization. The owner-authorized original workbook is included in experimental_apobec/source_data/; the preparation job stages a verified copy into project data/raw. Generated experimental profiles remain outside Git. The source workbook contains motif-average counts/percentages; they must not be silently treated as summed raw mutation counts. Source metadata, background/replicate information and the original conversion code determine which uncertainty claims can be made.
-3. Follow HPC_REPRODUCTION.md to download, extract and check the small bat COSMIC pilot before requesting expensive jobs.
-4. Prepare GC3/codon/one-step baselines and human PCA/statistical scripts against the completed human export, independently of the bat download/profile work.
-5. Use the existing local CGC v99 GRCh38 snapshot for initial annotation/mapping checks rather than automatically changing releases or redownloading it. The historical CGC shell script's embedded authentication has been replaced with COSMIC_USERNAME/COSMIC_PASSWORD variables; its legacy network workflow is not part of the current validated pipeline and has not been executed.
-
-The bat COSMIC and whole-genome experimental APOBEC calculations have completed on the user's HPC according to the supplied full audit logs. The experimental values still need table export and historical numerical comparison; archive validation alone does not establish agreement with the original biological results.
+The historical transcript populations are frozen. Their IDs alone do not provide gene or one-to-one orthologue mappings. The original transcript-level comparisons must not be interpreted as matched orthologue tests or as independent biological replicates. Raw experimental reads and the upstream assay-to-workbook pipeline have not been reprocessed by this workflow.

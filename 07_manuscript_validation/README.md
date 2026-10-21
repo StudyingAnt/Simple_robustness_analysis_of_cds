@@ -50,3 +50,22 @@ Both programs use raw research inputs and portable Python code; cluster settings
 ## Remaining original supplementary analyses
 
 S11 (BLOSUM80/SBS2 subset) and S12 (BRCA1 genotype/phenotype graph) are original-paper analyses. They remain separate from the two jobs above. Historical exploratory code survives, but exact final HDF5 inputs and the COSMIC observed-variant overlay table have not been recovered. A regenerated analysis must state its chosen subset/settings and data provenance rather than claiming byte-identical historical reproduction. S12 red observed-variant points cannot be reconstructed without the source variant data. These panels must not be marked verified solely because the package's BLOSUM unit tests passed.
+
+After the two core validations, the separate reconstruction jobs are ready:
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+mkdir -p logs
+SINABRO_SUPPLEMENT=s11 sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/run_supplementary_cases_seawulf.slurm
+SINABRO_SUPPLEMENT=s12 sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/run_supplementary_cases_seawulf.slurm
+```
+
+Each job requests eight CPUs, 8 GB and four hours. These are allocation limits, not measured runtime estimates. The wrapper uses existing inputs and the existing Conda environment. It does not rerun whole-genome trajectories. Portable command-line usage is available through `run_supplementary_cases.py --help`.
+
+Both reconstructions use SBS2 and a BLOSUM80 global protein alignment, gap-open −10, gap-extension −0.5 and stopping distance ≥20. The path cap is 10,000 proposed mutations; reaching it without a stopping event fails the run rather than contributing a truncated robustness value. The `score` stop policy evaluates translated stop-containing sequences through the alignment score. BLOSUM distance is a proxy and is not an experimental measurement of functional loss.
+
+- **S11:** the historical exploratory selector yields 985 CGC-v99 gene-201/gene-203 transcripts. The exact final plotted subset was not recovered. The frozen [case manifest](supplementary_cases.json) therefore chooses a new, explicit set of 12 length-quantile representatives (291–7,029 coding nucleotides). Each receives 1,000 paired-seed paths under protein identity and under the BLOSUM criterion: 24,000 paths total. Shared mutation prefixes and the relaxed-path length bound are checked. The output includes per-path counts, criterion means, paired-difference Monte Carlo standard errors and PDF/PNG scatter plots. This small subset illustrates criterion sensitivity; it does not establish a genome-wide effect.
+- **S12:** BRCA1-203 (ENST00000357654.9; 5,592 coding nucleotides) receives 100 BLOSUM paths. Graph nodes represent actual simulated DNA sequences, with DNA substitutions, Hamming distances and BLOSUM distances exported alongside edges. The display uses a deterministic radial layout, not the historical exploratory t-SNE layout. The graph contains **simulation only**; no observed cancer variants are imputed or substituted from another database.
+
+Read `results/supplementary_s11_JOBID/supplementary_summary.json` and the corresponding `s12` file. `simulation_passed: true` confirms completed checked paths. `original_figure_reproduced: false` records the unavailable historical inputs; it remains false even when a reconstruction succeeds. For S12, `observed_cosmic_variant_overlay_reproduced` also remains false. New output directories are required and input hashes are checked before and after computation.

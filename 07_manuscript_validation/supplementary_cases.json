@@ -1,0 +1,88 @@
+{
+  "historical_subset_recovered": false,
+  "human_input_sha256": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751",
+  "selection": "Twelve deterministic length-quantile representatives of the recovered CGC-v99 gene-201/gene-203 selector; a new explicitly labelled reconstruction, not recovered original Figure S11 gene identities.",
+  "candidate_transcripts": 985,
+  "cgc_source_sha256": "d67ec91bae5f0d1906344a739d25bd570e1a079864c0cda3418ca9d7811d9d06",
+  "s11": [
+    {
+      "transcript_id": "ENST00000374116.3",
+      "transcript_name": "HMGA1-203",
+      "cds_nt": 291,
+      "sequence_sha256": "525ec37b26fbf9faf133cc673519bc3dc4bd2058bf8b0efb71e733e267a6bfe7"
+    },
+    {
+      "transcript_id": "ENST00000256196.9",
+      "transcript_name": "RRAS2-201",
+      "cds_nt": 615,
+      "sequence_sha256": "3e93b8bb2c1fb1a49e2660a61eb26dbc56e9e1c2485c5211d041773088124e2a"
+    },
+    {
+      "transcript_id": "ENST00000296921.6",
+      "transcript_name": "TLX3-201",
+      "cds_nt": 876,
+      "sequence_sha256": "9a206b79afff9004a1e9708dce1f17991929e816681944a22d96657842da0048"
+    },
+    {
+      "transcript_id": "ENST00000379792.6",
+      "transcript_name": "HERPUD1-203",
+      "cds_nt": 1101,
+      "sequence_sha256": "41a8b93ae51bcfdfd09c5c17e6a5449ece87044f34ddf0cd1289c68f3336d043"
+    },
+    {
+      "transcript_id": "ENST00000538265.5",
+      "transcript_name": "ETV4-203",
+      "cds_nt": 1338,
+      "sequence_sha256": "e760c2db1b0ba8a3c83febc05a40ccd1ed21c63530782f8d3565f217038cdd6d"
+    },
+    {
+      "transcript_id": "ENST00000517373.1",
+      "transcript_name": "EBF1-203",
+      "cds_nt": 1572,
+      "sequence_sha256": "bee24b475e7f06feb68b1e4c70a7ffac064e4ce53f543b70c9543695fee790f0"
+    },
+    {
+      "transcript_id": "ENST00000372321.6",
+      "transcript_name": "NUTM2B-201",
+      "cds_nt": 1890,
+      "sequence_sha256": "112f9ca3679fbe2ff2ebe56760fcfeb95541bb662b7849ebb5c4e571d5398297"
+    },
+    {
+      "transcript_id": "ENST00000216281.13",
+      "transcript_name": "HSP90AA1-201",
+      "cds_nt": 2199,
+      "sequence_sha256": "f253e20f2e00df28de42d6c87bacb901f60e5ebe8a3606cdd7b4bb67e92d7761"
+    },
+    {
+      "transcript_id": "ENST00000389253.9",
+      "transcript_name": "DNM2-203",
+      "cds_nt": 2613,
+      "sequence_sha256": "2934ca43937701dd8c8981da7fb9f03f9c67b9d6ec7f77d86e007fff7b005fc5"
+    },
+    {
+      "transcript_id": "ENST00000320743.8",
+      "transcript_name": "LRIG3-201",
+      "cds_nt": 3360,
+      "sequence_sha256": "87c62effe3dafbddce4bea3ff6459ce27deb82fd21639a18de05cb8a9b170b40"
+    },
+    {
+      "transcript_id": "ENST00000395856.3",
+      "transcript_name": "NCOA1-203",
+      "cds_nt": 4323,
+      "sequence_sha256": "928e8b40005d287ffe497345a0d464b173889d30756180eecfbc5c788b095974"
+    },
+    {
+      "transcript_id": "ENST00000346991.9",
+      "transcript_name": "KNL1-201",
+      "cds_nt": 7029,
+      "sequence_sha256": "264cdbcb29dbc93f72f8cf3eb36310d4935c127ba238ff84b3e1dd627dc34a2e"
+    }
+  ],
+  "s12": {
+    "transcript_id": "ENST00000357654.9",
+    "transcript_name": "BRCA1-203",
+    "cds_nt": 5592,
+    "sequence_sha256": "6f6ab596a2d5b4a38126653a5c0fe7b7dfccd61035e98a3fa74e1c132ea87c16"
+  },
+  "observed_cosmic_variant_overlay_available": false
+}

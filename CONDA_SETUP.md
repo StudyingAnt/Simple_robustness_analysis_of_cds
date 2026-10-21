@@ -1,6 +1,8 @@
-# Conda setup for the manuscript revision
+# Conda setup for manuscript reproduction
 
-Use this environment for GENCODE preprocessing, the timing pilots and their evaluation, and the SeaWulf Slurm simulation runner. It installs Sinabro 3.0.0 from its separate Git repository. Later historical analysis and R scripts still require separate review and dependencies.
+Use this environment for reference preprocessing, simulation, checkpoint auditing, table export and the portable manuscript analyses. It installs Sinabro 3.0.0 from its separate Git repository. The current Python workflow includes PCA, statistical tables, scientific plots and supplementary reconstructions without requiring the historical R environment.
+
+The existing environment name and HPC prefix `sinabro-revision` are retained so current installations and job scripts continue to work. The name is only an environment name or location; a new installation may choose another name or prefix as described below.
 
 The [portable simulation and parallel validation](02_run_sinabro/REPRODUCTION.md) also run directly with Python without Slurm; SeaWulf-specific resource/environment settings are confined to the Slurm wrappers.
 
@@ -52,14 +54,14 @@ The [Conda environment guide](https://docs.conda.io/projects/conda/en/stable/use
 
 | Component | Pinned version | Purpose |
 |---|---|---|
-| Python | 3.9.15 | Recorded historical environment and checked revision pilots |
+| Python | 3.9.15 | Recorded historical environment and checked reproduction workflow |
 | NumPy | 1.21.6 | Numerical calculations and random generators |
 | Biopython | 1.79 | Sequence handling and translation |
-| SciPy | 1.8.1 | Optional Sinabro analysis functions |
-| Matplotlib | 3.6.2 | Pilot evaluation plots |
+| SciPy | 1.8.1 | Statistical tests and numerical analysis |
+| Matplotlib | 3.6.2 | Scientific plots and pilot evaluation |
 | Sinabro | 3.0.0 | Installed from the separate package checkout |
 
-The recorded full historical environment has Python 3.9.15; an older preprocessing README stated 3.9.16. The checked revision workflow uses 3.9.15. The YAML pins these scientific-library versions, not every transitive dependency or binary build; export the resolved HPC environment as shown below.
+The recorded full historical environment has Python 3.9.15; an older preprocessing README stated 3.9.16. The checked reproduction workflow uses 3.9.15. The YAML pins these scientific-library versions, not every transitive dependency or binary build; export the resolved HPC environment as shown below.
 
 Conda installs the dependencies first. Pip installs only Sinabro from the local checkout: `--no-deps` prevents dependency replacement, and `--no-build-isolation` uses the environment's installed build tools. `--force-reinstall` replaces any previously installed Sinabro, including an editable installation or another checkout with the same version number. This regular installation copies the package into the environment's `site-packages`; source edits require running the installation command again.
 
@@ -123,7 +125,7 @@ PY
 python -m unittest discover -s tests -v
 ```
 
-The last command runs the preprocessing and HPC-runner checkpoint/argument tests. These commands do not execute the full simulation or submit jobs. With the regular installation above, `Sinabro source` should point into the activated environment's `lib/python3.9/site-packages/sinabro/__init__.py`. It should not be `None`. A successful local check does not establish that the same environment has been created on HPC; run it there too.
+The last command runs the analysis test suite, including bounded simulations and numerical checks. It does not launch the full dataset or submit jobs. With the regular installation above, `Sinabro source` should point into the activated environment's `lib/python3.9/site-packages/sinabro/__init__.py`. It should not be `None`. A successful local check does not establish that the same environment has been created on HPC; run it there too.
 
 Also verify the import from the repositories' shared parent directory. The subshell returns you to the analysis directory afterward:
 

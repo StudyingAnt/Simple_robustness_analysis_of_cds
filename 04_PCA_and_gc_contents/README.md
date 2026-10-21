@@ -1,16 +1,9 @@
-# Principal component anlysis (PCA): GC contents of wobble postion
+# PCA, coding-sequence features and signature features
 
-## Reduce columns
-There are total 79 mutational signatures released in COSMIC. However, 19 of them are potential sequencing artifacts and another 19 of them do not have known aetiology. We removed those signatures and generated two processed files: `all_gencode_rums_profile_noseqerr.csv` and `all_gencode_rums_profile_aetiology.csv`.
-```console
-python3 reduce_signatures.py
-```
+The current portable implementation is [validate_manuscript_results.py](../07_manuscript_validation/validate_manuscript_results.py). Follow the [manuscript analysis guide](../07_manuscript_validation/README.md) for command-line and SeaWulf usage. It reuses audited exported tables and performs no new whole-genome simulation.
 
-## Run PCA
-We ran PCA on data with all signatures, without sequencing artifacts, and with only known aetiology. Further, analysis was performed mostly with PCA without sequencing artifacts.
-```console
-python3 run_pca.py
-```
+The analysis retains the original 79-signature group, the 60-signature group without sequencing artifacts, and the 41-signature group with known aetiology. Group identities and ordering are frozen in [manuscript_signature_groups.json](../02_run_sinabro/manuscript_signature_groups.json).
 
-## Draw Figure
-One can use R script `draw_violin_plots_by_rank.R` to draw **Figure XX**.
+PCA uses mean-centered full SVD without feature standardization, with the original sign convention. All loadings and explained-variance ratios are exported, together with the first ten transcript scores, GC3 and whole-CDS GC features. Entropy, transition fractions and the corresponding regressions are computed from the pinned signature table. Actual observed coefficients and variance ratios are recorded rather than enforced to match the manuscript.
+
+The Python and R files in this directory preserve the historical analysis. They may depend on fixed paths, historical tables and a separate R environment. The combined portable implementation provides the current reproduction entry point; the old files remain available for provenance and method comparison.

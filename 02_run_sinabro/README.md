@@ -1,91 +1,21 @@
-# Small timing pilot with the refactored package
+# Human RUMS simulation, audit and export
 
-For the current full-run workflow, use [portable execution and audit](REPRODUCTION.md), [SeaWulf submission](HPC_SUBMISSION.md), and [audited NPZ-to-table export](AGGREGATION.md). The user reported that the full human saved-output audit passed on 2026-10-16: 73,214 transcripts, 79 signatures and 1,000 trajectories per pair. The pilot descriptions and historical instructions below are retained as earlier stages.
+The manuscript configuration uses 73,214 GENCODE v40 CDS-plus transcripts, 79 COSMIC SBS signatures and 1,000 independent paths per transcript/signature combination. The stopping criterion is the first protein-sequence change. Completed paths report accepted neutral steps before that event; capped or otherwise incomplete paths cannot contribute a complete robustness value.
 
-The checked pilots use Sinabro 3.0.0, the recorded scientific-library environment, and the freshly reproduced GENCODE v40 CDS-plus file. Both 20 and 100 trajectories per combination have been measured. The 1,000-trajectory manuscript setting has not been run in this pilot.
+## Current workflow
 
-## Preserved 20-path reference
+1. Prepare the [pinned environment](../CONDA_SETUP.md) and [GENCODE input](../01_data_downloading_and_preprocessing/README.md).
+2. Follow [portable execution and parallel validation](REPRODUCTION.md) to compare serial and parallel results on a small selection.
+3. Use [HPC submission and resume](HPC_SUBMISSION.md) for the SeaWulf job array, or run `run_rums.py` directly on another computer.
+4. Audit every saved archive with `validate_results.py` before [exporting tables](AGGREGATION.md).
+5. Use [signature distributions](../03_mean_std_analysis/README.md) and [manuscript downstream analyses](../07_manuscript_validation/README.md) to generate numerical tables and plots from the checked exports.
 
-```bash
-python 02_run_sinabro/benchmark_pilot.py \
-  --input data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
-  --sinabro-source ../sinabro \
-  --out-dir results/benchmark20_2026-10-14 \
-  --n-traj 20 --seed 42 --max-steps 10000 --case-timeout 180
+Keep raw references in project `data/raw/`, sequence inputs in `data/processed/`, parameterized simulations/checkpoints and intermediate exports in `runs/`, and final analysis tables and plots in `results/`. All paths are configurable. Python runners are portable; `_seawulf.slurm` files contain cluster-specific settings.
 
-python 02_run_sinabro/evaluate_benchmark_pilot.py \
-  --results results/benchmark20_2026-10-14
-```
+The completed human audit and export covered all 73,214 × 79 × 1,000 paths without incomplete paths, according to the supplied HPC logs. This establishes checkpoint completeness; agreement of downstream manuscript conclusions requires the separate downstream checks. See the [figure and validation map](../MANUSCRIPT_REPRODUCTION.md).
 
-The benchmark selects three distinct genes per CDS length bin (up to 1,000; 1,001–3,000; 3,001–10,000; above 10,000 nt), including the longest transcript. Internal-stop records are excluded only from this timing sample. The unchanged complete preprocessing data remains available.
+## Timing and historical provenance
 
-There are 12 transcripts × SBS1/SBS2/SBS13 × 20 trajectories = **720 trajectories**, with one measured batch per combination and no extra trajectory warm-up. Each combination runs in an isolated serial worker with numerical-library threads limited to one. Profile loading is prepared before timing and included in setup and end-to-end costs. The current memory instrumentation uses Linux/WSL peak worker RSS.
+The [timing-pilot record](PILOT_VALIDATION.md) preserves the 20-path and 100-path selections, comparison commands and original SGE instructions. It is a timing/provenance reference, not the entry point for a new full run.
 
-Outputs include selection CSV/FASTA, input and source hashes, seeds, environment, per-combination wall/CPU time, peak worker RSS, per-path stopping reasons, mutation counts, and trajectory hashes. Every path is checked for a single substitution per step, correct CDS coordinates, preserved flanks, protein identity before the terminal event, and correct accepted-step counts. The output directory must be new to protect previous measurements.
-
-The evaluator audits a completed result and writes CSV/JSON summaries, a report and time/memory plots. It **does not simulate any trajectories**. The original 20-path report remains preserved in its output directory.
-
-## 100 paths per combination
-
-```bash
-python 02_run_sinabro/benchmark_pilot.py \
-  --input data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
-  --sinabro-source ../sinabro \
-  --out-dir results/benchmark100_2026-10-14 \
-  --n-traj 100 --seed 42 --max-steps 10000 --case-timeout 180
-
-python 02_run_sinabro/evaluate_benchmark_pilot.py \
-  --results results/benchmark100_2026-10-14 \
-  --baseline results/benchmark20_2026-10-14
-```
-
-The same 12 transcripts and 3 signatures produce 3,600 trajectories. The case seed does not depend on the requested count, allowing the first 20 paths in each 100-path case to be compared with the earlier measurement. All 720 prefix paths matched in this run.
-
-The historical simulate_single_gene.py sets n_traj = 1000. This parameter is the number of independent trajectories per transcript/signature pair; each trajectory stops at the first protein-sequence change. The pilot reduces that repeat count to 100. A 1,000-path estimate in the 100-path report applies only to the same 12 transcripts and 3 signatures, and is not a measured result or a whole-genome projection.
-
-## Preserved historical full-analysis instructions
-
-The instructions below describe the original cluster workflow. Their import paths and fixed paths must be reviewed before use with Sinabro 3.0.0. For current audited NPZ results, use aggregate_results.py rather than the historical CSV combiner below.
-
-# Run Sinabro
-
-## Sinabro
-Here we utilized Python package [Sinabro](https://github.com/StudyingAnt/sinabro) we developed to measure the robustness under mutational signature (RUMS).
-
-One can import **Sinabro** by adding into `PATH` using `sys` module as in the following code:
-```python
-# import sinabro
-sys.path.insert(0, "/home/jsong/sinabro")
-import sinabro.sinabro as snbr
-```
-
-Or, use `conda develop /PATH/TO/SINABRO/` if you are using `conda` environment.
-```console
-conda develop /PATH/TO/SINABRO/
-```
-
-## Run Sinbaro on SGE cluster
-We run total of 1,000 simulations per sequence for more than 70,000 sequences using SGE based computing cluster at Laufer center. Following is the job script to run all simulations using `simulate_single_gene.py`. Parameters should be modified according to the cluster you want to use.
-```console
-#!/bin/bash
-#$ -N NAME
-#$ -S /bin/bash
-#$ -o /PATH/TO/STDOUTS
-#$ -e /PATH/TO/STDERRS
-#$ -j y
-#$ -q cpu_short
-#$ -P PROJECT_NAME
-#$ -t 1-73214
-
-conda activate py39
-
-python3 /titan/jsong/robustness_analysis_all_genes/scripts/simulate_single_gene.py ${SGE_TASK_ID}
-
-conda deactivate
-```
-
-## Combine results into single file
-We used `combine_rums_profile.py` to combine results into single `all_gencode_rums_profile.csv` file.
-```console
-python3 combine_rums_profile.py
-```
+`simulate_single_gene.py`, `combine_rums_profile.py` and the SGE shell script are historical sources. Use the current portable runner and audited exporter for Sinabro 3.0.0. Earlier package imports and fixed cluster paths in historical scripts are not installation instructions for the current package.
