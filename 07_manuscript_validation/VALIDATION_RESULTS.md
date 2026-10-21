@@ -68,6 +68,12 @@ The original rank-test directions are retained: human > Molossus, Myotis > human
 
 Myotis has the highest median, but its mean is **0.00117019 lower than the human mean** in this native-process panel. The text must distinguish mean, median and rank-distribution comparisons; an unqualified claim that Myotis has the highest mean would be incorrect for these results.
 
+## Historical S11 matched-population analysis
+
+Full HPC job **2345768** passed: all **3,740** input sequences and paired transcript identities verified. The source data, manifest and script hashes match the local verified source. Both criterion distributions now use the same 3,740 transcripts, compared with 73,214 versus 3,740 in the historical plotted populations. Historical means are 0.8116874332 (identity) and 3.8720010695 (BLOSUM); medians are 0.705 and 3.594. All recovered BLOSUM estimates are at least their corresponding identity estimates.
+
+This is reproducible postprocessing of archived simulation estimates. `fresh_simulation` and `corrected_package_blosum_recalculation` remain false by design; those flags do not indicate a failed analysis. Historical per-path seeds were not recovered. See [S11 execution and scope](S11_HISTORICAL.md). The author supplied the successful console summary; HPC-generated figures were not independently inspected in this verification.
+
 ## Provenance and remaining scope
 
 - Shared signature table SHA256: `9d9c212cc14aa660da1b7fd9e60e696c8e2c885a7606c27d20ad8997954554ea`.

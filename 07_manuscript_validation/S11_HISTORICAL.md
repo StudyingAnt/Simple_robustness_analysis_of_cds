@@ -2,6 +2,10 @@
 
 This stage regenerates the criterion comparison using the same 3,740 transcripts on both sides. It uses recovered historical simulation estimates and does not launch new Sinabro paths. The bundled gzip CSV contains the transcript IDs/names and the two historical estimates, with source fingerprints and the original ordering recorded in its manifest. Original HDF5 files and raw COSMIC data are not required on the target computer. The pinned human FASTA is still required to verify transcript identity.
 
+## Completed full HPC verification
+
+Job **2345768** on **dg026** passed the full matched-transcript analysis: all **3,740** sequences verified, both populations **3,740**, and the source manifest, value archive and executable script hashes match the checked local run. Mean estimates are **0.8116874332** (identity) and **3.8720010695** (BLOSUM). Reported elapsed time was **6.316 seconds**. The report is at `PROJECT/results/s11_historical_2345768/s11_historical_summary.json`. This confirms historical postprocessing, not a fresh BLOSUM calculation under the corrected package. Existing successful output does not need resubmission.
+
 ## SeaWulf: one job
 
 From the project root:
