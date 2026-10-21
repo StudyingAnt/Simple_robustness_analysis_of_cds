@@ -19,11 +19,14 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | Portable one-worker vs eight-worker smoke test | Verified locally; user-reported SeaWulf comparison also passed (3,600 paths per mode) |
 | Full human RUMS calculation and saved-output audit | User-reported full audit passed: 73,214 transcripts × 79 signatures × 1,000 paths, no incomplete paths |
 | Audited NPZ-to-table export | User-reported full export passed: 73,214 checksums matched; 19,309 genes and 73 internal-stop transcripts retained |
-| Descriptive signature ranks and distribution figures | Portable analysis/plotting job implemented and checked locally; full HPC execution pending |
-| PCA and subsequent figures/inferential analyses | Pending reproduction |
-| Bat data and analyses | Pending validation |
+| Descriptive signature ranks and distribution figures | Full HPC analysis passed (job 2308077); SBS2 leads mean and SD in all three signature groups |
+| Two-bat COSMIC calculation, audit and export | Passed: 31,185 Molossus and 23,213 Myotis transcripts × eight signatures × 1,000 paths |
+| Six experimental enzyme profiles on all three species | Full audit passed (job 2336448), 765,672,000 paths; 18 exported summary combinations checked |
+| Original PCA/features/statistical tables and species panels | Portable [combined analysis](07_manuscript_validation/README.md) implemented and locally checked; full HPC result review pending |
+| Original S1/S2 random-sequence signature validation | Portable [sampler validation](07_manuscript_validation/README.md) implemented and locally checked; full 79-signature result review pending |
+| Original S11 BLOSUM subset and S12 BRCA1 example | Reconstruction pending; original final HDF5 and observed-variant overlay inputs not recovered |
 
-The full human calculation and archive audit were reported complete on 2026-10-16 (audit job 2304985), followed by a successful full table export reported on 2026-10-17 (job 2305071). Preserve the checkpoint files, audit reports and [exported tables](02_run_sinabro/AGGREGATION.md). Next, run [descriptive signature ranks and distribution figures](03_mean_std_analysis/README.md); reproducing manuscript conclusions, PCA and inferential analyses remains separate. See [pilot commands and instrumentation](02_run_sinabro/README.md) for the earlier bounded measurements.
+The complete whole-genome checkpoints and exports are available from the checked human, bat COSMIC and experimental-enzyme runs. Preserve their audit reports and [exported tables](02_run_sinabro/AGGREGATION.md). Continue with [original manuscript downstream and sampler validation](07_manuscript_validation/README.md), which reuses those calculations and reports the actual observed results without requiring the historical conclusions to hold. No claim of full manuscript reproduction is made while the remaining rows above are pending.
 
 Follow [the first-stage commands and checks](01_data_downloading_and_preprocessing/README.md). Reference counts and hashes are stored in [expected_gencode_v40.json](01_data_downloading_and_preprocessing/expected_gencode_v40.json).
 
