@@ -26,7 +26,7 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | Six experimental enzyme profiles on all three species | Full audit passed (job 2336448), 765,672,000 paths; 18 exported summary combinations checked |
 | Original PCA/features/statistical tables and species panels | Portable [combined analysis](07_manuscript_validation/README.md) implemented and locally checked; full HPC result review pending |
 | Original S1/S2 random-sequence signature validation | Portable [sampler validation](07_manuscript_validation/README.md) implemented and locally checked; full 79-signature result review pending |
-| Original S11 BLOSUM subset and S12 BRCA1 example | Separate [reconstruction jobs](07_manuscript_validation/README.md) prepared and checked on bounded local cases; historical final subset and observed-variant overlay inputs not recovered |
+| Original S11 BLOSUM subset and S12 BRCA1 example | [Historical S11 values and transcript identities recovered](07_manuscript_validation/HISTORICAL_SUPPLEMENTARY_INPUTS.md); S12 graph code/artwork recovered, observed-variant mapping unresolved. Bounded examples are separate from these historical sources. |
 
 The complete whole-genome checkpoints and exports are available from the checked human, bat COSMIC and experimental-enzyme runs. Preserve their audit reports and [exported tables](02_run_sinabro/AGGREGATION.md). Continue with [original manuscript downstream and sampler validation](07_manuscript_validation/README.md), which reuses those calculations and reports the actual observed results without requiring the historical conclusions to hold. No claim of full manuscript reproduction is made while the remaining rows above are pending.
 
