@@ -5,6 +5,7 @@ import json
 import multiprocessing as mp
 import platform
 from pathlib import Path
+import re
 import sys
 import tempfile
 import time
@@ -35,6 +36,7 @@ def simulate(task):
         path_seed=int.from_bytes(key[:8],'big')
         relaxed=Trajectory(identifier,sequence,seed=path_seed,cds_start=1,cds_end=len(sequence)-1)
         relaxed.autofill(condition='blosum',method='signature',mutational_signature='SBS2',
+            cosmic_version='3.3.1',genome_ref='GRCh37',
             threshold=20,matrix_name='BLOSUM80',mode='global',gap_open=-10,gap_extend=-.5,
             stop_policy='score',max_steps=cap)
         require(relaxed.accepted_steps is not None,'Incomplete BLOSUM path; no mean will be published')
@@ -42,7 +44,8 @@ def simulate(task):
                  terminal_reason=relaxed.terminal_reason,terminal_distance=relaxed.score)
         if stage=='s11':
             strict=Trajectory(identifier,sequence,seed=path_seed,cds_start=1,cds_end=len(sequence)-1)
-            strict.autofill(condition='nonsynonymous',method='signature',mutational_signature='SBS2',max_steps=cap)
+            strict.autofill(condition='nonsynonymous',method='signature',mutational_signature='SBS2',
+                            cosmic_version='3.3.1',genome_ref='GRCh37',max_steps=cap)
             require(strict.accepted_steps is not None,'Incomplete protein-identity path')
             require(relaxed.accepted_steps>=strict.accepted_steps,'Relaxed criterion stopped before strict identity')
             strict_records=strict.get_records();relaxed_records=relaxed.get_records()
@@ -51,17 +54,65 @@ def simulate(task):
             row['identity_neutral_steps']=strict.accepted_steps
         else:
             previous=None
-            for record in relaxed.get_records():
+            for step,record in enumerate(relaxed.get_records()):
                 text=str(record.sequence)
+                require(len(text)==len(sequence) and text[0]==sequence[0] and text[-1]==sequence[-1],
+                        'Graph state changed sequence length or reference flanks')
                 node=hashlib.sha256(text.encode()).hexdigest()
                 differences=[f'{i}{old}>{new}' for i,(old,new) in enumerate(zip(sequence[1:-1],text[1:-1]),1) if old!=new]
                 distance=float(record.note.split('score:',1)[1]) if record.note.startswith('score:') else 0.
-                nodes[node]=dict(node=node,hamming_distance=len(differences),blosum_distance=distance,
+                nodes[node]=dict(node=node,transcript_id=identifier,hamming_distance=len(differences),blosum_distance=distance,
                     cds_substitutions=';'.join(differences),observed_cosmic_status='not_available')
-                if previous is not None:edges.append(dict(source=previous,target=node,path=index))
+                if previous is not None:edges.append(dict(source=previous,target=node,path=index,step=step))
                 previous=node
         rows.append(row)
     return rows,list(nodes.values()),edges
+
+
+def audit_graph(rows,nodes,edges,reference):
+    """Independently reconstruct graph DNA states and check each chronological path."""
+    require(len(rows)==len({r['path'] for r in rows}),'Duplicate graph trajectory')
+    root=hashlib.sha256(reference.encode()).hexdigest()
+    require(root in nodes,'Graph lacks its reference state')
+    substitutions={}
+    for key,node in nodes.items():
+        changes={};sequence=list(reference)
+        for text in filter(None,node['cds_substitutions'].split(';')):
+            match=re.fullmatch(r'([1-9][0-9]*)([ACGT])>([ACGT])',text)
+            require(match is not None,'Invalid CDS substitution notation')
+            position=int(match[1]);old,new=match[2],match[3]
+            require(position<len(reference)-1 and position not in changes
+                    and reference[position]==old and old!=new,'Invalid CDS substitution coordinate/reference')
+            changes[position]=new;sequence[position]=new
+        require(hashlib.sha256(''.join(sequence).encode()).hexdigest()==key==node['node'],
+                'Graph state hash does not match its reference-relative substitutions')
+        require(len(changes)==node['hamming_distance'],'Graph Hamming distance mismatch')
+        require(node['observed_cosmic_status']=='not_available','Unverified observed-variant annotation')
+        substitutions[key]=changes
+    by_path={r['path']:[] for r in rows}
+    for edge in edges:
+        require(edge['path'] in by_path,'Unknown graph path')
+        require(edge['source'] in nodes and edge['target'] in nodes,'Missing graph edge endpoint')
+        left,right=substitutions[edge['source']],substitutions[edge['target']]
+        difference=sum(left.get(p,reference[p])!=right.get(p,reference[p]) for p in set(left)|set(right))
+        require(difference==1,'Graph edge is not a single-base substitution')
+        by_path[edge['path']].append(edge)
+    visited={root}
+    for row in rows:
+        path=sorted(by_path[row['path']],key=lambda e:e['step'])
+        require(len(path)==row['blosum_neutral_steps']+1,'Graph path/event count mismatch')
+        require([e['step'] for e in path]==list(range(1,len(path)+1)),
+                'Missing or duplicate graph step')
+        previous=root
+        for edge in path:
+            require(edge['source']==previous,'Disconnected graph trajectory')
+            require(nodes[previous]['blosum_distance']<20,'Path continued beyond the BLOSUM threshold')
+            previous=edge['target'];visited.add(previous)
+        require(nodes[previous]['blosum_distance']==row['terminal_distance']>=20
+                and row['terminal_reason']=='evaluation','Graph terminal state/criterion mismatch')
+    require(visited==set(nodes),'Graph contains unused states')
+    return dict(graph_audit_passed=True,complete_paths=len(rows),incomplete_paths=0,
+                single_substitution_edges_checked=len(edges),reconstructed_dna_states_checked=len(nodes))
 
 
 def run(args):
@@ -85,17 +136,21 @@ def run(args):
     package_helpers.load_package(args.sinabro_source)
     source=package_helpers.source
     package_sha=package_helpers.package_digest()
+    signature_file=package_helpers.signature_path('3.3.1','GRCh37')
     started=time.perf_counter()
-    report=dict(stage=args.stage,simulation_passed=False,historical_subset_recovered=False,
+    report=dict(stage=args.stage,simulation_passed=False,
+        historical_subset_recovered=(args.stage=='s12' and chosen[0].get('historical_transcript_recovered',False)),
         original_figure_reproduced=False,observed_cosmic_variant_overlay_reproduced=False,
+        fresh_simulation=True,corrected_package_blosum_recalculation=True,
         input_sha256=digest(args.input),cases_sha256=digest(args.cases),package_source_sha256=package_sha,
+        signature_version='3.3.1',signature_reference='GRCh37',signature_sha256=digest(signature_file),
         script_sha256=digest(__file__),signatures=['SBS2'],n_trajectories=args.n_traj,seed=args.seed,
         selected_transcripts=list(selected),case_limit=args.case_limit,max_steps=args.max_steps,
         bounded_software_check=args.case_limit is not None,
         runtime=dict(python=platform.python_version(),numpy=np.__version__,biopython=Bio.__version__),
         criterion=dict(matrix='BLOSUM80',mode='global',gap_open=-10,gap_extend=-.5,threshold=20,
             threshold_rule='distance >= 20',stop_policy='score'),
-        interpretation='Reconstructed analysis under the corrected implementation; original final files unavailable. BLOSUM distance is a proxy, not experimentally measured functional loss.')
+        interpretation='Fresh corrected-package simulation of the documented cases. Historical random streams and observed COSMIC annotations were not recovered. BLOSUM distance is a proxy, not experimentally measured functional loss.')
     output.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='.paper-supplement-',dir=output.parent) as temporary:
         stage=Path(temporary)/'results';stage.mkdir()
@@ -131,12 +186,17 @@ def run(args):
             report['summary']=summary
             report['matched_path_prefixes_checked']=True
         else:
+            reference=str(records[next(iter(selected))].seq)
+            report.update(audit_graph(values,nodes,edges,reference))
+            record=chosen[0]
+            (stage/'s12_reference.cdsplus.fa').write_text(
+                f'>{record["transcript_id"]}|{record["transcript_name"]}|cds_start_0based=1|cds_end_exclusive={len(reference)-1}\n{reference}\n')
             ordered=sorted(nodes)
             coordinates={key:(0.,0.) if nodes[key]['hamming_distance']==0 else (
                 nodes[key]['hamming_distance']*np.cos(2*np.pi*int(key[:8],16)/2**32),
                 nodes[key]['hamming_distance']*np.sin(2*np.pi*int(key[:8],16)/2**32)) for key in ordered}
             write_csv(stage/'s12_graph_nodes.csv',[dict(nodes[key],x=coordinates[key][0],y=coordinates[key][1]) for key in ordered])
-            write_csv(stage/'s12_graph_edges.csv',sorted(edges,key=lambda row:(row['path'],row['source'],row['target'])))
+            write_csv(stage/'s12_graph_edges.csv',sorted(edges,key=lambda row:(row['path'],row['step'])))
             fig,ax=plt.subplots(figsize=(6,5))
             ax.add_collection(LineCollection([[coordinates[e['source']],coordinates[e['target']]] for e in edges],alpha=.2,linewidth=.4))
             scatter=ax.scatter([coordinates[k][0] for k in ordered],[coordinates[k][1] for k in ordered],
@@ -146,8 +206,17 @@ def run(args):
             ax.set_title('BRCA1-203 simulation graph\nObserved COSMIC overlay unavailable',fontsize=10)
             ax.set(xlabel='Radial distance = DNA Hamming distance',ylabel='Deterministic angular layout')
             save_plot(fig,stage,'figureS12_simulation_only')
-            report.update(nodes=len(nodes),edges=len(edges),missing_input='Observed COSMIC breast-cancer variants with matched BRCA1 transcript coordinates')
-        require(digest(args.input)==report['input_sha256'] and package_helpers.package_digest()==package_sha,
+            report.update(nodes=len(nodes),edges=len(edges),
+                reference_sequence_sha256=hashlib.sha256(reference.encode()).hexdigest(),
+                coordinate_system='CDS-relative 1-based substitutions against the initial reference; flanking bases excluded',
+                graph_layout='Deterministic angle, radius equals reference DNA Hamming distance',
+                historical_script_n_sim=record.get('historical_script_n_sim'),
+                blosum_neutral_steps_mean=float(np.mean([r['blosum_neutral_steps'] for r in values])),
+                blosum_neutral_steps_median=float(np.median([r['blosum_neutral_steps'] for r in values])),
+                missing_input='Observed COSMIC breast-cancer variants with matched BRCA1 transcript coordinates')
+        require(digest(args.input)==report['input_sha256'] and package_helpers.package_digest()==package_sha
+                and digest(args.cases)==report['cases_sha256']
+                and digest(signature_file)==report['signature_sha256'],
                 'Scientific inputs changed during supplementary run')
         report.update(simulation_passed=True,elapsed_seconds=time.perf_counter()-started,
             outputs=[dict(filename=p.name,sha256=digest(p)) for p in sorted(stage.iterdir())])

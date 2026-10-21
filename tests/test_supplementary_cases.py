@@ -1,5 +1,6 @@
 """Bounded matched-criterion reconstruction and explicit missing-overlay semantics."""
 import json
+import copy
 from pathlib import Path
 import sys
 import unittest
@@ -43,6 +44,33 @@ class MatchedCaseTests(unittest.TestCase):
     def test_incomplete_blosum_path_is_not_reported_as_success(self):
         with self.assertRaisesRegex(ValueError,'Incomplete BLOSUM path'):
             supplement.simulate(('s11','toy',self.sequence,0,1,42,1))
+
+    def test_graph_audit_reconstructs_dna_and_checks_every_complete_path(self):
+        rows,nodes,edges=supplement.simulate(('s12','toy',self.sequence,0,8,42,1000))
+        audit=supplement.audit_graph(rows,{r['node']:r for r in nodes},edges,self.sequence)
+        self.assertTrue(audit['graph_audit_passed'])
+        self.assertEqual(audit['complete_paths'],8)
+        self.assertEqual(audit['single_substitution_edges_checked'],
+                         sum(r['blosum_neutral_steps']+1 for r in rows))
+
+    def test_graph_audit_rejects_changed_coordinate_and_chronology(self):
+        rows,nodes,edges=supplement.simulate(('s12','toy',self.sequence,0,3,42,1000))
+        altered=copy.deepcopy({r['node']:r for r in nodes})
+        next(iter(altered.values()))['cds_substitutions']='1C>A'
+        with self.assertRaisesRegex(ValueError,'coordinate/reference'):
+            supplement.audit_graph(rows,altered,edges,self.sequence)
+        altered_edges=copy.deepcopy(edges);altered_edges[0]['step']=2
+        with self.assertRaisesRegex(ValueError,'Missing or duplicate graph step'):
+            supplement.audit_graph(rows,{r['node']:r for r in nodes},altered_edges,self.sequence)
+
+    def test_path_seeds_and_graph_states_do_not_depend_on_work_blocks(self):
+        whole=supplement.simulate(('s12','toy',self.sequence,0,7,42,1000))
+        parts=[supplement.simulate(('s12','toy',self.sequence,start,count,42,1000))
+               for start,count in [(0,3),(3,4)]]
+        self.assertEqual(whole[0],parts[0][0]+parts[1][0])
+        self.assertEqual({r['node']:r for r in whole[1]},
+                         {r['node']:r for part in parts for r in part[1]})
+        self.assertEqual(whole[2],parts[0][2]+parts[1][2])
 
 
 if __name__=='__main__':

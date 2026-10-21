@@ -79,6 +79,8 @@
     }
   ],
   "s12": {
+    "historical_transcript_recovered": true,
+    "historical_script_n_sim": 1000,
     "transcript_id": "ENST00000357654.9",
     "transcript_name": "BRCA1-203",
     "cds_nt": 5592,
