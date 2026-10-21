@@ -51,6 +51,8 @@ Both programs use raw research inputs and portable Python code; cluster settings
 
 ## Remaining original supplementary analyses
 
+**Next executable stage: [historical S11 matched-transcript analysis](S11_HISTORICAL.md).** Its frozen historical estimates are included with the code, so HPC needs no separate archive transfer. Run this stage to compare both criteria on the recovered 3,740-transcript population. It performs postprocessing, not new mutation simulation.
+
 S11 (BLOSUM80/SBS2 subset) and S12 (BRCA1 genotype/phenotype graph) are original-paper analyses. They remain separate from the two jobs above. **Archive recovery update:** the [historical supplementary input audit](HISTORICAL_SUPPLEMENTARY_INPUTS.md) identifies 3,740 S11 results with their exact transcript sequences, and S12 graph code/artwork. The COSMIC observed-variant overlay table and matching rule remain unresolved. Prioritize these recovered sources for original-panel validation; the examples below remain separate bounded reconstructions. A regenerated analysis must state its chosen subset/settings and data provenance rather than claiming byte-identical historical reproduction. S12 red observed-variant points cannot be reconstructed without the source variant data. These panels must not be marked verified solely because the package's BLOSUM unit tests passed.
 
 The following optional examples were prepared before the archive was recovered. They can run after the two core validations, but do not replace validation of the recovered historical sources:

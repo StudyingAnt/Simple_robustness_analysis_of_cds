@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "transcripts": 3740,
+  "signature": "SBS2",
+  "values_filename": "s11_historical_values.csv.gz",
+  "values_sha256": "098f5d01be52f73919f6a8f59ec3a0ce1935a6530b0c7f39a405fa13f8a13672",
+  "uncompressed_csv_sha256": "89f43c2d98662f514aa92c897248152cee5d1da52a0f98050776a81934e1026f",
+  "human_input_sha256": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751",
+  "historical_results_only": true,
+  "historical_script_n_sim": 1000,
+  "historical_criterion": {
+    "matrix": "BLOSUM80",
+    "threshold": 20
+  },
+  "historical_seeds_recovered": false,
+  "source_lrho_hdf_sha256": "9777028bb2b855aa3ecf78adea6247e1203b7f9c8967cc1d09bd34af099abe8d",
+  "source_longest_fasta_sha256": "6e576d0d49d47479587309bb45ef49fe8995fe80163a666a838a9cfc47eaa978",
+  "source_notebook_sha256": "abbc7b8545dad4fa05b0f4234bdae2ca8a8fa4336b37f2df0baa1151052c54a1",
+  "selection": "First 3740 records of the recovered longest FASTA, paired in stored order with lrho_sbs2.h5/lrho. Protein-identity values joined by unique transcript name from the historical mean table.",
+  "historical_plotted_populations": {
+    "identity": 73214,
+    "blosum": 3740
+  },
+  "release_scope": "Historical simulation estimates and transcript identifiers only; no COSMIC observed variants, Cancer Gene Census source table or raw reference sequences are included."
+}
