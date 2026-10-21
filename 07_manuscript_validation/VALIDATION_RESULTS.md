@@ -26,11 +26,33 @@ Thus the manuscript's rounded **73%**, **90%** and **R² = 0.715** remain suppor
 
 Kruskal–Wallis and median-centered Levene calculations completed for the 79-, 60- and 41-signature groups. Reported floating-point p-values of zero are underflow, not exact zero probabilities. These are original transcript-level analyses, with the independence limitations already documented in the execution guide.
 
-### Figure 4 details require loading-table review
+### Figure 4 loading-table comparison completed
 
-The new JSON reports the largest positive loading across all 60 no-artifact signatures. The historical Figure 4 plotting code fits that 60-signature PCA but displays only the 41 known-aetiology signatures. Consequently, differences between the JSON's global maxima and the manuscript's displayed maxima cannot all be interpreted as changed PCA findings.
+The complete new `pca_noseqerr_loadings.csv` (3,600 coefficients) was supplied and its SHA256 exactly matches the output entry in the earlier downstream report: `c958c30b515b562a69b1b87bad09352c529295ee722e7f6d17b687a6416bf7a7`. All 60 signatures occur once per component and the loading matrix passes an orthonormality check. Comparison uses the original Figure 4 rule: fit the 60-signature PCA and display only the 41 known-aetiology signatures.
 
-One actual ordering difference is already identifiable: PC5's historical maximum was SBS10a (0.263056 versus SBS10b 0.260553), whereas the new report identifies SBS10b. Both signatures belong to the displayed group. Update that detail only after reviewing the new coefficients. To finish the remaining displayed-PC comparisons, inspect the existing `pca_noseqerr_loadings.csv` from the same result directory; no simulation or PCA rerun is required.
+| PC | Historical displayed positive maximum | New displayed positive maximum |
+|---|---|---|
+| PC1 | SBS2 | SBS2 |
+| PC2 | SBS2 | SBS2 |
+| PC3 | SBS1 | SBS1 |
+| PC4 | SBS1 | SBS1 |
+| PC5 | SBS10a | SBS10b |
+| PC6 | SBS7d | SBS7d |
+| PC7 | SBS7a | SBS7a |
+| PC8 | SBS84 | SBS84 |
+| PC9 | SBS22 | SBS22 |
+| PC10 | SBS1 | SBS1 |
+
+Only PC5's displayed maximum changes. Its two leading coefficients remain close:
+
+| Signature / PC5 | Historical coefficient | New coefficient |
+|---|---:|---:|
+| SBS10a | 0.26305612 | 0.26022800 |
+| SBS10b | 0.26055271 | 0.26070322 |
+
+The new lead is 0.00047522. For each of PC1–PC10, the full 60-coefficient historical/new vector cosine is at least **0.99923324**, with the same signs under the recorded convention. This supports very similar loading patterns, while lower ranks can still switch; it does not establish which implementation or random-stream change caused each difference.
+
+Update the Figure 4 text/caption to identify SBS10b as the new PC5 maximum and note the similarly large SBS10a loading. PC8/SBS84, PC9/SBS22 and PC10/SBS1 remain the displayed maxima; the earlier JSON's different global maxima include signatures excluded from the Figure 4 display. The numerical loading check is complete; visual inspection of the new final artwork remains separate.
 
 ## Native-process species panel
 
@@ -56,4 +78,4 @@ Myotis has the highest median, but its mean is **0.00117019 lower than the human
 
 The downstream JSON's static `remaining_original_analyses` list includes the separate S1/S2 job. That list is not a cross-job status check: S1/S2 is now verified by its own successful report and must not be rerun merely because it appears there.
 
-Finish the Figure 4 loading review and final artwork checks, then address the [recovered S11 sources and unresolved S12 observed-variant mapping](HISTORICAL_SUPPLEMENTARY_INPUTS.md). These successful core reports do not by themselves establish complete supplementary reproduction or a final tagged paper release.
+The Figure 4 numerical loading review is complete. Finish final artwork checks and address the [recovered S11 sources and unresolved S12 observed-variant mapping](HISTORICAL_SUPPLEMENTARY_INPUTS.md). These successful core reports do not by themselves establish complete supplementary reproduction or a final tagged paper release.

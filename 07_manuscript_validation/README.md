@@ -2,7 +2,7 @@
 
 These programs reproduce downstream analyses already present in the human/bat manuscript. They use the pinned Python/NumPy/Biopython/SciPy environment. They do not require R, pandas, scikit-learn or a new environment installation. The package and all completed whole-genome trajectories are unchanged.
 
-**Full-run status:** both core HPC reports have passed. See [numerical results and manuscript implications](VALIDATION_RESULTS.md), including preserved rounded PCA/regression values, Figure 4's remaining loading-table check and the native-panel mean/median distinction. Existing successful runs do not need resubmission.
+**Full-run status:** both core HPC reports have passed. See [numerical results and manuscript implications](VALIDATION_RESULTS.md), including preserved rounded PCA/regression values, Figure 4's completed loading-table comparison and the native-panel mean/median distinction. Existing successful runs do not need resubmission.
 
 ## Submit two independent jobs
 

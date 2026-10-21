@@ -24,7 +24,7 @@ Reproduction is checked one stage at a time. The first stage, **GENCODE v40 down
 | Descriptive signature ranks and distribution figures | Full HPC analysis passed (job 2308077); SBS2 leads mean and SD in all three signature groups |
 | Two-bat COSMIC calculation, audit and export | Passed: 31,185 Molossus and 23,213 Myotis transcripts × eight signatures × 1,000 paths |
 | Six experimental enzyme profiles on all three species | Full audit passed (job 2336448), 765,672,000 paths; 18 exported summary combinations checked |
-| Original PCA/features/statistical tables and species panels | Full HPC numerical report passed; [results and manuscript implications](07_manuscript_validation/VALIDATION_RESULTS.md). Figure 4's detailed loading review and final artwork review remain. |
+| Original PCA/features/statistical tables and species panels | Full HPC numerical report passed; [results and manuscript implications](07_manuscript_validation/VALIDATION_RESULTS.md). Figure 4's numerical loading comparison is complete; final artwork review remains. |
 | Original S1/S2 random-sequence signature validation | Full 79-signature validation passed: 790,000 substitutions, all conditional-oracle checks passed; mean original-profile cosine 0.97519. |
 | Original S11 BLOSUM subset and S12 BRCA1 example | [Historical S11 values and transcript identities recovered](07_manuscript_validation/HISTORICAL_SUPPLEMENTARY_INPUTS.md); S12 graph code/artwork recovered, observed-variant mapping unresolved. Bounded examples are separate from these historical sources. |
 
