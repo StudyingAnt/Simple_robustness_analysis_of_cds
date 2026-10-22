@@ -74,6 +74,14 @@ Full HPC job **2345768** passed: all **3,740** input sequences and paired transc
 
 This is reproducible postprocessing of archived simulation estimates. `fresh_simulation` and `corrected_package_blosum_recalculation` remain false by design; those flags do not indicate a failed analysis. Historical per-path seeds were not recovered. See [S11 execution and scope](S11_HISTORICAL.md). The author supplied the successful console summary; HPC-generated figures were not independently inspected in this verification.
 
+## Fresh S12 BRCA1 simulation and cross-machine data agreement
+
+The full corrected-package BRCA1 report passed on HPC: **1,000/1,000** complete SBS2/BLOSUM80 paths, no incomplete paths, all graph-audit checks passed, **3,152** DNA states and **3,623** one-substitution edges. Mean neutral steps **2.623**, median **2.0**. Input, package, signature, cases and executable-source fingerprints match the verified local run.
+
+Reported hashes for `trajectory_counts.csv`, `s12_graph_nodes.csv`, `s12_graph_edges.csv` and `s12_reference.cdsplus.fa` are byte-identical to the corresponding local outputs. Thus agreement extends beyond means to path counts, state annotations, chronological connections, reference DNA and diagnostic coordinates. HPC output files were not directly accessed; the comparison uses the hashes supplied in the report. Image hashes are different and actual HPC artwork remains to be visually reviewed.
+
+The observed COSMIC variant overlay and its original matching rule are unresolved. `original_figure_reproduced` and `observed_cosmic_variant_overlay_reproduced` remain false, while `fresh_simulation`, `corrected_package_blosum_recalculation`, `simulation_passed` and `graph_audit_passed` are true. Use the existing graph for later annotation; no additional paths are required merely to add evidence-backed observed-variant annotations. See [BRCA1 graph execution and scope](BRCA1_GRAPH.md).
+
 ## Provenance and remaining scope
 
 - Shared signature table SHA256: `9d9c212cc14aa660da1b7fd9e60e696c8e2c885a7606c27d20ad8997954554ea`.
