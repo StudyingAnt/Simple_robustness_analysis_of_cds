@@ -107,7 +107,7 @@ def paired_analysis(matrix, names, n_trajectories, progress=None):
     omnibus = dict(test='Friedman, tie-corrected chi-square approximation', n_blocks=n,
                    signatures=k, statistic=statistic, df=k-1, p=pvalue,
                    p_underflow=(pvalue == 0.),
-                   p_display=('< smallest representable positive float (underflow)' if pvalue == 0.
+                   p_display=('numeric underflow; exact value not represented' if pvalue == 0.
                               else '{:.8g}'.format(pvalue)),
                    kendall_W=statistic / (n * (k-1)),
                    asymptotic_size_guidance_met=(n > 10 and k > 6))
