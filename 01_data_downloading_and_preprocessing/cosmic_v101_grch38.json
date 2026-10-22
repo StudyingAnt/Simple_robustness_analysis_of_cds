@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "release": "v101",
+  "genome": "GRCh38",
+  "api_endpoint": "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted",
+  "metadata_verified_on": "2026-10-21",
+  "release_selection": {
+    "status": "date_based_candidate_not_proven_historical_release",
+    "release_date": "2024-11-19",
+    "next_release": "v102",
+    "next_release_date": "2025-05-21",
+    "recovered_h5_modification_dates": [
+      "2025-05-12",
+      "2025-05-19"
+    ],
+    "qualification": "Filesystem modification dates can reflect copying or later writes; they do not prove file creation or the COSMIC release originally used."
+  },
+  "sources": [
+    "https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/mutantcensus",
+    "https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification",
+    "https://cancer.sanger.ac.uk/cosmic/release_notes?genome=38"
+  ],
+  "files": [
+    {
+      "product": "mutantcensus",
+      "filename": "Cosmic_MutantCensus_Tsv_v101_GRCh38.tar",
+      "s3_object": "grch38/cosmic/v101/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar",
+      "s3_bucket": "cosmic-downloads-production",
+      "release_date": "2024-11-19T14:52:54Z",
+      "sha256": "9464b5a72f90747031fb2d13e4b42fca121f2f2dbe31643d2cff756d93e2c499"
+    },
+    {
+      "product": "classification",
+      "filename": "Cosmic_Classification_Tsv_v101_GRCh38.tar",
+      "s3_object": "grch38/cosmic/v101/Cosmic_Classification_Tsv_v101_GRCh38.tar",
+      "s3_bucket": "cosmic-downloads-production",
+      "release_date": "2024-11-19T14:52:54Z",
+      "sha256": "54f9e8d31a5cd768cff9c7762dc7e286881b0c9ea0bb05105f20a9522b188135"
+    }
+  ]
+}

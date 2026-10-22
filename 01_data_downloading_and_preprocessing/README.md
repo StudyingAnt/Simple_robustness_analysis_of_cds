@@ -1,5 +1,7 @@
 # GENCODE v40 download and CDS-plus preprocessing
 
+For the independent S12 observed-variant inputs, see [COSMIC variant download and verification](COSMIC_VARIANTS.md). It covers the candidate v101/GRCh38 archives, interactive account authentication and browser-download verification.
+
 Run these commands from the analysis repository root. Downloaded and generated data are excluded from Git. Each stage writes a provenance manifest and refuses to overwrite existing outputs.
 
 ## 1. Download and unpack the transcript FASTA

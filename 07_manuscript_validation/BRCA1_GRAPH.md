@@ -10,6 +10,8 @@ HPC image-file hashes differ from the local image hashes; this check did not est
 
 ## Submit one job on SeaWulf
 
+For the independent observed-variant input, see [COSMIC v101/GRCh38 download instructions](../01_data_downloading_and_preprocessing/COSMIC_VARIANTS.md). The portable downloader checks official archive SHA256 values and prompts for account credentials only in an interactive terminal. v101 is a date-based candidate, not a confirmed historical release. This acquisition does not require another simulation job.
+
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
