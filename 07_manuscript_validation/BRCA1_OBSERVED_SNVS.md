@@ -2,7 +2,32 @@
 
 The author-reported COSMIC preparation has passed: **354 breast BRCA1 observations**, of which **235** map as SNVs to the simulated CDS; these represent **174 distinct target substitutions**. There are 74 non-SNV/unknown-allele exclusions and 45 outside-target-CDS exclusions. The input archive, FASTA, map and processing-code hashes were verified against the local reference files. There were no unresolved phenotypes, reference mismatches or genomic-annotation conflicts. See [coordinate preparation](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md).
 
-This next job compares the checked SNV set with the existing full graph. It performs **no new simulation, download or package installation**.
+This stage compares the checked SNV set with the existing full graph. It performs **no new simulation, download or package installation**. The author has supplied a passing full-data annotation report; the command below is retained for independent reproduction, not resubmission of that completed run.
+
+## Completed full-data HPC annotation
+
+The full-data report passed with `annotation_passed=true`, `regenerated_allele_match_panel_created=true`, `bounded_software_check=false` and `fresh_simulation=false`. The input graph is `runs/brca1_sbs2_blosum20_n1000_2346048/`; mapped variants are `data/processed/cosmic_v101_grch38/brca1_breast_2346740/`. The supplied annotation report did not include its own Slurm job ID/output-directory suffix. Elapsed postprocessing time was **1.793 seconds**.
+
+| Quantity | Full-data result |
+| --- | ---: |
+| Distinct prepared breast SNVs | 174 (235 source observations) |
+| Exact single-substitution nodes matching a reported allele | **19** |
+| Multi-substitution nodes with at least one reported component allele | **288** |
+| Nodes with any reported component allele | **307** |
+| Distinct reported variants appearing anywhere among graph components | **27** |
+| Distinct reported variants matching single-substitution nodes | **19** |
+
+All **1,000** paths were reaudited, with **3,152** reconstructed DNA states and **3,623** single-substitution edges; no paths were incomplete. The 19 red-marked nodes follow the exact single-substitution rule below. The 288 multi-substitution nodes are component matches, not confirmed tumour genotypes. Neither 307/3,152 nor 19/174 should be interpreted as a mutation probability, enrichment statistic or measure of tumour prevalence from this descriptive comparison.
+
+The executable SHA256 (`5221bce3f3df771f62692b86c7d88ad8e3607848106712d43ca4a29b4f2528a6`) matches the local file. The four scientific graph hashes match the independently audited local graph; the variant/audit hashes match the preceding supplied preparation report. Reported annotation output hashes:
+
+- `s12_annotated_nodes.tsv`: `cba6f3a4361ece654ba26a996a229ccab1eee616278fbafe1f0dee695277f526`.
+- `s12_observed_variant_matches.tsv`: `127a7bba5f9dbf6c281e3366120eb86ad0af6ab83ecb6058e37f371b40bc2fe3`.
+- `figureS12_caption.txt`: `aefd1f966c0cb90b2cf5f1e5bafbfd2ac661232c6d682edd1f87b93cbc40160c`.
+- `figureS12_cosmic_single_snv_matches.png`: `02b2652cdfee9478b4fea2cd12b2ba11d7e4f7fe69c40e252650266b54f8dcd8`.
+- `figureS12_cosmic_single_snv_matches.pdf`: `b928a6ca2760c77337cd86835f4b2d6ff355e1c043c6dcecf7fca9344c3343b0`.
+
+These new observed-data artifacts remain on HPC and have not been independently opened locally. Final artwork review remains. This successful reconstruction creates a new, explicitly defined allele-match panel; the historical exact panel, release and node-matching rule remain unconfirmed.
 
 ## Submit one job on SeaWulf
 
@@ -58,7 +83,7 @@ PROJECT/results/brca1_cosmic_snv_matches_JOBID/
 
 Share the summary JSON. `annotation_passed=true`, `regenerated_allele_match_panel_created=true`, `bounded_software_check=false` and `fresh_simulation=false` describe successful full-data postprocessing. `original_figure_reproduced=false`, `historical_observation_rule_recovered=false` and the legacy `observed_cosmic_variant_overlay_reproduced=false` remain explicit because the historical panel's matching semantics have not been recovered. These are distinct from successful generation of the newly defined allele-match panel.
 
-The summary retains `observed_genotypes_confirmed=false`. The completed numerical/simulation analyses are unaffected. The real-data overlap counts must be read from this new HPC result before making a statement about how many of the 174 variants match. This is separate from the local plotting check, which used three synthetic alleles rather than actual COSMIC observations.
+The summary retains `observed_genotypes_confirmed=false`. The completed numerical/simulation analyses are unaffected. Use the full-data results above for the observed overlap counts. They are separate from the local plotting check, which used three synthetic alleles rather than actual COSMIC observations.
 
 ## Validation and portable execution
 

@@ -22,6 +22,8 @@ The recovered `brca-1_sbs2.svg` and PNG have no red observed-variant annotations
 
 The simulation graph source and historical artwork are therefore recovered. The table and rule connecting observed breast-cancer variants to red points remain unresolved within the inspected archive. A new COSMIC download requires a declared release, tissue filter, variant type, coordinate mapping and matching rule. It does not automatically recover the historical rule. The portable 100-path radial-layout example remains a separate reconstruction.
 
+**Subsequent reconstruction:** COSMIC v101/GRCh38 archives were downloaded, verified and filtered to 174 distinct breast SNVs in the simulated BRCA1 target coordinates. The [full-data graph annotation](BRCA1_OBSERVED_SNVS.md) passed on HPC, with 19 single-substitution allele matches and 288 multi-substitution nodes containing a reported component allele. The regenerated panel/caption use an explicit current matching definition; the historical source-table release and original red-point rule remain unrecovered. Artwork review remains separate from this numerical/provenance verification.
+
 ## Fingerprints
 
 The archive originals are unchanged; local research copies and a checksum manifest preserve the recovered files. Only the derived historical estimates and transcript IDs/names are bundled for this stage; the raw archive is not published.

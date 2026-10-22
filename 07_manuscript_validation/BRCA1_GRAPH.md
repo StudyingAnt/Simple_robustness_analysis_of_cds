@@ -16,7 +16,7 @@ For the independent observed-variant input, see [COSMIC v101/GRCh38 download ins
 
 The completed [breast selection and coordinate-mapping stage](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) used the two raw TARs and a frozen 22-segment GENCODE v40 map whose complete 5,592-nt CDS was independently verified against NC_000017.11 genomic sequence.
 
-**Mapping completion update:** the author supplied a passing full report: 354 breast observations, 235 accepted mapped observations, **174 distinct target SNVs**, no attention reasons. Both official archive hashes, FASTA, map and code hashes matched. The [graph allele-matching job](BRCA1_OBSERVED_SNVS.md) is now ready and reuses the existing 1,000 paths. It marks exactly one-substitution allele matches and records component matches separately without claiming observed multi-mutant genotypes.
+**Mapping and annotation completed:** the author supplied passing full reports: 354 breast observations, 235 accepted mapped observations, **174 distinct target SNVs**, no attention reasons. Both official archive hashes, FASTA, map and code hashes matched. The [graph allele-matching stage](BRCA1_OBSERVED_SNVS.md) passed using the existing 1,000 paths: **19 single-substitution allele-match nodes**, **288 multi-substitution nodes containing a reported component allele**. Component matches do not establish observed multi-mutant genotypes. New observed-data artwork review remains.
 
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub

@@ -80,7 +80,17 @@ The full corrected-package BRCA1 report passed on HPC: **1,000/1,000** complete 
 
 Reported hashes for `trajectory_counts.csv`, `s12_graph_nodes.csv`, `s12_graph_edges.csv` and `s12_reference.cdsplus.fa` are byte-identical to the corresponding local outputs. Thus agreement extends beyond means to path counts, state annotations, chronological connections, reference DNA and diagnostic coordinates. HPC output files were not directly accessed; the comparison uses the hashes supplied in the report. Image hashes are different and actual HPC artwork remains to be visually reviewed.
 
-The observed COSMIC variant overlay and its original matching rule are unresolved. `original_figure_reproduced` and `observed_cosmic_variant_overlay_reproduced` remain false, while `fresh_simulation`, `corrected_package_blosum_recalculation`, `simulation_passed` and `graph_audit_passed` are true. Use the existing graph for later annotation; no additional paths are required merely to add evidence-backed observed-variant annotations. See [BRCA1 graph execution and scope](BRCA1_GRAPH.md).
+Observed-variant preparation and a newly defined allele-match panel have subsequently passed as described below. The original historical matching rule remains unresolved. The simulation-stage `original_figure_reproduced` and `observed_cosmic_variant_overlay_reproduced` flags remain false, while `fresh_simulation`, `corrected_package_blosum_recalculation`, `simulation_passed` and `graph_audit_passed` are true. See [BRCA1 graph execution and scope](BRCA1_GRAPH.md).
+
+## S12 COSMIC observed-allele reconstruction completed
+
+The author supplied passing full-data mapping and annotation reports for COSMIC v101/GRCh38. Classification selected 354 breast BRCA1 observations; 235 mapped as SNVs to the simulated target CDS, giving **174 distinct substitutions**. The source transcript differs from the simulated transcript, so genomic positions were converted with a GENCODE v40 map and every accepted target reference allele was checked. There were no attention reasons. See [coordinate selection and exclusions](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md).
+
+The checked graph contains **19** single-substitution states whose reference-relative allele matches a reported breast SNV. Another **288** multi-substitution nodes contain at least one reported component allele, for **307** nodes with any component match. **27** distinct reported variants occur among graph components; **19** occur as single-substitution node matches. These are descriptive catalog/graph overlaps, not enrichment, tumour prevalence or confirmation of complete observed DNA genotypes.
+
+The annotation reran the full graph audit (1,000 complete paths, 3,152 states, 3,623 edges) without new simulation. Executable SHA256 `5221bce3f3df771f62692b86c7d88ad8e3607848106712d43ca4a29b4f2528a6` matches locally; the scientific graph hashes match the local audited outputs, and variant-file hashes match the supplied preparation report. Full-data flags are `annotation_passed=true`, `regenerated_allele_match_panel_created=true`, `bounded_software_check=false`, `fresh_simulation=false`.
+
+The PDF/PNG and standalone caption were generated on HPC. The new red marks use the explicit single-substitution allele rule in [the annotation guide](BRCA1_OBSERVED_SNVS.md). Historical release/annotation semantics remain unconfirmed, so the historical-reproduction flags remain false by design. `observed_genotypes_confirmed=false` also remains explicit. The actual new observed-data artwork has not yet been independently opened locally; visual review remains before final release.
 
 ## Provenance and remaining scope
 
@@ -92,4 +102,4 @@ The observed COSMIC variant overlay and its original matching rule are unresolve
 
 The downstream JSON's static `remaining_original_analyses` list includes the separate S1/S2 job. That list is not a cross-job status check: S1/S2 is now verified by its own successful report and must not be rerun merely because it appears there.
 
-The Figure 4 numerical loading review is complete. Finish final artwork checks and address the [recovered S11 sources and unresolved S12 observed-variant mapping](HISTORICAL_SUPPLEMENTARY_INPUTS.md). These successful core reports do not by themselves establish complete supplementary reproduction or a final tagged paper release.
+The Figure 4 numerical loading review, historical S11 postprocessing and S12 allele-match reconstruction are complete. Finish final artwork checks and manuscript wording, preserving the [historical-source limitations](HISTORICAL_SUPPLEMENTARY_INPUTS.md) and newly declared S12 matching rule. These successful reports do not establish recovery of the exact historical supplementary panel or a final tagged paper release.
