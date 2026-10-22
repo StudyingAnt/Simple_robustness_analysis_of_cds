@@ -27,7 +27,8 @@
       "s3_object": "grch38/cosmic/v101/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar",
       "s3_bucket": "cosmic-downloads-production",
       "release_date": "2024-11-19T14:52:54Z",
-      "sha256": "9464b5a72f90747031fb2d13e4b42fca121f2f2dbe31643d2cff756d93e2c499"
+      "sha256": "9464b5a72f90747031fb2d13e4b42fca121f2f2dbe31643d2cff756d93e2c499",
+      "api_bucket": "downloads"
     },
     {
       "product": "classification",
@@ -35,7 +36,10 @@
       "s3_object": "grch38/cosmic/v101/Cosmic_Classification_Tsv_v101_GRCh38.tar",
       "s3_bucket": "cosmic-downloads-production",
       "release_date": "2024-11-19T14:52:54Z",
-      "sha256": "54f9e8d31a5cd768cff9c7762dc7e286881b0c9ea0bb05105f20a9522b188135"
+      "sha256": "54f9e8d31a5cd768cff9c7762dc7e286881b0c9ea0bb05105f20a9522b188135",
+      "api_bucket": "downloads"
     }
-  ]
+  ],
+  "api_instructions_verified_on": "2026-10-21",
+  "api_bucket_source": "Official v101 MutantCensus scripted-download popup supplied by the author."
 }

@@ -19,6 +19,38 @@ The original source-table filename and observation-to-graph matching rule remain
 
 ## Interactive scripted download
 
+### Direct file-selection links
+
+1. [Sign in to COSMIC](https://cancer.sanger.ac.uk/cosmic/auth/login).
+2. [v101 Census Genes Mutations](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/mutantcensus): select **Cosmic_MutantCensus_Tsv_v101_GRCh38.tar**.
+3. [v101 Classification](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification): select **Cosmic_Classification_Tsv_v101_GRCh38.tar**.
+
+Click the selected filename to open the download popup. The `/download/cancer-mutation-census` landing page describes the separate Cancer Mutation Census product; use the direct COSMIC product links above for these inputs.
+
+### Official command-line workflow
+
+The author supplied the v101 MutantCensus popup instructions on 2026-10-21. They describe three steps:
+
+1. Encode the registered email and password, joined by a colon, as Base64. This is a reusable account credential, not encryption. The Python downloader performs this in memory after hidden password input.
+2. Request a temporary download URL with the Basic authentication header. The exact public request URL for this archive is [the v101 MutantCensus scripted-download API](https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar&bucket=downloads):
+
+   ```bash
+   # Template only; prefer the Python downloader's hidden credential prompts.
+   curl -H 'Authorization: Basic <BASE64_AUTHENTICATION_STRING>' \
+     'https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar&bucket=downloads'
+   ```
+
+3. Download from the returned URL **without** sending the account authentication header:
+
+   ```bash
+   curl '<TEMPORARY_DOWNLOAD_URL_FROM_STEP_2>' \
+     --output Cosmic_MutantCensus_Tsv_v101_GRCh38.tar
+   ```
+
+The popup states that the temporary URL is valid for one hour. The placeholders above are deliberately not real credentials or live signed URLs. For actual terminal use, the Python downloader below avoids putting account credentials into command arguments or history. Classification follows the same workflow with its own archive path.
+
+**API correction:** the official request uses `bucket=downloads`. This is the API alias, distinct from the public metadata's physical storage bucket `cosmic-downloads-production`. Both are now represented separately in the pinned manifest. Earlier preparation used the storage bucket in the API query; that unverified request returned HTTP 400. The alias is corrected; an authenticated run is still needed to establish end-to-end success.
+
 The [official download page](https://cancer.sanger.ac.uk/cosmic/download/cosmic) provides **Scripted download** in the selected file's popup. The current site's published instructions use Basic authentication to request a temporary signed URL from:
 
 ```text
@@ -27,17 +59,22 @@ https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=...&buc
 
 Use this API rather than the older `/cosmic/file_download/...` examples. An authorized COSMIC account is required. Browser login is separate from command-line authentication. Never put passwords, Basic authorization strings or signed URLs in Git, shell arguments or Slurm scripts. The downloader prompts for email and a hidden password, keeps authentication in memory, and sends it only to the fixed COSMIC API. Storage requests carry no account Authorization header. Redirects are rejected; signed URLs are not printed or included in receipts.
 
-On SeaWulf, run in an **interactive terminal**:
+On SeaWulf, use an interactive **Slurm compute-node allocation** for downloads:
 
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
-conda activate /gpfs/projects/DamaghiGroup/projects/sinabro_pub/sinabro-revision
-
-PROJECT=/gpfs/projects/DamaghiGroup/projects/sinabro_pub
-ANALYSIS_DIR="${PROJECT}/Simple_robustness_analysis_of_cds"
-python "${ANALYSIS_DIR}/01_data_downloading_and_preprocessing/download_cosmic_variants.py" \
-  --out-dir "${PROJECT}/data/raw/cosmic/v101/GRCh38"
+srun --job-name=cosmic-download --partition=short-96core-shared \
+  --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=2G --time=00:30:00 \
+  --pty bash -lc '
+    set -eo pipefail
+    module load anaconda/3
+    source "$(conda info --base)/etc/profile.d/conda.sh"
+    PROJECT=/gpfs/projects/DamaghiGroup/projects/sinabro_pub
+    conda activate "${PROJECT}/sinabro-revision"
+    python "${PROJECT}/Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/download_cosmic_variants.py" \
+      --out-dir "${PROJECT}/data/raw/cosmic/v101/GRCh38"
+  '
 ```
 
 Enter account details only at the terminal prompts. No new installation is needed: the script uses the Python standard library (Python 3.9 or later). On other computers, use the local checkout and replace `--out-dir` with the desired absolute raw-data directory. The Python script has no SeaWulf paths or scheduler settings.
@@ -55,6 +92,8 @@ If authentication or archive access is unavailable, the program stops; it does n
 In the browser select **v101**, the product, **GRCh38**, then **Download in browser**. Save both original `.tar` archives in the raw directory above, then verify without account input:
 
 ```bash
+PROJECT=/gpfs/projects/DamaghiGroup/projects/sinabro_pub
+ANALYSIS_DIR="${PROJECT}/Simple_robustness_analysis_of_cds"
 python "${ANALYSIS_DIR}/01_data_downloading_and_preprocessing/download_cosmic_variants.py" \
   --out-dir "${PROJECT}/data/raw/cosmic/v101/GRCh38" --verify-only
 ```
@@ -65,4 +104,44 @@ Alternatively add `--signed-links` to the normal command to paste each archive's
 
 Archives stay compressed and unchanged outside the code checkout. Each successful run writes `download_verification_<id>.json` with the pinned release/build, official hashes, source-manifest hash and verification time. Existing matching archives are reused without login/network; existing mismatched files are preserved and cause an error. Interrupted or incorrect downloads are not published as final archives.
 
-Next inspect TSV headers, select BRCA1 breast-cancer single-nucleotide substitutions, and check coordinates/reference alleles against **ENST00000357654.9**. Record provenance, exclusions and the annotation definition explicitly. Existing 1,000-path simulations do not need repeating. Keep downloaded COSMIC tables in raw data; this repository distributes retrieval code and public checksums.
+### First step after receiving the MutantCensus TAR
+
+Only the MutantCensus TAR is needed for the first source-extraction job. It checks the official SHA256, inspects TAR membership and TSV headers, and streams **every exact-BRCA1 row** into a smaller TSV. It retains duplicate sample observations, indels and other transcripts. Nothing is assigned to a simulated node at this stage. The raw TAR is not changed and no network or authentication is needed.
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+mkdir -p logs
+sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_brca1_seawulf.slurm
+```
+
+Default input:
+
+```text
+PROJECT/data/raw/cosmic/v101/GRCh38/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar
+```
+
+If the file was saved elsewhere, pass its existing absolute path; moving or unpacking it first is unnecessary:
+
+```bash
+COSMIC_MUTANTCENSUS_TAR=/ABSOLUTE/PATH/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar \
+  sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_brca1_seawulf.slurm
+```
+
+The job requests one CPU, 4 GB and 30 minutes (allocation limits). Outputs are placed in **`PROJECT/data/processed/cosmic_v101_grch38/brca1_source_JOBID/`**:
+
+- `cosmic_brca1_preparation_summary.json`: hash verification, archive members, headers, source/BRCA1 row counts and transcript/mutation-type counts.
+- `brca1_source_rows.tsv`: complete source columns for the retained BRCA1 observations.
+- `transcript_counts.csv`: observation counts per source transcript.
+
+Check `logs/cosmic-brca1-input-JOBID.out` and share the summary JSON. `preparation_passed: true` verifies this extraction; **`breast_filter_applied: false` is intentional** because Classification has not been used. A production run on the author's real archive remains to be verified; local tests use synthetic archives rather than redistributed COSMIC observations.
+
+Portable equivalent with the existing environment active:
+
+```bash
+python 01_data_downloading_and_preprocessing/prepare_cosmic_brca1.py \
+  --archive /PATH/TO/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar \
+  --out-dir /PATH/TO/NEW_PROCESSED_DIRECTORY
+```
+
+Then use the Classification archive to select breast samples and examine single-nucleotide substitutions/reference alleles against **ENST00000357654.9**. Record exclusions and matching semantics explicitly. Existing 1,000-path simulations do not need repeating. Keep raw and processed COSMIC observations outside Git; this repository distributes retrieval/processing code and public checksums.

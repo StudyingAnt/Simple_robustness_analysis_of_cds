@@ -54,7 +54,8 @@ def checked_url(url, record):
 
 
 def obtain_url(opener, endpoint, record, authorization):
-    query = urllib.parse.urlencode({"path": record["s3_object"], "bucket": record["s3_bucket"]})
+    # The public API bucket alias differs from the physical storage bucket name.
+    query = urllib.parse.urlencode({"path": record["s3_object"], "bucket": record["api_bucket"]})
     request = urllib.request.Request(endpoint + "?" + query, headers={
         "Authorization": authorization, "Accept": "application/json"})
     try:

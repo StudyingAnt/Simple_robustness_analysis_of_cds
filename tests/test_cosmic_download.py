@@ -17,6 +17,7 @@ class CosmicDownloadTests(unittest.TestCase):
     def setUp(self):
         self.payload = b"test archive payload"
         self.record = {"filename": "Cosmic_Test.tar", "s3_bucket": "cosmic-downloads-production",
+                       "api_bucket": "downloads",
                        "s3_object": "grch38/cosmic/v101/Cosmic_Test.tar",
                        "sha256": hashlib.sha256(self.payload).hexdigest()}
         self.url = "https://cosmic-downloads-production.s3.eu-west-2.amazonaws.com/" + self.record["s3_object"] + "?signature=SECRET"
@@ -27,7 +28,7 @@ class CosmicDownloadTests(unittest.TestCase):
         url = cosmic.obtain_url(opener, "https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted", self.record, "Basic PRIVATE")
         request = opener.open.call_args.args[0]
         self.assertEqual(request.get_header("Authorization"), "Basic PRIVATE")
-        self.assertIn("bucket=cosmic-downloads-production", request.full_url)
+        self.assertIn("bucket=downloads", request.full_url)
         opener.open.return_value = io.BytesIO(self.payload)
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / self.record["filename"]
