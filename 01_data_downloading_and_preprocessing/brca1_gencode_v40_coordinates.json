@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "assembly": "GRCh38.p13",
+  "gencode_release": 40,
+  "gene": "BRCA1",
+  "transcript": "ENST00000357654.9",
+  "chromosome": "17",
+  "strand": "-",
+  "cds_nt": 5592,
+  "includes_terminal_stop_codon": true,
+  "cds_sha256": "2a8bfbf3a33c29bc232c0624f2e685fbe1ca2f114d7e452e1e09d87c597e1929",
+  "cdsplus_sha256": "6f6ab596a2d5b4a38126653a5c0fe7b7dfccd61035e98a3fa74e1c132ea87c16",
+  "coordinate_convention": "1-based inclusive genomic and CDS positions; CDS ordered in transcript orientation",
+  "source_gtf": {
+    "url": "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_40/gencode.v40.annotation.gtf.gz",
+    "sha256": "6254e1c52470d74c37f5a7969ee5b1b7debdd9d6bbd9bf722e65fc3d873f3104",
+    "official_md5": "14a867b82917c8c3006838c3a5053a3e",
+    "md5_manifest_url": "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_40/MD5SUMS"
+  },
+  "segments": [
+    {
+      "genome_start": 43124017,
+      "genome_end": 43124096,
+      "cds_start": 1,
+      "cds_end": 80
+    },
+    {
+      "genome_start": 43115726,
+      "genome_end": 43115779,
+      "cds_start": 81,
+      "cds_end": 134
+    },
+    {
+      "genome_start": 43106456,
+      "genome_end": 43106533,
+      "cds_start": 135,
+      "cds_end": 212
+    },
+    {
+      "genome_start": 43104868,
+      "genome_end": 43104956,
+      "cds_start": 213,
+      "cds_end": 301
+    },
+    {
+      "genome_start": 43104122,
+      "genome_end": 43104261,
+      "cds_start": 302,
+      "cds_end": 441
+    },
+    {
+      "genome_start": 43099775,
+      "genome_end": 43099880,
+      "cds_start": 442,
+      "cds_end": 547
+    },
+    {
+      "genome_start": 43097244,
+      "genome_end": 43097289,
+      "cds_start": 548,
+      "cds_end": 593
+    },
+    {
+      "genome_start": 43095846,
+      "genome_end": 43095922,
+      "cds_start": 594,
+      "cds_end": 670
+    },
+    {
+      "genome_start": 43091435,
+      "genome_end": 43094860,
+      "cds_start": 671,
+      "cds_end": 4096
+    },
+    {
+      "genome_start": 43090944,
+      "genome_end": 43091032,
+      "cds_start": 4097,
+      "cds_end": 4185
+    },
+    {
+      "genome_start": 43082404,
+      "genome_end": 43082575,
+      "cds_start": 4186,
+      "cds_end": 4357
+    },
+    {
+      "genome_start": 43076488,
+      "genome_end": 43076614,
+      "cds_start": 4358,
+      "cds_end": 4484
+    },
+    {
+      "genome_start": 43074331,
+      "genome_end": 43074521,
+      "cds_start": 4485,
+      "cds_end": 4675
+    },
+    {
+      "genome_start": 43070928,
+      "genome_end": 43071238,
+      "cds_start": 4676,
+      "cds_end": 4986
+    },
+    {
+      "genome_start": 43067608,
+      "genome_end": 43067695,
+      "cds_start": 4987,
+      "cds_end": 5074
+    },
+    {
+      "genome_start": 43063874,
+      "genome_end": 43063951,
+      "cds_start": 5075,
+      "cds_end": 5152
+    },
+    {
+      "genome_start": 43063333,
+      "genome_end": 43063373,
+      "cds_start": 5153,
+      "cds_end": 5193
+    },
+    {
+      "genome_start": 43057052,
+      "genome_end": 43057135,
+      "cds_start": 5194,
+      "cds_end": 5277
+    },
+    {
+      "genome_start": 43051063,
+      "genome_end": 43051117,
+      "cds_start": 5278,
+      "cds_end": 5332
+    },
+    {
+      "genome_start": 43049121,
+      "genome_end": 43049194,
+      "cds_start": 5333,
+      "cds_end": 5406
+    },
+    {
+      "genome_start": 43047643,
+      "genome_end": 43047703,
+      "cds_start": 5407,
+      "cds_end": 5467
+    },
+    {
+      "genome_start": 43045678,
+      "genome_end": 43045802,
+      "cds_start": 5468,
+      "cds_end": 5592
+    }
+  ],
+  "source_features": [
+    {
+      "feature": "stop_codon",
+      "genome_start": 43045678,
+      "genome_end": 43045680,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43045681,
+      "genome_end": 43045802,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43047643,
+      "genome_end": 43047703,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43049121,
+      "genome_end": 43049194,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43051063,
+      "genome_end": 43051117,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43057052,
+      "genome_end": 43057135,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43063333,
+      "genome_end": 43063373,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43063874,
+      "genome_end": 43063951,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43067608,
+      "genome_end": 43067695,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43070928,
+      "genome_end": 43071238,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43074331,
+      "genome_end": 43074521,
+      "phase": "1"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43076488,
+      "genome_end": 43076614,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43082404,
+      "genome_end": 43082575,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43090944,
+      "genome_end": 43091032,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43091435,
+      "genome_end": 43094860,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43095846,
+      "genome_end": 43095922,
+      "phase": "1"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43097244,
+      "genome_end": 43097289,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43099775,
+      "genome_end": 43099880,
+      "phase": "0"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43104122,
+      "genome_end": 43104261,
+      "phase": "2"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43104868,
+      "genome_end": 43104956,
+      "phase": "1"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43106456,
+      "genome_end": 43106533,
+      "phase": "1"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43115726,
+      "genome_end": 43115779,
+      "phase": "1"
+    },
+    {
+      "feature": "CDS",
+      "genome_start": 43124017,
+      "genome_end": 43124096,
+      "phase": "0"
+    }
+  ]
+}

@@ -176,7 +176,7 @@ The source observations remain on HPC; their content has not been independently 
 
 **Coordinate check:** the local pinned GENCODE v40 CDS-plus FASTA contains source transcript ENST00000471181.7 (**BRCA1-210, 5,655 coding nt**) and simulation target ENST00000357654.9 (**BRCA1-203, 5,592 coding nt**). Their CDS hashes differ. Source `MUTATION_CDS` positions therefore must not be copied directly into target graph coordinates. Use the GRCh38 genomic position/alleles with the target's GENCODE v40 CDS annotation, account for transcript strand and verify each mapped reference allele against the target sequence. The target sequence and completed graph do not need to change for annotation.
 
-Classification is still required to identify breast samples through `COSMIC_PHENOTYPE_ID`. Acquire [Cosmic_Classification_Tsv_v101_GRCh38.tar](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification) into the same raw directory before the tissue-selection stage. The coordinate-mapping implementation and observed-variant overlay remain pending; this source-extraction stage does not perform them.
+Classification is required to identify breast samples through `COSMIC_PHENOTYPE_ID`. The author subsequently reported placing it in the same raw directory. **Next executable stage: [breast selection and target-CDS mapping](COSMIC_BREAST_VARIANTS.md).** Its portable Python and Slurm wrapper are ready; the frozen GENCODE map was checked independently against genomic sequence. Full-data mapping results and the observed-variant overlay remain pending. This first source-extraction stage does not perform either.
 
 Portable equivalent with the existing environment active:
 

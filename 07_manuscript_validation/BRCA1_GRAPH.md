@@ -14,6 +14,8 @@ For the independent observed-variant input, see [COSMIC v101/GRCh38 download ins
 
 **Observed-input update:** the author-reported HPC extraction passed for 1,984,965 source rows and retained 3,037 BRCA1 observations, all annotated on **ENST00000471181.7**. Local GENCODE v40 sequence checks show this source CDS is 5,655 nt, whereas the simulated **ENST00000357654.9** CDS is 5,592 nt. Source CDS coordinates cannot be reused directly. Classification-based breast selection and GRCh38 genomic-to-target-CDS mapping with reference-allele checks are required before graph annotation. These stages remain pending; the existing graph needs no new trajectories.
 
+The next [breast selection and coordinate-mapping job](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) is ready for the two raw TARs. It includes a frozen 22-segment GENCODE v40 coordinate map whose complete 5,592-nt CDS was independently verified against NC_000017.11 genomic sequence. Real COSMIC mapping results must still be reviewed before graph annotation.
+
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only

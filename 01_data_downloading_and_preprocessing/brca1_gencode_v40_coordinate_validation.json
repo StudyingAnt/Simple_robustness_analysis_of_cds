@@ -1,0 +1,11 @@
+{
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_000017.11&seq_start=43045678&seq_stop=43124096&rettype=fasta&retmode=text",
+  "chromosome_accession": "NC_000017.11",
+  "genome_start": 43045678,
+  "genome_end": 43124096,
+  "region_nt": 78419,
+  "region_sequence_sha256": "67cc39bb6228c7b1daa485ae39e99e30b35bc6e928b5345a7d237973aef9d491",
+  "mapped_cds_nt": 5592,
+  "mapped_cds_sha256": "2a8bfbf3a33c29bc232c0624f2e685fbe1ca2f114d7e452e1e09d87c597e1929",
+  "pinned_target_cds_match": true
+}
