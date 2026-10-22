@@ -134,7 +134,23 @@ The job requests one CPU, 4 GB and 30 minutes (allocation limits). Outputs are p
 - `brca1_source_rows.tsv`: complete source columns for the retained BRCA1 observations.
 - `transcript_counts.csv`: observation counts per source transcript.
 
-Check `logs/cosmic-brca1-input-JOBID.out` and share the summary JSON. `preparation_passed: true` verifies this extraction; **`breast_filter_applied: false` is intentional** because Classification has not been used. A production run on the author's real archive remains to be verified; local tests use synthetic archives rather than redistributed COSMIC observations.
+Check `logs/cosmic-brca1-input-JOBID.out` and share the summary JSON. `preparation_passed: true` verifies this extraction; **`breast_filter_applied: false` is intentional** because Classification has not been used. Local tests use synthetic archives rather than redistributed COSMIC observations.
+
+### Completed author-reported HPC extraction
+
+On 2026-10-21 (New York), the author supplied a successful HPC report with UTC timestamp `2026-10-22T02:25:46.298301+00:00`. The official archive SHA256 matched. The reported processing-script SHA256 (`3adb18b3f623a53699bc32b5951ae256e90e7eb4dd45b56b5e065ff584d1ddcf`) and source-manifest SHA256 (`ba7900d9e37b6d03b8a411be15344f468037353aab70b713a108ac31e145de1e`) also match the local files.
+
+- **1,984,965 source rows** scanned; **3,037 BRCA1 observations** retained.
+- All BRCA1 observations use source transcript **ENST00000471181.7**.
+- Reported `brca1_source_rows.tsv` SHA256: `4d72c7d9c0c6e2fce51885308adeae286a687e51dbaa5d3f5ffadc30d8e281c9`.
+- Reported `transcript_counts.csv` SHA256: `4ea951b03f1a2b4ce6d396583b4d90a017f4b130be546e465ce0f5d552ee1a83`.
+- No tissue, SNV or target-coordinate filter has been applied. Counts represent source observations, not distinct variants or independent patients.
+
+The source observations remain on HPC; their content has not been independently inspected locally. The report omitted its Slurm job ID/output-directory suffix. Successful source extraction does not require resubmission.
+
+**Coordinate check:** the local pinned GENCODE v40 CDS-plus FASTA contains source transcript ENST00000471181.7 (**BRCA1-210, 5,655 coding nt**) and simulation target ENST00000357654.9 (**BRCA1-203, 5,592 coding nt**). Their CDS hashes differ. Source `MUTATION_CDS` positions therefore must not be copied directly into target graph coordinates. Use the GRCh38 genomic position/alleles with the target's GENCODE v40 CDS annotation, account for transcript strand and verify each mapped reference allele against the target sequence. The target sequence and completed graph do not need to change for annotation.
+
+Classification is still required to identify breast samples through `COSMIC_PHENOTYPE_ID`. Acquire [Cosmic_Classification_Tsv_v101_GRCh38.tar](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification) into the same raw directory before the tissue-selection stage. The coordinate-mapping implementation and observed-variant overlay remain pending; this source-extraction stage does not perform them.
 
 Portable equivalent with the existing environment active:
 
