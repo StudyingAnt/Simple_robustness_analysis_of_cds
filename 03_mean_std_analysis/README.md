@@ -8,37 +8,22 @@ From the analysis repository root:
 
 ```bash
 python 03_mean_std_analysis/analyze_signature_distributions.py \
-  --aggregation-dir /PATH/TO/PROJECT/runs/aggregation_JOBID \
-  --out-dir /PATH/TO/PROJECT/results/signature_distributions_001 \
-  --workers 8 --expected-records 73214 --expected-signatures 79
+  --aggregation-dir /PATH/TO/PROJECT/runs/human_export \
+  --out-dir /PATH/TO/PROJECT/results/signature_distributions \
+  --workers 1 --expected-records 73214 --expected-signatures 79
 ```
 
 The output directory must be new and outside the aggregation directory. Intermediate files are staged separately and the completed directory is published only after success. A failure returns a nonzero exit code and leaves the original export unchanged. Keep the input export fixed during execution.
 
 For a smaller audited export, omit the two expected-dimension assertions. Defaults: one worker, 15 signatures per page, 256 density evaluation points and PNG resolution 200 dpi. --workers, --page-size, --density-points (at least 32) and --dpi can be supplied explicitly. The Python code has no scheduler paths or required Slurm variables. The saved aggregation manifest supplies the signature membership/order and dataset dimensions.
 
-## SeaWulf submission for the completed full export
+## Check the output
 
-Submit from the HPC project root:
+Read `analysis_summary.json` in your chosen output directory. It should report `analysis_passed=true` and `summary_and_rank_agreement=true`. Full human data should report 73,214 transcripts and 79 signatures. For the small included example, use its `example_export` directory and omit `--expected-records` and `--expected-signatures`; two signatures and three synthetic transcripts are not manuscript results.
 
-```bash
-cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
-git -C Simple_robustness_analysis_of_cds pull --ff-only
-mkdir -p logs
-export SINABRO_DISTRIBUTIONS_INPUT="$PWD/runs/aggregation_2305071"
-sbatch Simple_robustness_analysis_of_cds/03_mean_std_analysis/analyze_signature_distributions_seawulf.slurm
-```
+## Author execution
 
-The wrapper requests one shared node, eight CPUs, 8 GB RAM and a four-hour walltime limit. The limit is not a runtime estimate. It activates PROJECT/sinabro-revision automatically. SINABRO_DISTRIBUTIONS_INPUT is required, so a different export cannot be selected implicitly. PROJECT defaults to the Slurm submission directory. ANALYSIS_DIR, SINABRO_ENV and SINABRO_PYTHON can be overridden as in the earlier jobs. Set SINABRO_DISTRIBUTIONS_OUTPUT to override the default PROJECT/results/signature_distributions_JOBID with another new directory.
-
-After completion, replace JOBID with the submitted job number:
-
-```bash
-cat results/signature_distributions_JOBID/analysis_summary.json
-tail -n 100 logs/distributions-JOBID.out
-```
-
-Expected integrity checks: analysis_passed=true, summary_and_rank_agreement=true, transcripts=73214 and signatures=79. leaders reports the observed highest mean and across-transcript SD for each group. manuscript_claim_checks reports SBS2's actual rank under each metric; the program does not force SBS2 to rank first. A difference from the manuscript's claim is a scientific result to inspect, not a file-integrity failure.
+The authors ran the full-data analysis on Stony Brook University's SeaWulf system, which requires institutional access. The [actual submission settings and run record](author_hpc/README.md) are retained separately. The portable command above needs no HPC account; adapt the optional Slurm example to your own site if needed.
 
 ## Checks and statistical definitions
 

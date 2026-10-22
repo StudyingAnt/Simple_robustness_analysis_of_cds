@@ -1,56 +1,69 @@
-# Bat references, COSMIC controls and experimental APOBEC profiles
+# Bat CDS preparation and COSMIC calculations
 
-This stage is separate from the completed human COSMIC run. The manuscript uses Molossus molossus assembly HLmolMol2 and Myotis myotis assembly HLmyoMyo6 from the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/). Keep these assemblies and annotation versions for the initial reproduction rather than silently replacing them with newer assemblies.
+Run from the analysis repository root with the [pinned environment](../CONDA_SETUP.md) active. The commands below run on your own computer without a scheduler or institutional account. Use an absolute `PROJECT` directory outside the source checkout and set `WORKERS` to your available CPU processes (1 is valid).
 
-For the checked download -> CDS extraction -> bounded serial/parallel sequence, follow [HPC_REPRODUCTION.md](HPC_REPRODUCTION.md), one stage at a time. After the pilot passes, [COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) describes full eight-signature execution, archive auditing and bat-specific table export. Local real-reference extraction and pilot evidence are summarized in [archived bat reference checks](../historical/validation/BAT_REFERENCE_CHECKS.md). The reference full COSMIC audit passed (job 2327882); export (job 2328086) passed with both frozen transcript populations and zero incomplete paths. The separate [six-enzyme experimental workflow](experimental_apobec/README.md) passed its full three-dataset HPC audit (job 2336448); the table export (job 2338741) provides all 18 dataset/profile summaries without resimulation.
-
-## Download raw references independently
-
-The portable download_bat_inputs.py uses only the Python standard library. bat1k_pilot_sources.json records official URLs, expected index sizes and checksums. Both genome hashes are now pinned to a completed, gzip-validated official-source download on 2026-10-17; they are not independent publisher-provided checksums. Downloads check sizes, configured hashes and gzip CRC, then publish a new raw-data directory with download_manifest.json. No CDS extraction or simulation is performed by the downloader. A failed download publishes no completed directory; rerun into a new destination after fixing the failure.
-
-From the HPC project root:
+## 1. Download the original assemblies and annotations
 
 ```bash
-cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
-git -C Simple_robustness_analysis_of_cds pull --ff-only
-mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/download_bat_inputs_seawulf.slurm
-```
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+WORKERS=1
 
-Default destination: PROJECT/data/raw/bat1k_pilot_2020, which must not already exist. Set SINABRO_BAT_RAW to another new directory if needed. The wrapper activates PROJECT/sinabro-revision, requests one shared CPU, 4 GB and a four-hour limit, and downloads README, both allAnnotatedIsoforms BED12 files, and both compressed genome FASTAs. The two genome files total 1,394,004,198 bytes compressed; annotation/documentation add approximately 17 MB. The limit is not a measured runtime. This job can run independently of human PCA/statistics work.
-
-On another computer, from the analysis repository root:
-
-```bash
 python 06_Bat_genome/download_bat_inputs.py \
-  --out-dir /PATH/TO/PROJECT/data/raw/bat1k_pilot_2020
+  --out-dir "$PROJECT/data/raw/bat1k_pilot_2020"
 ```
 
-For the small files alone, use --annotations-only and a separate new output directory. Genomes remain compressed in this stage. CDS extraction and scientific input validation are separate steps.
+The reference is the [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/): HLmolMol2 (*Molossus molossus*) and HLmyoMyo6 (*Myotis myotis*). Here “Pilot” is part of the source project's name, not a required preliminary simulation. Two compressed genomes total about 1.4 GB; annotations add about 17 MB. The downloader verifies the pinned source hashes, sizes and gzip integrity and writes `download_manifest.json`.
 
-## Historical cohort and checked CDS extraction
+## 2. Extract the frozen CDS-plus cohorts
 
-The historical make_sinabro_input_*_all.py scripts concatenate every BED exon without clipping to thickStart/thickEnd. BED block definitions describe exons, while thickStart/thickEnd delimit the coding segment in these gene annotations; see [UCSC BED documentation](https://genome.ucsc.edu/FAQ/FAQformat.html#format1). A transcript can therefore have untranslated exon sequence outside its CDS.
+```bash
+for SPECIES in molMol2 myoMyo6; do
+  python 06_Bat_genome/extract_bat_cds.py \
+    --raw-dir "$PROJECT/data/raw/bat1k_pilot_2020" \
+    --out-dir "$PROJECT/data/processed/bat1k_historical_v1/$SPECIES" \
+    --species "$SPECIES"
+done
+```
 
-Inspection of the official annotation snapshots downloaded on 2026-10-17 found:
+Expected populations: **31,185** Molossus and **23,213** Myotis transcripts, as fixed by [cohorts/](cohorts/README.md). Outputs per species include `SPECIES.cdsplus.fa`, `transcript_qc.csv` and `extraction_manifest.json`. Every frozen transcript must pass extraction; the program does not select new isoforms. Internal-stop transcripts (383 Molossus, 79 Myotis) remain in the full inputs and are flagged.
 
-| Annotation | BED transcripts | Outer transcript span differs from coding span |
-| --- | ---: | ---: |
-| HLmolMol2 | 55,697 | 23,975 |
-| HLmyoMyo6 | 47,391 | 23,665 |
+## 3. Run the eight COSMIC signatures
 
-However, every ID in the historical result tables (31,185 Molossus and 23,213 Myotis transcripts) matches a BED record with equal transcript/CDS outer bounds. No outer-boundary UTR discrepancy was found in these retained cohorts. The versioned lists in cohorts/ preserve those populations explicitly. extract_bat_cds.py checks the source/cohort hashes and coordinate agreement, extracts coding exon blocks and genomic flanks on both strands, and requires every frozen transcript to pass sequence validation. It does not admit additional isoforms from the larger annotation. The original make_sinabro_input_* files remain unchanged.
+```bash
+for SPECIES in molMol2 myoMyo6; do
+  python 02_run_sinabro/run_rums.py \
+    --input "$PROJECT/data/processed/bat1k_historical_v1/$SPECIES/$SPECIES.cdsplus.fa" \
+    --out-dir "$PROJECT/runs/bat_cosmic_n1000_seed42/$SPECIES" \
+    --signatures SBS1 SBS2 SBS3 SBS4 SBS6 SBS9 SBS13 SBS18 \
+    --n-traj 1000 --seed 42 --max-steps 10000 --workers "$WORKERS"
+done
+```
 
-Local extraction from both actual genomes passed with the original transcript counts. Internal stops were found in 383 Molossus and 79 Myotis transcripts; these remain in the full FASTAs and are flagged in QC, matching the historical filtering policy. The bounded pilot omits them and records that exclusion. The original historical FASTAs have not been recovered, so this is not a claim of byte identity with archived original inputs. Transcript IDs do not constitute gene or orthologue mappings.
+The complete calculation is **435,184,000 paths** and may take substantial time on a personal computer. This is the manuscript configuration, not a short example. The stopping criterion is the first protein-sequence change. The fixed COSMIC v3.3.1 GRCh37 label identifies the profile table; bat coordinates remain those of the original Bat1K assemblies. These direct commands do not require a pilot report.
 
-NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC SBS context is centered on the mutated base. The [experimental runner](experimental_apobec/README.md) checks strand expansion, mutation-target bounds and available flanks explicitly. It preserves the original one-base CDS flanks and requires the full NNC context. Experimental profiles are handled separately from the COSMIC runner.
+## 4. Audit and export
 
-## Analysis and provenance
+```bash
+python 06_Bat_genome/process_bat_results.py \
+  --stage audit --processed-root "$PROJECT/data/processed/bat1k_historical_v1" \
+  --run-root "$PROJECT/runs/bat_cosmic_n1000_seed42" \
+  --out-root "$PROJECT/runs/bat_cosmic_audit" --n-traj 1000 --workers "$WORKERS"
 
-The two bat COSMIC runs contain 435,184,000 paths in total. Applying all six experimental enzyme profiles to human and both bats contains 765,672,000 paths. Full HPC audit logs for both campaigns report no invalid or incomplete paths. These counts describe completed simulation scope, not biological replicates or evidence of agreement with every manuscript claim.
+python 06_Bat_genome/process_bat_results.py \
+  --stage export --processed-root "$PROJECT/data/processed/bat1k_historical_v1" \
+  --run-root "$PROJECT/runs/bat_cosmic_n1000_seed42" \
+  --audit-root "$PROJECT/runs/bat_cosmic_audit" \
+  --out-root "$PROJECT/runs/bat_cosmic_export" --n-traj 1000 --workers "$WORKERS"
+```
 
-Use [the manuscript analysis workflow](../07_manuscript_validation/README.md) to compare the audited exports, generate PCA/statistical tables and plot the species panels. The native-process panel compares human COSMIC SBS2 with Molossus APOBEC3A and Myotis APOBEC3A3; applying a single fixed enzyme profile to all three genomes is a different comparison. Both are reported explicitly.
+Read `audit_manifest.json` and `export_manifest.json`: both should have `stage_passed=true`, with both full populations and no incomplete paths. Each species export contains signature summaries and transcript matrices. Then prepare the [six experimental enzyme profiles](experimental_apobec/README.md) and run the [cross-species manuscript analyses](../07_manuscript_validation/README.md).
 
-The owner-authorized source workbook is included under `experimental_apobec/source_data/`. Preparation stages a verified copy into project `data/raw/`, preserves its motif-average values and normalizes per-site NNC preferences. The exact historical probability CSV was not recovered, so the generated profiles are labelled as a documented reconstruction. See [profile preparation and execution](experimental_apobec/README.md) for the conversion policy, profile names, checksums and commands.
+## Method and interpretation
 
-The historical transcript populations are frozen. Their IDs alone do not provide gene or one-to-one orthologue mappings. The original transcript-level comparisons must not be interpreted as matched orthologue tests or as independent biological replicates. Raw experimental reads and the upstream assay-to-workbook pipeline have not been reprocessed by this workflow.
+Extraction checks coding boundaries, exon order, strand, source hashes and frozen IDs. Historical exon-concatenation scripts did not clip every BED exon to its coding bounds, but all retained cohort IDs in these snapshots have equal transcript/CDS outer bounds. The current extractor checks this agreement and genomic flanks explicitly. Recovered cohort IDs do not establish byte identity to missing historical FASTAs.
+
+All retained isoforms receive equal transcript weight. These are not one-to-one orthologue or gene-collapsed comparisons, and transcripts are not independent biological replicates. Experimental NNC profiles are a separate mutation model from the centered COSMIC SBS context.
+
+## Author execution
+
+The authors ran the full calculations on Stony Brook University's SeaWulf HPC system, which requires institutional access. Their actual Slurm files, completed-run records and pilot checks are in [author_hpc/](author_hpc/README.md). If you use your own HPC system, adapt these examples to your site's settings. SeaWulf access and its pilot reports are not prerequisites for the direct Python workflow above.

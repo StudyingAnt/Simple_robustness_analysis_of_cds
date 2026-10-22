@@ -2,25 +2,36 @@
 
 Use aggregate_results.py after validate_results.py has passed. This stage exports the stored, independently checked summary statistics. It does not simulate trajectories, fit PCA, draw figures or test manuscript conclusions. NumPy and Biopython from the existing pinned environment are sufficient; pandas and a Sinabro import are not required.
 
-## Portable command
+## Audit and export on your computer
 
-Run from the analysis repository root, using paths on your own computer:
+Run from the analysis repository root after the [full human calculation](README.md#reproduce-the-manuscript-calculation) finishes. Set `PROJECT` to your own absolute data/output directory. No scheduler or pilot report is required.
 
 ```bash
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+WORKERS=1
+
+python 02_run_sinabro/validate_results.py \
+  --run-dir "$PROJECT/runs/human_cosmic_n1000_seed42" \
+  --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
+  --report-dir "$PROJECT/runs/human_audit" \
+  --workers "$WORKERS" --expected-records 73214
+
 python 02_run_sinabro/aggregate_results.py \
-  --run-dir /PATH/TO/PROJECT/runs/hpc_gencode_v40_n1000_seed42 \
-  --validation-dir /PATH/TO/PROJECT/runs/results_check_JOBID \
-  --input /PATH/TO/PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
-  --out-dir /PATH/TO/PROJECT/runs/aggregation_001 \
+  --run-dir "$PROJECT/runs/human_cosmic_n1000_seed42" \
+  --validation-dir "$PROJECT/runs/human_audit" \
+  --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
+  --out-dir "$PROJECT/runs/human_export" \
   --signature-groups 02_run_sinabro/manuscript_signature_groups.json \
-  --workers 8 --expected-records 73214
+  --workers "$WORKERS" --expected-records 73214
 ```
+
+Inspect `human_audit/validation_summary.json` for `validation_passed=true` and `all_paths_complete=true`, then `human_export/aggregation_manifest.json` for `aggregation_passed=true`. These directories are under `PROJECT/runs/`. Continue with [distribution figures](../03_mean_std_analysis/README.md), using `human_export` as the aggregation input.
 
 The validation directory must contain a passing validation_summary.json and transcript_audit.csv from the same simulation. The manifest fingerprint, input hash, validated transcript set, dimensions and completed-path counts must agree. Every checkpoint's current SHA256 must match its audit-inventory entry before its summary arrays can be exported. Paths can change when transferring a run to another computer; matching content hashes establish correspondence. No unchecked or incomplete transcript is silently omitted.
 
-The input must have GENCODE-style headers containing transcript ID, gene ID, transcript name and gene name. --input defaults to the path recorded in the audit report. --workers defaults to one and needs no scheduler variables. --expected-records is optional for other input sizes. For a pilot using only a few signatures, omit --signature-groups; the manuscript subset file intentionally requires all its members to be present.
+The input must have GENCODE-style headers containing transcript ID, gene ID, transcript name and gene name. --input defaults to the path recorded in the audit report. --workers defaults to one and needs no scheduler variables. --expected-records is optional for other input sizes. For a small example using only a few signatures, omit --signature-groups; the manuscript subset file intentionally requires all its members to be present.
 
-The output directory must be new and outside both the simulation and validation directories. Tables are built in a temporary sibling directory and published only after success. A mismatch stops export with a nonzero exit code and leaves no completed output directory. Errors appear in the command or Slurm error log. Keep source results, inputs and audit files unchanged during export. Pick another output directory when repeating an export.
+The output directory must be new and outside both the simulation and validation directories. Tables are built in a temporary sibling directory and published only after success. A mismatch stops export with a nonzero exit code and leaves no completed output directory. Errors appear in terminal output. Keep source results, inputs and audit files unchanged during export. Pick another output directory when repeating an export.
 
 ## Output tables and identifiers
 
@@ -64,6 +75,6 @@ manuscript_signature_groups.json copies membership and order from the preserved 
 
 The historical combine_rums_profile.py is retained for its original trajectory-CSV workflow. Use aggregate_results.py for audited NPZ outputs. Numeric equality with old manuscript results is not assumed because these outputs come from the corrected Sinabro implementation. Keep this export under PROJECT/runs until checked; final analysis tables and figures belong under PROJECT/results.
 
-## SeaWulf command for the verified full run
+## Author execution
 
-See [HPC_SUBMISSION.md](HPC_SUBMISSION.md#export-audited-analysis-tables). The wrapper activates the pinned environment and calls the portable Python file on one compute node with eight CPUs. It requires SINABRO_AGGREGATE_VALIDATION to identify the passing audit directory explicitly. No environment recreation or package reinstall is required for this stage.
+The authors used SeaWulf for the full export. Their site-specific wrapper and original paths are retained under [author_hpc/](author_hpc/README.md); access to that system is not required to use the portable exporter.

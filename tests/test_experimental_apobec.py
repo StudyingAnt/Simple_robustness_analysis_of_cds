@@ -18,6 +18,7 @@ sys.path.insert(0, str(EXPERIMENT))
 import prepare_profiles as profiles
 import run_campaign as campaign
 import run_experimental_apobec as runner
+sys.path.insert(0, str(EXPERIMENT / 'author_hpc'))
 import validate_experimental_pilot as pilot
 from validate_results import audit_checkpoint
 

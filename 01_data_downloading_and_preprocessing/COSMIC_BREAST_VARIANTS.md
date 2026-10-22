@@ -1,34 +1,20 @@
-# Breast-cancer observations mapped to the simulated BRCA1 transcript
+# Prepare COSMIC breast SNVs for the BRCA1 graph
 
-This stage uses the two downloaded **COSMIC v101 / GRCh38** archives, the existing pinned GENCODE v40 CDS-plus FASTA and a small reference coordinate map included in Git. No COSMIC login, network download, GTF transfer or new simulation is needed on the compute node.
-
-## Submit on SeaWulf
+Obtain both pinned [COSMIC v101 GRCh38 archives](COSMIC_VARIANTS.md) and prepare the [GENCODE v40 CDS-plus FASTA](README.md). From the analysis repository root with the pinned environment active:
 
 ```bash
-cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
-git -C Simple_robustness_analysis_of_cds pull --ff-only
-mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_breast_variants_seawulf.slurm
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+python 01_data_downloading_and_preprocessing/prepare_cosmic_breast_variants.py \
+  --raw-dir "$PROJECT/data/raw/cosmic/v101/GRCh38" \
+  --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
+  --out-dir "$PROJECT/data/processed/cosmic_v101_grch38/brca1_breast"
 ```
 
-The job requests **one CPU, 4 GB, 30 minutes** (allocation limits, not measured runtime). It activates the existing `PROJECT/sinabro-revision` environment.
+Choose a new output directory. This reads the verified TARs directly, joins tissue classifications and maps accepted genomic SNVs to **ENST00000357654.9 / BRCA1-203**. No scheduler, institutional account or prior BRCA1 source-extraction output is required. COSMIC archive retrieval itself requires the appropriate COSMIC account.
 
-Default inputs:
+Inspect `cosmic_breast_variants_summary.json`: `preparation_passed=true`, no attention reasons, correct target transcript, and passing strand/reference checks. With the pinned inputs, reference counts are 354 breast BRCA1 observations, 235 accepted mapped observations and 174 distinct SNVs; 74 non-SNV/unknown-allele and 45 outside-CDS observations are excluded. Source observations are not independent patients.
 
-```text
-PROJECT/data/raw/cosmic/v101/GRCh38/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar
-PROJECT/data/raw/cosmic/v101/GRCh38/Cosmic_Classification_Tsv_v101_GRCh38.tar
-PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa
-```
-
-Here `PROJECT` is the project directory from which `sbatch` is submitted. The existing first extraction job/output directory is not required. Both raw TARs and the FASTA are checked against their pinned hashes. If the user's `/data/raw/...` refers to the literal filesystem root rather than the project directory, override `COSMIC_RAW_DIR`:
-
-```bash
-COSMIC_RAW_DIR=/data/raw/cosmic/v101/GRCh38 \
-  sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_breast_variants_seawulf.slurm
-```
-
-Other overrides: `PROJECT`, `ANALYSIS_DIR`, `SINABRO_ENV`, `SINABRO_PYTHON`, `SINABRO_FASTA`, `COSMIC_BREAST_OUTPUT`.
+Outputs include `brca1_observation_audit.tsv` (per-observation inclusion/exclusion audit), `brca1_breast_target_snvs.tsv` (deduplicated target substitutions) and the summary with source/code hashes. Keep raw and processed COSMIC observations outside Git. Next: [annotate the saved BRCA1 graph](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md).
 
 ## Selection and coordinate rules
 
@@ -59,41 +45,9 @@ python 01_data_downloading_and_preprocessing/build_brca1_coordinate_map.py \
   --validation-out /PATH/TO/NEW_VALIDATION.json
 ```
 
-Local synthetic tests cover both strands, coding-segment boundaries, terminal stop positions, alternative source-transcript coordinates, phenotype joins, duplicate sample observations, reference mismatches, conflicting annotations and existing-output preservation. Tests do not redistribute COSMIC observations. The real author TARs remain on HPC; the author subsequently supplied the successful full-data report below.
+Local synthetic tests cover both strands, coding-segment boundaries, terminal stop positions, alternative source-transcript coordinates, phenotype joins, duplicate sample observations, reference mismatches, conflicting annotations and existing-output preservation. Tests do not redistribute COSMIC observations. The source archives are retrieved separately by each authorized user and are not redistributed in Git.
 
-### Completed author-reported HPC preparation
 
-The full-data report passed with no attention reasons at `2026-10-22T02:41:35.366043+00:00` (2026-10-21 in New York). Of 1,984,965 source rows, 3,037 were BRCA1. Classification selected **354 breast observations**, all source-annotated on ENST00000471181.7. Of these, **235 observations mapped as SNVs** to target ENST00000357654.9; they represent **174 distinct substitutions**. Exclusions: **74 non-SNV/unknown alleles** and **45 positions outside the target CDS**. The remaining 2,683 BRCA1 observations were from other primary sites. These are counts of catalog observations, not independent patients.
+## Author execution
 
-Both official archive hashes, the pinned FASTA, processing code (`2cb3fee027803cdf8e78a91ec42c6cc312febc52da67e7f42f1b9f8e908436c1`) and coordinate map (`39b7ecca50d24fafca787121f9ec9079da03c7e051a1390e826255077160e89e`) matched. Reported `brca1_breast_target_snvs.tsv` SHA256: `48bdae70c6a2417a4545fe4ae7341cf4abf106b81b0decdca2a6f1f0419cf521`; observation audit SHA256: `c53b73468ccca61c5f1a7d00230b18217897c763b56a4fd1571a50d88194faa5`.
-
-No unresolved phenotype linkage, reference mismatch, genomic annotation conflict or invalid genomic coordinate was reported. The raw/processed observations remain on HPC and have not been inspected locally. The supplied report did not include its Slurm job ID/output-directory suffix. **Next: [match the SNVs to the existing graph](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md)**; the successful mapping job does not need resubmission.
-
-## Outputs and result check
-
-Default output:
-
-```text
-PROJECT/data/processed/cosmic_v101_grch38/brca1_breast_JOBID/
-```
-
-- **`cosmic_breast_variants_summary.json`**: pass/attention status, source and tissue counts, mapping/exclusion counts, distinct target variants and all input/reference/source hashes.
-- `brca1_observation_audit.tsv`: all BRCA1 source rows with tissue assignment and mapping/exclusion status. Original columns and duplicate observations remain available.
-- `brca1_breast_target_snvs.tsv`: one row per accepted target CDS substitution, with observation/sample-ID counts and COSV identifiers.
-
-Share the summary JSON. `preparation_passed: true` requires accepted mapped SNVs and no unresolved BRCA1 phenotypes, reference mismatches, genomic annotation conflicts or invalid genomic coordinates. Biological exclusions such as non-breast observations, indels and positions outside the target CDS are reported separately. If attention is required, the summary/audit files are still saved and the Slurm job exits unsuccessfully to make that visible. Hash/schema errors stop before publishing processed outputs.
-
-**This stage prepares the observed SNV set; it does not yet draw an observed-variant overlay.** A matched single substitution does not mean that an entire simulated multi-mutation DNA state was observed in a tumour. The historical observation-to-node rule remains unrecovered. Any regenerated annotation must state its matching definition. COSMIC observations alone do not identify driver status or establish that APOBEC caused a mutation. Existing simulated paths remain reusable.
-
-## Portable execution
-
-With the existing pinned environment active, from the analysis checkout:
-
-```bash
-python 01_data_downloading_and_preprocessing/prepare_cosmic_breast_variants.py \
-  --raw-dir /PATH/TO/cosmic/v101/GRCh38 \
-  --input /PATH/TO/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
-  --out-dir /PATH/TO/NEW_PROCESSED_DIRECTORY
-```
-
-The Python implementation uses the standard library. Slurm configuration is isolated in the SeaWulf wrapper. Keep the restricted observations, audit rows and processed variant sets outside Git.
+The authors processed these inputs on SeaWulf. Their [actual submission settings and verified full-data record](author_hpc/COSMIC_BREAST_VARIANTS.md) are retained separately. SeaWulf is restricted to authorized institutional users and is not required by the command above. Adapt the optional HPC example to your own site's configuration.

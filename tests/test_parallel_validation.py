@@ -8,7 +8,7 @@ import unittest
 
 import numpy as np
 
-SCRIPTS = Path(__file__).resolve().parents[1] / '02_run_sinabro'
+SCRIPTS = Path(__file__).resolve().parents[1] / '02_run_sinabro/author_hpc'
 sys.path.insert(0, str(SCRIPTS))
 spec = importlib.util.spec_from_file_location('parallel_validation_tests_target', SCRIPTS / 'validate_parallel.py')
 validation = importlib.util.module_from_spec(spec)

@@ -28,6 +28,6 @@ PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID on $(hostname); experimental APOBEC serial/parallel pilot"
-"$PYTHON_BIN" "$ANALYSIS_DIR/06_Bat_genome/experimental_apobec/validate_experimental_pilot.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/06_Bat_genome/experimental_apobec/author_hpc/validate_experimental_pilot.py" \
   --inputs-dir "$INPUTS" --out-dir "$OUTPUT" --sinabro-source "$PACKAGE" \
   --workers "$SLURM_CPUS_PER_TASK" --n-traj 100 --seed 42 --max-steps 10000

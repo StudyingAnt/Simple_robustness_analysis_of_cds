@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_rums import digest_file
 from pilot_selection import SIGNATURES, select_transcripts
 import numpy as np
@@ -77,7 +78,7 @@ def main(argv=None):
         writer = csv.DictWriter(stream, fieldnames=list(selected[0]))
         writer.writeheader()
         writer.writerows(selected)
-    runner = Path(__file__).with_name('run_rums.py').resolve()
+    runner = Path(__file__).resolve().parents[1] / 'run_rums.py'
     manifest = dict(input_path=str(args.input.resolve()), input_sha256=digest_file(args.input),
                     selected_fasta_sha256=digest_file(selected_file), selection=selected,
                     population_by_bin=populations, internal_stop_excluded_from_pilot_by_bin=exclusions,

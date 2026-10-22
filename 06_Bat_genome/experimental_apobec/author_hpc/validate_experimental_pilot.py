@@ -10,11 +10,13 @@ import time
 import numpy as np
 from Bio import SeqIO
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from prepare_inputs import DATASETS, load_inputs
 from prepare_profiles import digest, load_profiles, require
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE.parents[1] / '02_run_sinabro'))
+sys.path.insert(0, str(HERE.parents[1] / '02_run_sinabro/author_hpc'))
 from validate_parallel import summarize_execution
 from validate_results import validate_run
 

@@ -11,9 +11,10 @@ import time
 import numpy as np
 from Bio import SeqIO
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parents[1]
 RUNNER_DIR = HERE.parent / '02_run_sinabro'
 sys.path.insert(0, str(RUNNER_DIR))
+sys.path.insert(0, str(RUNNER_DIR / 'author_hpc'))
 from validate_parallel import summarize_execution
 from validate_results import validate_run
 

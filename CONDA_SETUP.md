@@ -62,21 +62,6 @@ python -m unittest discover -s tests -v
 
 Tests use bounded scientific/software cases; they do not submit full genome calculations. Package tests are documented in the separate Sinabro repository. CI configuration is under `.github/workflows/`.
 
-## SeaWulf environment activation
-
-Where required by the site's installed module configuration:
-
-```bash
-module load anaconda/3
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate /ABSOLUTE/PATH/TO/YOUR/ENVIRONMENT
-export SINABRO_ENV="$CONDA_PREFIX"
-export SINABRO_PYTHON="$CONDA_PREFIX/bin/python"
-export SINABRO_SOURCE="$(cd ../sinabro && pwd)"
-```
-
-Export the environment prefix before submitting the Slurm wrappers, particularly when using a custom installation path. Reference, package and output directories must be visible from compute nodes. The wrappers' standard project layout is described in [the reproduction guide](MANUSCRIPT_REPRODUCTION.md).
-
 ## Preserve the resolved environment
 
 ```bash
@@ -89,3 +74,7 @@ git -C ../sinabro rev-parse HEAD > results/environment_records/sinabro-commit.tx
 ```
 
 The YAML pins scientific-library versions rather than every binary build/transitive dependency. Preserve these exports, manifests and input hashes with each campaign. Keep records from distinct environments in separate directories.
+
+## Author environment
+
+The authors used SeaWulf for full computations. Its site-specific activation commands are retained in [the author execution archive](author_hpc/README.md). Your installation uses the ordinary Conda commands above and needs no institutional cluster account.

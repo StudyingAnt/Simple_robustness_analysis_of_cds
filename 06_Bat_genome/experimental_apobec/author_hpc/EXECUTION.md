@@ -1,0 +1,190 @@
+# Six experimental APOBEC profiles: simulation before plotting
+
+> Author execution record: these commands and paths describe the authors’ SeaWulf setup. SeaWulf requires institutional access. For ordinary terminal/Python commands, use the stage README one level above. Researchers using an HPC system must adapt these examples to their own site.
+
+This workflow applies each of the six measured bat enzyme preferences to the same human, Molossus molossus and Myotis myotis CDS cohorts used by the COSMIC calculations. These are empirical NNC preferences, distinct from COSMIC SBS2/SBS13. Python programs are portable; only the Slurm wrappers contain SeaWulf settings.
+
+| Dataset | Transcripts | Enzyme profiles | Paths per combination | Total paths |
+| --- | ---: | ---: | ---: | ---: |
+| Human GENCODE v40 | 73,214 | 6 | 1,000 | 439,284,000 |
+| HLmolMol2 | 31,185 | 6 | 1,000 | 187,110,000 |
+| HLmyoMyo6 | 23,213 | 6 | 1,000 | 139,278,000 |
+| Total | 127,612 | 6 | 1,000 | 765,672,000 |
+
+The user reported successful full HPC archive audit on 2026-10-20 (job 2336448): all three populations and 765,672,000 paths passed, with zero invalid files and zero incomplete paths. Reference counts are based on the preserved audit/export reports; the full checkpoint store is external to Git. Existing COSMIC outputs are reused as separate controls and are not recomputed here. Table export below reads the existing experimental archives; agreement with historical biological results still requires a numerical comparison.
+
+## Source workbook and reconstruction policy
+
+The original workbook is versioned at [source_data/C to T Mutation data of six bat enzymes.xlsx](../source_data/C%20to%20T%20Mutation%20data%20of%20six%20bat%20enzymes.xlsx), SHA256 `af2e8dad39b7ebb3e36d4e55d388c7550967610398b7361dc06cdddaae5add5a`. The project owner authorized publication of this source file for reproduction. Git pull retrieves the workbook together with the code; no Drive sign-in or separate file transfer is required. Generated probability tables and analysis outputs remain excluded from Git.
+
+| Source sample | Profile ID |
+| --- | --- |
+| B7 | HLmolMol2_APOBEC3A |
+| B8 | HLmolMol2_APOBEC3C |
+| B24 | HLmolMol2_APOBEC1 |
+| B22 | HLmyoMyo6_APOBEC3A3 |
+| B23 | HLmyoMyo6_APOBEC3C |
+| B27 | HLmyoMyo6_APOBEC1 |
+
+The Myotis source label APOBEC3A3 is preserved. Historical aggregate CSVs called that column APOBEC3A.
+
+The workbook identifies the 16 NNC values as motif averages. For each enzyme, the per-opportunity weight is the motif's mean percentage divided by the sum of its 16 mean percentages. The parser verifies that percentage equals 100 times mean C-to-T count divided by the enzyme's sequenced-molecule total. Normalizing those mean counts gives the same weights. Substrate motif occurrence counts are recorded for provenance and are **not multiplied into these weights**.
+
+The historical package's `mut_types` sampler assigned each eligible sequence occurrence its supplied motif weight. This reconstruction follows that interpretation. The original `molMol2_apobec.csv` and `myoMyo6_apobec.csv` conversion tables have not been recovered, so exact identity to the historical probability tables is not established. Original aggregate RUMS tables are not a substitute for those inputs. The preparation manifest records this limitation explicitly.
+
+The model uses `NN[C>T]` with the reverse-complement G-to-A events, `strand=both` and equal strand factors of 0.5. Event probabilities are normalized over all available weighted occurrences; equal strand factors do not force half the sampled events onto each strand. C targets require two upstream bases and reverse-complement G targets require two downstream bases. The existing one-base CDS flanks are retained, targets stay inside the CDS, and a target without its full context is excluded. No extra flanks or centered SBS96 contexts are invented.
+
+This models relative sequence preference, not absolute enzyme activity or biological elapsed time. No uncertainty estimate for experimental replicates is inferred from motif means. Paths terminate at the first amino-acid sequence change. Saved counts record accepted neutral steps before that event. The 10,000-step cap and unavailable-event terminations are explicit incomplete paths; the full audit must pass before interpretation. The existing internal-stop filtering policy is retained for the full cohorts (73 human, 383 Molossus, 79 Myotis).
+
+## SeaWulf: run one stage at a time
+
+Use the pinned environment (Python 3.9.15, NumPy 1.21.6, Biopython 1.79), existing extracted CDS inputs, and the refactored Sinabro package source. All sbatch commands below are issued from the HPC project root so relative log paths resolve correctly.
+
+### 1. Update code and source data
+
+On HPC:
+
+```bash
+cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+mkdir -p logs
+```
+
+The preparation job below copies the bundled workbook into `PROJECT/data/raw/bat_apobec/` if it is absent and verifies its original SHA256. An existing destination is preserved and must match the expected checksum. No manual workbook copy is needed.
+
+### 2. Prepare and verify profiles and inputs
+
+```bash
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/author_hpc/prepare_experimental_apobec_seawulf.slurm
+```
+
+Check `logs/apobec-prepare-JOBID.out` and `.err` before proceeding. Preparation checks the frozen workbook, sample identities, motifs, percentages, human FASTA hash, bat extraction manifests and population counts. The final JSON should show `preparation_passed: true`, `combinations: 765672` and `production_paths_at_n1000: 765672000`.
+
+Default generated directories:
+
+```text
+data/processed/experimental_apobec_v1/
+  profiles.json
+  source_values.csv
+  preparation_manifest.json
+data/processed/experimental_apobec_inputs_v1/
+  inputs_manifest.json
+```
+
+Preparation refuses to overwrite an existing campaign input directory. Existing prepared profiles are verified before use. For a separate preparation, set `SINABRO_APOBEC_PROFILES` and `SINABRO_APOBEC_INPUTS` to new locations and keep those environment variables consistent in later stages. `SINABRO_APOBEC_WORKBOOK`, `SINABRO_HUMAN_FASTA` and `SINABRO_BAT_PROCESSED` override input locations. Staged raw data and processed outputs remain outside both Git checkouts; the small original workbook is also preserved as versioned source data.
+
+### 3. Check execution on HPC
+
+```bash
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/author_hpc/validate_experimental_pilot_seawulf.slurm
+```
+
+This tests 12 length-stratified transcripts per dataset, all six profiles and 100 paths per combination, serially and with eight workers: 43,200 simulated paths in total. Each mode is independently audited and every path count/termination code is compared. The pilot omits internal-stop transcripts only from this bounded check; the full campaign retains them.
+
+Require `validation_passed: true` in:
+
+```text
+runs/experimental_apobec_pilot_JOBID/experimental_pilot_report.json
+```
+
+### 4. Submit the complete campaign once
+
+Replace `PILOT_JOBID` with the passing pilot's actual job ID:
+
+```bash
+export SINABRO_APOBEC_PILOT="$PWD/runs/experimental_apobec_pilot_PILOT_JOBID"
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/author_hpc/run_experimental_apobec_seawulf.slurm
+```
+
+One submission contains **50 array tasks**, with at most eight tasks running concurrently. Each task requests one node and 96 workers; the maximum concurrent request is eight nodes and 768 workers. Allocation depends on scheduler availability. Every task runs six dataset/shard cases sequentially: shard k on all three datasets, then shard k+50 on all three datasets. Together these cover 100 shards per dataset exactly once, with no later range to submit manually. The four-hour limit applies to each allocation and is a requested limit, not a measured completion estimate.
+
+Production requires the passing HPC pilot with matching input/profile hashes, simulation source, profile-loader source, package source, master seed and step cap. The full and pilot path counts intentionally differ. Keep code and inputs fixed during the campaign.
+
+Default output:
+
+```text
+runs/hpc_experimental_apobec_n1000_seed42/
+  human/{run_manifest.json,transcripts/,shards/}
+  molMol2/{run_manifest.json,transcripts/,shards/}
+  myoMyo6/{run_manifest.json,transcripts/,shards/}
+```
+
+Each transcript archive contains all six profiles and every path's count and termination code. Seeds include master seed, dataset, transcript ID and enzyme ID, so scheduling and worker counts do not alter path results. Checkpoints are published atomically and validated before resume. A duplicate live shard is rejected by a lock. Configuration mismatches require a new output directory; existing results are not overwritten.
+
+For an interrupted task, resubmit only its original task index using `sbatch --array=INDEX .../run_experimental_apobec_seawulf.slurm` with the same inputs, pilot and run settings. Completed transcript checkpoints in that task are checked and skipped. Do not change the task-count or shard plan. A stored incomplete path is not silently treated as a successful result or repaired on resume; investigate it and use a separate, explicitly changed run if necessary. Existing unrelated queued jobs may still affect the account's submission limit even with this bounded array.
+
+### 5. Audit the completed archive
+
+After all production array tasks finish:
+
+```bash
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/author_hpc/validate_experimental_results_seawulf.slurm
+```
+
+Require `stage_passed: true` in `runs/experimental_apobec_audit_JOBID/experimental_audit_manifest.json`. The audit reads every archive and checks populations, configuration fingerprints, all shard completion records, individual path completion and stored statistics. It performs no new simulation.
+
+### 6. Export audited values and a numerical summary
+
+For the passing full audit job 2336448, run from the HPC project root:
+
+```bash
+git -C Simple_robustness_analysis_of_cds pull --ff-only
+export SINABRO_APOBEC_AUDIT="$PWD/runs/experimental_apobec_audit_2336448"
+export SINABRO_N_TRAJ=1000
+export SINABRO_SEED=42
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/author_hpc/export_experimental_results_seawulf.slurm
+```
+
+For another audited run, set `SINABRO_APOBEC_AUDIT` to its passing audit directory and retain matching input/run settings. The job uses eight shared CPUs, 8 GB and a requested two-hour limit, activates the pinned environment, and performs no simulation or plotting. It requires the campaign audit, verifies each dataset's audit-summary hash, scientific settings and every checkpoint hash, and preserves full enzyme labels including APOBEC3A3. All three datasets must use the same simulation source, package, environment, seed and step cap. Partial or failed exports do not publish a completed output directory.
+
+Default output:
+
+```text
+runs/experimental_apobec_export_JOBID/
+  export_manifest.json
+  profile_comparison_summary.csv
+  human/
+  molMol2/
+  myoMyo6/
+```
+
+Each dataset directory contains `rums_mean_by_transcript_id.csv`, `rums_sd_by_transcript_id.csv`, `rums_median_by_transcript_id.csv`, `rums_mc_se_by_transcript_id.csv`, `transcript_annotations.csv`, `signature_summary.csv` and `aggregation_manifest.json`, plus a historical-style mean table. Canonical table rows retain transcript IDs; the human historical-style table uses transcript names. Bat coordinates/QC remain linked to the frozen extraction, with no invented gene or orthologue mapping.
+
+`profile_comparison_summary.csv` has 18 rows: three datasets × six enzymes. It includes the mean and sample SD of transcript-level RUMS means, within-dataset descriptive ranks, source enzyme species/sample code and relation (`human_control`, `same_species`, `other_species`). Each retained transcript has equal weight; isoforms are not collapsed. Across-transcript SD describes heterogeneity, while `rums_sd_by_transcript_id.csv` describes individual path-count variation and `rums_mc_se_by_transcript_id.csv` describes uncertainty in a simulated transcript mean. These are different quantities and do not create independent biological replicates.
+
+After completion, replace `EXPORT_JOBID` with the export job number:
+
+```bash
+tail -n 60 logs/apobec-export-EXPORT_JOBID.out
+cat logs/apobec-export-EXPORT_JOBID.err
+cut -d, -f1-5 runs/experimental_apobec_export_EXPORT_JOBID/profile_comparison_summary.csv
+```
+
+Require `stage_passed: true`, `total_transcripts: 127612`, `total_trajectories: 765672000` and `summary_rows: 18`. Send this summary for numerical comparison with the historical results before drawing conclusions about reproduction. `SINABRO_APOBEC_EXPORT_OUTPUT` can select a different new output directory. Existing results are never overwritten.
+
+## Other computers
+
+Activate the pinned environment and use the portable programs directly, from the analysis repository root. Paths below are examples; supply the local copies of the same frozen FASTA inputs. The workbook is included in the checkout:
+
+```bash
+python 06_Bat_genome/experimental_apobec/prepare_profiles.py \
+  --workbook '06_Bat_genome/experimental_apobec/source_data/C to T Mutation data of six bat enzymes.xlsx' \
+  --out-dir /PATH/TO/PROJECT/data/processed/experimental_apobec_v1
+python 06_Bat_genome/experimental_apobec/prepare_inputs.py \
+  --human-input /PATH/TO/PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
+  --bat-root /PATH/TO/PROJECT/data/processed/bat1k_historical_v1 \
+  --profiles-dir /PATH/TO/PROJECT/data/processed/experimental_apobec_v1 \
+  --out-dir /PATH/TO/PROJECT/data/processed/experimental_apobec_inputs_v1
+python 06_Bat_genome/experimental_apobec/author_hpc/validate_experimental_pilot.py \
+  --inputs-dir /PATH/TO/PROJECT/data/processed/experimental_apobec_inputs_v1 \
+  --out-dir /PATH/TO/PROJECT/runs/experimental_apobec_pilot \
+  --sinabro-source /PATH/TO/PROJECT/sinabro --workers 4 --n-traj 100
+```
+
+`run_experimental_apobec.py --help` provides a single-dataset runner. `run_campaign.py --help` provides the allocation-independent task driver; call all task indices for the chosen plan. `export_results.py --help` provides the portable read-only three-dataset exporter; specify `--inputs-dir`, `--run-root`, `--audit-root`, `--out-root`, `--n-traj` and `--workers`. The exporter needs the pinned numerical libraries but does not import Sinabro. Input manifests contain local absolute paths, so prepare them on each machine rather than copying a manifest with paths from another machine. Only a labelled bounded demonstration may use `--allow-subset`; the normal HPC export requires all three complete frozen populations.
+
+## Local validation before handoff
+
+The original workbook and all three actual cohorts passed preparation locally on 2026-10-19. The complete bounded pilot passed: 43,200 paths, all six independent archive audits passed, serial/four-worker results identical path by path, four simultaneous cases observed and no incomplete paths. An independent sampler check drew 2,000 events per profile and checked event eligibility, substitutions and observed counts against separately computed per-position probabilities. A further bounded production-driver check completed six dataset/shard cases (132 transcripts, 1,584 paths), including the longest input per dataset, and independent checkpoint auditing passed; resume skipped all completed transcripts and preserved every checkpoint hash. The analysis repository's 104 unit tests passed, including source corruption, identities, normalization, immutable outputs, checkpoint statistics, incomplete paths, pilot provenance and the complete 50-task allocation plan. All four new Slurm files passed bash syntax checks. These checks establish bounded implementation validation, not full experimental reproduction.
+
+The new export stage was also exercised locally on all three actual pilot datasets (36 transcripts, 21,600 already-computed paths), including spawned archive readers. Full-model synthetic archive tests check all 18 summary rows, retained internal stops, source-file preservation, failed/mismatched audits, changed checkpoints, wrong profiles/criteria, inconsistent seeds and atomic failure without partial publication. The full analysis test suite, including these seven new tests, passed (111 tests). The historical COSMIC export configuration checks remain the default; the shared bat CSV writer accepts an explicit experimental configuration checker only for this separate workflow.

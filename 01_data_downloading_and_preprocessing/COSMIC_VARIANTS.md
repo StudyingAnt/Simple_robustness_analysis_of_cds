@@ -85,105 +85,39 @@ https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=...&buc
 
 Use this API rather than the older `/cosmic/file_download/...` examples. An authorized COSMIC account is required. Browser login is separate from command-line authentication. Never put passwords, Basic authorization strings or signed URLs in Git, shell arguments or Slurm scripts. The downloader prompts for email and a hidden password, keeps authentication in memory, and sends it only to the fixed COSMIC API. Storage requests carry no account Authorization header. Redirects are rejected; signed URLs are not printed or included in receipts.
 
-On SeaWulf, use an interactive **Slurm compute-node allocation** for downloads:
+Run from the analysis repository root with your environment active:
 
 ```bash
-cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
-git -C Simple_robustness_analysis_of_cds pull --ff-only
-srun --job-name=cosmic-download --partition=short-96core-shared \
-  --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=2G --time=00:30:00 \
-  --pty bash -lc '
-    set -eo pipefail
-    module load anaconda/3
-    source "$(conda info --base)/etc/profile.d/conda.sh"
-    PROJECT=/gpfs/projects/DamaghiGroup/projects/sinabro_pub
-    conda activate "${PROJECT}/sinabro-revision"
-    python "${PROJECT}/Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/download_cosmic_variants.py" \
-      --out-dir "${PROJECT}/data/raw/cosmic/v101/GRCh38"
-  '
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+python 01_data_downloading_and_preprocessing/download_cosmic_variants.py \
+  --out-dir "$PROJECT/data/raw/cosmic/v101/GRCh38"
 ```
 
-Enter account details only at the terminal prompts. No new installation is needed: the script uses the Python standard library (Python 3.9 or later). On other computers, use the local checkout and replace `--out-dir` with the desired absolute raw-data directory. The Python script has no SeaWulf paths or scheduler settings.
+Enter account details only at the terminal prompts. The standard-library downloader needs Python 3.9 or later. To inspect pinned metadata without network or login, add `--plan` instead of `--out-dir`. To paste temporary links at hidden prompts, add `--signed-links` to the normal command.
 
-For an offline plan, without login or network:
+## If you downloaded the TAR files in your browser
+
+Save both unchanged archives under your chosen raw directory and verify them:
 
 ```bash
-python 01_data_downloading_and_preprocessing/download_cosmic_variants.py --plan
+python 01_data_downloading_and_preprocessing/download_cosmic_variants.py \
+  --out-dir "$PROJECT/data/raw/cosmic/v101/GRCh38" --verify-only
 ```
 
-If authentication or archive access is unavailable, the program stops rather than substituting another release. Automated tests check request construction and file handling without live account credentials; account authentication is exercised by the person retrieving the data. The reference archives were acquired and passed their official SHA256 checks.
+Each successful download/verification writes a receipt with pinned build/release, hashes and verification time. Existing matching files are reused; mismatching files are preserved and cause failure. Raw COSMIC observations and temporary credentials/URLs stay outside Git.
 
-## Browser and temporary-link alternatives
+## Optional BRCA1-only source extraction
 
-In the browser select **v101**, the product, **GRCh38**, then **Download in browser**. Save both original `.tar` archives in the raw directory above, then verify without account input:
-
-```bash
-PROJECT=/gpfs/projects/DamaghiGroup/projects/sinabro_pub
-ANALYSIS_DIR="${PROJECT}/Simple_robustness_analysis_of_cds"
-python "${ANALYSIS_DIR}/01_data_downloading_and_preprocessing/download_cosmic_variants.py" \
-  --out-dir "${PROJECT}/data/raw/cosmic/v101/GRCh38" --verify-only
-```
-
-Alternatively add `--signed-links` to the normal command to paste each archive's temporary URL at a hidden terminal prompt instead of entering account credentials. Obtain URLs through the official scripted-download instructions. The site states that links expire after one hour. Expected storage hosts, filenames and SHA256 values are checked. Do not publish temporary URLs.
-
-## Outputs and next step
-
-Archives stay compressed and unchanged outside the code checkout. Each successful run writes `download_verification_<id>.json` with the pinned release/build, official hashes, source-manifest hash and verification time. Existing matching archives are reused without login/network; existing mismatched files are preserved and cause an error. Interrupted or incorrect downloads are not published as final archives.
-
-### First step after receiving the MutantCensus TAR
-
-Only the MutantCensus TAR is needed for the first source-extraction job. It checks the official SHA256, inspects TAR membership and TSV headers, and streams **every exact-BRCA1 row** into a smaller TSV. It retains duplicate sample observations, indels and other transcripts. Nothing is assigned to a simulated node at this stage. The raw TAR is not changed and no network or authentication is needed.
-
-```bash
-cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
-git -C Simple_robustness_analysis_of_cds pull --ff-only
-mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_brca1_seawulf.slurm
-```
-
-Default input:
-
-```text
-PROJECT/data/raw/cosmic/v101/GRCh38/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar
-```
-
-If the file was saved elsewhere, pass its existing absolute path; moving or unpacking it first is unnecessary:
-
-```bash
-COSMIC_MUTANTCENSUS_TAR=/ABSOLUTE/PATH/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar \
-  sbatch Simple_robustness_analysis_of_cds/01_data_downloading_and_preprocessing/prepare_cosmic_brca1_seawulf.slurm
-```
-
-The job requests one CPU, 4 GB and 30 minutes (allocation limits). Outputs are placed in **`PROJECT/data/processed/cosmic_v101_grch38/brca1_source_JOBID/`**:
-
-- `cosmic_brca1_preparation_summary.json`: hash verification, archive members, headers, source/BRCA1 row counts and transcript/mutation-type counts.
-- `brca1_source_rows.tsv`: complete source columns for the retained BRCA1 observations.
-- `transcript_counts.csv`: observation counts per source transcript.
-
-Check `logs/cosmic-brca1-input-JOBID.out` and share the summary JSON. `preparation_passed: true` verifies this extraction; **`breast_filter_applied: false` is intentional** because Classification has not been used. Local tests use synthetic archives rather than redistributed COSMIC observations.
-
-### Completed author-reported HPC extraction
-
-On 2026-10-21 (New York), the author supplied a successful HPC report with UTC timestamp `2026-10-22T02:25:46.298301+00:00`. The official archive SHA256 matched. The reported processing-script SHA256 (`3adb18b3f623a53699bc32b5951ae256e90e7eb4dd45b56b5e065ff584d1ddcf`) and source-manifest SHA256 (`ba7900d9e37b6d03b8a411be15344f468037353aab70b713a108ac31e145de1e`) also match the local files.
-
-- **1,984,965 source rows** scanned; **3,037 BRCA1 observations** retained.
-- All BRCA1 observations use source transcript **ENST00000471181.7**.
-- Reported `brca1_source_rows.tsv` SHA256: `4d72c7d9c0c6e2fce51885308adeae286a687e51dbaa5d3f5ffadc30d8e281c9`.
-- Reported `transcript_counts.csv` SHA256: `4ea951b03f1a2b4ce6d396583b4d90a017f4b130be546e465ce0f5d552ee1a83`.
-- No tissue, SNV or target-coordinate filter has been applied. Counts represent source observations, not distinct variants or independent patients.
-
-The source observations remain on HPC; their content has not been independently inspected locally. The report omitted its Slurm job ID/output-directory suffix. Successful source extraction does not require resubmission.
-
-**Coordinate check:** the local pinned GENCODE v40 CDS-plus FASTA contains source transcript ENST00000471181.7 (**BRCA1-210, 5,655 coding nt**) and simulation target ENST00000357654.9 (**BRCA1-203, 5,592 coding nt**). Their CDS hashes differ. Source `MUTATION_CDS` positions therefore must not be copied directly into target graph coordinates. Use the GRCh38 genomic position/alleles with the target's GENCODE v40 CDS annotation, account for transcript strand and verify each mapped reference allele against the target sequence. The target sequence and completed graph do not need to change for annotation.
-
-Classification is required to identify breast samples through `COSMIC_PHENOTYPE_ID`. The author subsequently supplied both archives and a [passing full-data breast/coordinate-mapping report](COSMIC_BREAST_VARIANTS.md): 354 breast observations, 235 accepted mapped observations and 174 distinct SNVs, with no attention reasons. The [observed-allele graph annotation](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) also passed with 19 single-substitution matches and an explicit caption rule. Existing extraction/mapping jobs do not need resubmission. This first source-extraction stage itself does not perform those later analyses.
-
-Portable equivalent with the existing environment active:
+This streams every exact-BRCA1 observation from MutantCensus without a tissue or SNV filter. It is an inspection step; the full breast-coordinate preparation below can read both TARs directly.
 
 ```bash
 python 01_data_downloading_and_preprocessing/prepare_cosmic_brca1.py \
-  --archive /PATH/TO/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar \
-  --out-dir /PATH/TO/NEW_PROCESSED_DIRECTORY
+  --archive "$PROJECT/data/raw/cosmic/v101/GRCh38/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar" \
+  --out-dir "$PROJECT/data/processed/cosmic_v101_grch38/brca1_source"
 ```
 
-Then use the Classification archive to select breast samples and examine single-nucleotide substitutions/reference alleles against **ENST00000357654.9**. Record exclusions and matching semantics explicitly. Existing 1,000-path simulations do not need repeating. Keep raw and processed COSMIC observations outside Git; this repository distributes retrieval/processing code and public checksums.
+Next: [select breast observations and map to the graph transcript](COSMIC_BREAST_VARIANTS.md). Source transcript CDS positions must not be copied into the target transcript without genomic mapping.
+
+## Author execution
+
+The authors downloaded and processed these inputs for calculations on SeaWulf. SeaWulf requires institutional access; COSMIC access separately requires an authorized COSMIC account. The [actual site-specific commands and verified source-extraction record](author_hpc/COSMIC_VARIANTS.md) are retained for provenance. Adapt those examples to your own HPC site if applicable; the portable commands above need no SeaWulf account.

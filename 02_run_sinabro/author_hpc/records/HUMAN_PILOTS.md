@@ -1,19 +1,19 @@
 # Small timing pilot with the refactored package
 
-For the current full-run workflow, use [portable execution and audit](../../02_run_sinabro/REPRODUCTION.md), [SeaWulf submission](../../02_run_sinabro/HPC_SUBMISSION.md), and [audited NPZ-to-table export](../../02_run_sinabro/AGGREGATION.md). The user reported that the full human saved-output audit passed on 2026-10-16: 73,214 transcripts, 79 signatures and 1,000 trajectories per pair. The pilot descriptions and historical instructions below are retained as earlier stages.
+For the current full-run workflow, use [portable execution and audit](../PARALLEL_CHECKS.md), [SeaWulf submission](../EXECUTION.md), and [audited NPZ-to-table export](../../AGGREGATION.md). The user reported that the full human saved-output audit passed on 2026-10-16: 73,214 transcripts, 79 signatures and 1,000 trajectories per pair. The pilot descriptions and historical instructions below are retained as earlier stages.
 
 The checked pilots use Sinabro 3.0.0, the recorded scientific-library environment, and the freshly reproduced GENCODE v40 CDS-plus file. Both 20 and 100 trajectories per combination have been measured. The 1,000-trajectory manuscript setting has not been run in this pilot.
 
 ## Preserved 20-path reference
 
 ```bash
-python 02_run_sinabro/benchmark_pilot.py \
+python 02_run_sinabro/author_hpc/benchmark_pilot.py \
   --input data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
   --sinabro-source ../sinabro \
   --out-dir results/benchmark20_2026-10-14 \
   --n-traj 20 --seed 42 --max-steps 10000 --case-timeout 180
 
-python 02_run_sinabro/evaluate_benchmark_pilot.py \
+python 02_run_sinabro/author_hpc/evaluate_benchmark_pilot.py \
   --results results/benchmark20_2026-10-14
 ```
 
@@ -28,13 +28,13 @@ The evaluator audits a completed result and writes CSV/JSON summaries, a report 
 ## 100 paths per combination
 
 ```bash
-python 02_run_sinabro/benchmark_pilot.py \
+python 02_run_sinabro/author_hpc/benchmark_pilot.py \
   --input data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
   --sinabro-source ../sinabro \
   --out-dir results/benchmark100_2026-10-14 \
   --n-traj 100 --seed 42 --max-steps 10000 --case-timeout 180
 
-python 02_run_sinabro/evaluate_benchmark_pilot.py \
+python 02_run_sinabro/author_hpc/evaluate_benchmark_pilot.py \
   --results results/benchmark100_2026-10-14 \
   --baseline results/benchmark20_2026-10-14
 ```

@@ -7,15 +7,15 @@ This repository supplies analysis workflows for *Human and bats genome robustnes
 | Step | Input and calculation | Output |
 | --- | --- | --- |
 | 1 | [GENCODE v40 download and CDS-plus preparation](01_data_downloading_and_preprocessing/README.md) | 73,214 human CDS-plus records and provenance manifest |
-| 2 | [Human COSMIC calculation](02_run_sinabro/README.md), [Slurm submission/resume](02_run_sinabro/HPC_SUBMISSION.md), [audit and export](02_run_sinabro/AGGREGATION.md) | Checkpoints, per-transcript results and signature summaries |
+| 2 | [Human COSMIC calculation](02_run_sinabro/README.md), [audit and export](02_run_sinabro/AGGREGATION.md) | Checkpoints, per-transcript results and signature summaries |
 | 3 | [Signature distributions](03_mean_std_analysis/README.md) | Rank tables, full-data distributions and plots |
-| 4 | [Bat reference preparation](06_Bat_genome/HPC_REPRODUCTION.md) and [COSMIC controls](06_Bat_genome/COSMIC_PRODUCTION.md) | Frozen Molossus/Myotis cohorts and audited results |
+| 4 | [Bat reference preparation and COSMIC controls](06_Bat_genome/README.md) | Frozen Molossus/Myotis cohorts and audited results |
 | 5 | [Six experimental APOBEC profiles](06_Bat_genome/experimental_apobec/README.md) | Profile tables and audited results on all three species |
 | 6 | [Manuscript statistics and sampler checks](07_manuscript_validation/README.md) | PCA, GC3/signature features, statistical tables and panels |
 | 7 | [Historical S11 matched-transcript comparison](07_manuscript_validation/S11_HISTORICAL.md) | Postprocessing of 3,740 archived paired estimates |
 | 8 | [BRCA1 graph](07_manuscript_validation/BRCA1_GRAPH.md), [COSMIC breast-SNV preparation](01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md), [allele annotation](07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) | Audited 1,000-path graph, observed-allele matches and supplementary panel |
 
-Start new calculations with the small parallel check in [REPRODUCTION.md](02_run_sinabro/REPRODUCTION.md). Existing audited campaigns can proceed from their exported tables. Do not resimulate completed trajectories merely to regenerate plots.
+Run each linked stage from the analysis repository root using its direct Python/terminal commands. To try the workflow without genome downloads, start with the [included synthetic example](02_run_sinabro/README.md#try-the-workflow-on-the-included-example). Full manuscript campaigns are large calculations. Existing audited exports can be reused to regenerate plots.
 
 ## Figure and method map
 
@@ -33,7 +33,7 @@ Start new calculations with the small parallel check in [REPRODUCTION.md](02_run
 
 See [methods and reference results](docs/validation_reference.md) for quantitative agreement and differences. The current computations use corrected package behavior and explicit seeds. Exact historical random streams are unavailable, and historical estimates are not relabelled as fresh simulation outputs.
 
-## Project layout and scheduler use
+## Your project directory
 
 ```text
 PROJECT/
@@ -46,9 +46,9 @@ PROJECT/
   logs/
 ```
 
-Submit Slurm files from `PROJECT/`, with `logs/` created first. `PROJECT`, `ANALYSIS_DIR`, `SINABRO_ENV`, `SINABRO_SOURCE`, input and output variables are configurable in the wrappers. Current executable paths are retained so existing HPC workflows remain valid. Python programs accept explicit paths without requiring Slurm.
+Use an absolute `PROJECT` path on your computer and keep generated data outside the source checkout. Each guide names the inputs and expected output files. Choose the number of local processes with `--workers`; one process is valid. Preserve manifests, input hashes, resolved environments and both repository commits with each calculation.
 
-The completed example campaign locations in the wrappers identify the reference calculations. On another project, override the corresponding variables/arguments to point at that project's exports. Raw/processed data and generated figures belong outside Git; preserve each manifest, complete audit, input hash, resolved environment and both repository commits with the campaign.
+The authors used Stony Brook University's SeaWulf HPC system for full calculations. It requires institutional access and is not part of the reader setup. Each stage's `author_hpc/` folder preserves actual submitted scripts, reference campaign paths, completion records and pilot materials. If you use an HPC system, adapt those examples to your own site's settings. See the [author execution index](author_hpc/README.md); these records are optional for running the portable workflows.
 
 ## Supplementary interpretation and historical sources
 
@@ -56,4 +56,4 @@ For S11, the recovered 3,740 estimates are paired to the same transcript populat
 
 For S12, genomic coordinates are mapped to BRCA1-203, with strand and reference-base checks. Red nodes denote single-substitution states matching reported COSMIC v101 breast SNVs. Individually reported component alleles do not establish complete tumour genotypes. The original source release/node-matching rule is not recovered; the regenerated caption states the current definition.
 
-Earlier Python/R/SGE sources and detailed validation records are in [historical/](historical/README.md), separate from the current workflow. Original package implementations and the pre-publication analysis snapshot remain in backup branches. This repository is code for manuscript reproduction; journal publication metadata and a persistent archival DOI should be added when available rather than inferred from a repository name.
+Earlier Python/R/SGE sources are in [historical/](historical/README.md); author execution and validation records are indexed in [author_hpc/](author_hpc/README.md), separate from the current workflow. Original package implementations and the pre-publication analysis snapshot remain in backup branches. This repository is code for manuscript reproduction; journal publication metadata and a persistent archival DOI should be added when available rather than inferred from a repository name.

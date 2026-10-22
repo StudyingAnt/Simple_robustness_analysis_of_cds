@@ -1,5 +1,7 @@
 # Bat CDS preparation and bounded COSMIC validation
 
+> Author execution record: these commands and paths describe the authors’ SeaWulf setup. SeaWulf requires institutional access. For ordinary terminal/Python commands, use the stage README one level above. Researchers using an HPC system must adapt these examples to their own site.
+
 This workflow starts from the raw references on an HPC project with no bat files.
 It preserves the historical transcript cohorts and leaves the original scripts
 unchanged. It does not submit full bat simulations or the experimental APOBEC,
@@ -27,7 +29,7 @@ Do not chain job submissions until you have checked the preceding job's report.
 ## 1. Download raw references
 
 ```bash
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/download_bat_inputs_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/download_bat_inputs_seawulf.slurm
 ```
 
 Destination: data/raw/bat1k_pilot_2020/. The job retrieves the two compressed
@@ -45,7 +47,7 @@ For another destination, set SINABRO_BAT_RAW consistently in steps 1 and 2.
 ## 2. Extract and validate both historical CDS cohorts
 
 ```bash
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/extract_bat_cds_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/extract_bat_cds_seawulf.slurm
 ```
 
 Destination: data/processed/bat1k_historical_v1/{molMol2,myoMyo6}/. The extractor
@@ -89,7 +91,7 @@ normalization; the Molossus old script left some flank letters lowercase.
 Only after both extraction manifests pass:
 
 ```bash
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/validate_bat_pilot_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/validate_bat_pilot_seawulf.slurm
 ```
 
 Destination: runs/bat_cosmic_pilot_JOBID/. For each species, select 12 evenly
@@ -118,12 +120,12 @@ From the analysis repository root, with the pinned environment active:
 python 06_Bat_genome/download_bat_inputs.py --out-dir /PATH/TO/PROJECT/data/raw/bat1k_pilot_2020
 python 06_Bat_genome/extract_bat_cds.py --raw-dir /PATH/TO/PROJECT/data/raw/bat1k_pilot_2020 --out-dir /PATH/TO/PROJECT/data/processed/bat1k_historical_v1/molMol2 --species molMol2
 python 06_Bat_genome/extract_bat_cds.py --raw-dir /PATH/TO/PROJECT/data/raw/bat1k_pilot_2020 --out-dir /PATH/TO/PROJECT/data/processed/bat1k_historical_v1/myoMyo6 --species myoMyo6
-python 06_Bat_genome/validate_bat_pilot.py --processed-root /PATH/TO/PROJECT/data/processed/bat1k_historical_v1 --out-dir /PATH/TO/PROJECT/runs/bat_pilot_local --sinabro-source /PATH/TO/PROJECT/sinabro --workers 4 --records 12 --n-traj 20
+python 06_Bat_genome/author_hpc/validate_bat_pilot.py --processed-root /PATH/TO/PROJECT/data/processed/bat1k_historical_v1 --out-dir /PATH/TO/PROJECT/runs/bat_pilot_local --sinabro-source /PATH/TO/PROJECT/sinabro --workers 4 --records 12 --n-traj 20
 ```
 
 Choose new output directories for a repeat. A failed or existing output is not
 automatically deleted. After this pilot passes, continue with
-[COSMIC_PRODUCTION.md](COSMIC_PRODUCTION.md) for the full eight-signature array,
+[COSMIC_PRODUCTION.md](COSMIC_EXECUTION.md) for the full eight-signature array,
 archive audit and bat-specific table export. The six experimental enzyme profiles
 remain a separate workflow. aggregate_bat_results.py preserves bat IDs and reuses
 the audited checkpoint reader; the GENCODE-only exporter must not be used directly.

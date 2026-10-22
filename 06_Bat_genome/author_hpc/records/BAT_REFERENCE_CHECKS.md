@@ -73,7 +73,7 @@ them on another computer with the same references and environment.
 ## Production preparation checks, 2026-10-19
 
 The full eight-profile launch/audit/export workflow is documented in
-[COSMIC_PRODUCTION.md](../../06_Bat_genome/COSMIC_PRODUCTION.md). New automated checks bring the
+[COSMIC_PRODUCTION.md](../COSMIC_EXECUTION.md). New automated checks bring the
 analysis suite to 84 passing tests; they cover species/shard array mapping,
 pilot/input provenance, scientific configuration guards, resume mismatches,
 bat-specific audited export and changed-file rejection. All three new Slurm

@@ -1,21 +1,52 @@
-# Human RUMS simulation, audit and export
+# Human RUMS calculation
 
-The manuscript configuration uses 73,214 GENCODE v40 CDS-plus transcripts, 79 COSMIC SBS signatures and 1,000 independent paths per transcript/signature combination. The stopping criterion is the first protein-sequence change. Completed paths report accepted neutral steps before that event; capped or otherwise incomplete paths cannot contribute a complete robustness value.
+Use the [installed environment and Sinabro package](../CONDA_SETUP.md). All commands below run from the analysis repository root in a terminal; no scheduler or institutional account is required. Set `PROJECT` to an absolute directory for your inputs and generated outputs, and `WORKERS` to the CPU processes you want to use.
 
-## Current workflow
+## Try the workflow on the included example
 
-1. Prepare the [pinned environment](../CONDA_SETUP.md) and [GENCODE input](../01_data_downloading_and_preprocessing/README.md).
-2. Follow [portable execution and parallel validation](REPRODUCTION.md) to compare serial and parallel results on a small selection.
-3. Use [HPC submission and resume](HPC_SUBMISSION.md) for the SeaWulf job array, or run `run_rums.py` directly on another computer.
-4. Audit every saved archive with `validate_results.py` before [exporting tables](AGGREGATION.md).
-5. Use [signature distributions](../03_mean_std_analysis/README.md) and [manuscript downstream analyses](../07_manuscript_validation/README.md) to generate numerical tables and plots from the checked exports.
+The [example FASTA](example_cdsplus.fa) contains three **synthetic** CDS-plus records with GENCODE-style identifiers. It is an execution example, not a human reference or a manuscript result. Choose a new output directory.
 
-Keep raw references in project `data/raw/`, sequence inputs in `data/processed/`, parameterized simulations/checkpoints and intermediate exports in `runs/`, and final analysis tables and plots in `results/`. All paths are configurable. Python runners are portable; `_seawulf.slurm` files contain cluster-specific settings.
+```bash
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+WORKERS=1
 
-The reference human audit and export covered all 73,214 × 79 × 1,000 paths without incomplete paths. This establishes checkpoint completeness; agreement of downstream manuscript conclusions requires the separate downstream checks. See the [figure and validation map](../MANUSCRIPT_REPRODUCTION.md).
+python 02_run_sinabro/run_rums.py \
+  --input 02_run_sinabro/example_cdsplus.fa \
+  --out-dir "$PROJECT/runs/example_rums" \
+  --signatures SBS1 SBS2 --n-traj 20 --seed 42 --workers "$WORKERS"
 
-## Timing and historical provenance
+python 02_run_sinabro/validate_results.py \
+  --run-dir "$PROJECT/runs/example_rums" \
+  --input 02_run_sinabro/example_cdsplus.fa \
+  --report-dir "$PROJECT/runs/example_audit" --workers "$WORKERS"
 
-The [timing-pilot record](../historical/validation/HUMAN_PILOTS.md) preserves the 20-path and 100-path selections, comparison commands and original SGE instructions. It is a timing/provenance reference, not the entry point for a new full run.
+python 02_run_sinabro/aggregate_results.py \
+  --run-dir "$PROJECT/runs/example_rums" \
+  --validation-dir "$PROJECT/runs/example_audit" \
+  --input 02_run_sinabro/example_cdsplus.fa \
+  --out-dir "$PROJECT/runs/example_export" --workers "$WORKERS"
+```
 
-The earlier single-gene runner, CSV combiner and SGE wrapper are preserved under [historical/02_run_sinabro](../historical/02_run_sinabro/). Use the current portable runner and audited exporter for Sinabro 3.0.0. Earlier package imports and fixed cluster paths in historical scripts are not installation instructions for the current package.
+This calculates 120 paths (3 records × 2 signatures × 20). The audit should report `validation_passed=true` and `all_paths_complete=true`; export should report `aggregation_passed=true`. Continue with [distribution plots](../03_mean_std_analysis/README.md) using `example_export` as the input. The example does not require downloading GENCODE.
+
+## Reproduce the manuscript calculation
+
+First [download GENCODE v40 and prepare CDS-plus](../01_data_downloading_and_preprocessing/README.md). With the same `PROJECT` and `WORKERS` variables:
+
+```bash
+python 02_run_sinabro/run_rums.py \
+  --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
+  --out-dir "$PROJECT/runs/human_cosmic_n1000_seed42" \
+  --n-traj 1000 --seed 42 --max-steps 10000 \
+  --workers "$WORKERS" --expected-records 73214
+```
+
+Omitting `--signatures` selects all 79 COSMIC v3.3.1 GRCh37 SBS profiles. The full calculation contains **5,783,906,000 paths** and can take substantial time on a personal computer. The commands specify the calculation; they do not imply that it is a short workstation run. Smaller trajectory counts or input subsets are examples rather than full manuscript reproduction.
+
+The stopping criterion is the first amino-acid sequence change. RUMS counts accepted neutral steps before that event. The 10,000-step cap is a safety limit; capped or unavailable-event paths are incomplete and must not be interpreted as complete robustness estimates.
+
+Audit and export the completed full calculation using [AGGREGATION.md](AGGREGATION.md). Then follow [distribution analysis](../03_mean_std_analysis/README.md) and [manuscript analyses](../07_manuscript_validation/README.md). [REPRODUCTION.md](REPRODUCTION.md) explains input format, resume and execution settings.
+
+## How the authors ran this stage
+
+The authors performed the full calculation on Stony Brook University's SeaWulf HPC system. SeaWulf requires institutional access and is not required for these Python commands. The actual Slurm wrappers, run records and serial/parallel pilot materials are retained under [author_hpc/](author_hpc/README.md). Researchers using their own HPC system may adapt those examples to their site's scheduler, partitions, environment and paths.

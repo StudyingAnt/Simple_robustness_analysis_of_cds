@@ -1,39 +1,49 @@
-# Manuscript analyses and supplementary workflows
+# Manuscript analyses and supplementary panels
 
-These portable programs produce manuscript PCA, sequence/signature features, statistical comparisons, sampler checks and supplementary panels. They use the [pinned Python environment](../CONDA_SETUP.md) and audited upstream exports. Current analyses do not require the historical R environment.
+These programs use the [pinned Python environment](../CONDA_SETUP.md) and ordinary terminal commands. No HPC account is required. Run from the analysis repository root and provide your own audited upstream exports. The original full calculations were performed on the authors' HPC system; scheduler details are kept separately.
 
-## Main analysis and sampler check
+## PCA, sequence/signature features, statistics and species panels
 
-After the human, bat COSMIC and experimental-profile tables have been exported and audited, submit from the SeaWulf project root:
+After completing [human table export](../02_run_sinabro/AGGREGATION.md), [bat COSMIC export](../06_Bat_genome/README.md) and [experimental-profile export](../06_Bat_genome/experimental_apobec/README.md):
 
 ```bash
-mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/validate_manuscript_results_seawulf.slurm
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/validate_signature_sampler_seawulf.slurm
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+SINABRO_SOURCE=/ABSOLUTE/PATH/TO/YOUR/sinabro
+
+python 07_manuscript_validation/validate_manuscript_results.py \
+  --human-export "$PROJECT/runs/human_export" \
+  --bat-export "$PROJECT/runs/bat_cosmic_export" \
+  --apobec-export "$PROJECT/runs/experimental_apobec_export" \
+  --signatures "$SINABRO_SOURCE/sinabro/data/COSMIC_v3.3.1_SBS_GRCh37.txt" \
+  --out-dir "$PROJECT/results/manuscript_analysis" --n-traj 1000
 ```
 
-The two jobs are independent. Each requests eight CPUs, 8 GB and four hours as allocation limits. Wrappers activate the configured `SINABRO_ENV`; Python entry points accept explicit paths on other computers.
+Choose a new output directory. The program verifies manifests, populations, signature identity and compatible inputs, then writes `analysis_summary.json`, statistical/feature/PCA tables and PDF/PNG panels. It reuses completed trajectories; it does not rerun the genome simulations. The full manuscript analysis expects the full cohorts, not the synthetic usage example.
 
-| Program | Calculation | Main output |
-| --- | --- | --- |
-| `validate_manuscript_results.py` | PCA, GC3, signature features, statistical and species comparisons | `analysis_summary.json`, tables and PDF/PNG panels |
-| `validate_signature_sampler.py` | 10,000 random 2,200-bp sequences per each of 79 signatures | `sampler_validation_summary.json`, channel counts, cosine summaries and plots |
+PCA uses mean-centered full SVD without standardization and the historical sign convention. All 79-, 60- and 41-signature groups are retained; Figure 4 fits the 60-signature model and displays 41 known-aetiology signatures. Statistical comparisons include Kruskal–Wallis, median-centered Levene, Dunn/Bonferroni and asymptotic Mann–Whitney tests with documented family corrections. Transcript observations are not independent biological replicates. See [methods and reference results](../docs/validation_reference.md).
 
-The downstream job reads the human export, both bat exports and all three experimental-profile exports. It verifies file manifests, expected populations, signature identity and input compatibility. Default wrapper paths identify the reference campaign; override `SINABRO_PAPER_HUMAN`, `SINABRO_PAPER_BATS`, `SINABRO_PAPER_APOBEC` and `SINABRO_PAPER_OUTPUT` for another project. Output locations must be new.
+## Signature sampler figures (S1/S2)
 
-PCA is mean-centred full SVD without standardization, using the historical sign convention. All 79-, 60- and 41-signature groups are retained; Figure 4 fits the 60-signature model and displays the 41 known-aetiology signatures. The original comparisons include Kruskal–Wallis, median-centred Levene, Dunn/Bonferroni and asymptotic Mann–Whitney tests with the documented family corrections. Transcript-level observations are not independent biological replicates. See [methods and reference results](../docs/validation_reference.md).
+This independent calculation uses random sequences rather than the genome exports:
 
-Sampler validation uses 790,000 single-substitution events and an independent conditional probability oracle based on available trinucleotide opportunities. Cosine to the original signature is descriptive; opportunity-adjusted checks verify sampling behavior rather than enforcing the old rounded cosine.
+```bash
+python 07_manuscript_validation/validate_signature_sampler.py \
+  --sinabro-source "$SINABRO_SOURCE" \
+  --out-dir "$PROJECT/results/signature_sampler" \
+  --workers 1 --n-sequences 10000 --length 2200 --gc 0.4 --seed 42
+```
+
+This samples one event for each of 10,000 random 2,200-bp sequences for all 79 signatures (790,000 events). Outputs include `sampler_validation_summary.json`, channel counts, cosine summaries and figures. The independent conditional probability oracle accounts for available sequence opportunities. A smaller `--n-sequences` or `--signatures` subset is an execution example rather than full S1/S2 reproduction.
 
 ## Supplementary analyses
 
-| Analysis | Execution guide | Interpretation |
+| Analysis | Direct execution guide | Scope |
 | --- | --- | --- |
-| S11 paired historical estimates | [S11_HISTORICAL.md](S11_HISTORICAL.md) | 3,740 matched transcript pairs; archived estimates, not a new full-cohort BLOSUM campaign |
-| S12 BRCA1-203 simulation | [BRCA1_GRAPH.md](BRCA1_GRAPH.md) | 1,000 SBS2/BLOSUM80 paths with reconstructable DNA states and chronological edges |
-| COSMIC breast-SNV preparation | [Coordinate preparation](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) | Verified archive/phenotype join and source-to-target genomic coordinate mapping |
-| S12 reported-allele annotation | [BRCA1_OBSERVED_SNVS.md](BRCA1_OBSERVED_SNVS.md) | Single-substitution allele matches; multi-substitution components do not prove observed genotypes |
+| S11 criterion comparison | [S11_HISTORICAL.md](S11_HISTORICAL.md) | 3,740 matched archived transcript estimates; no new paths |
+| S12 BRCA1 graph | [BRCA1_GRAPH.md](BRCA1_GRAPH.md) | Fresh 1,000-path SBS2/BLOSUM80 simulation |
+| Reported breast SNVs | [Coordinate preparation](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) | COSMIC phenotype selection, genomic mapping and reference checks |
+| S12 reported-allele marks | [BRCA1_OBSERVED_SNVS.md](BRCA1_OBSERVED_SNVS.md) | Explicit single-substitution allele matching, using the saved graph |
 
-The reference full campaigns and supplementary stages have passing reports. The [validation reference](../docs/validation_reference.md) records the numerical results and scope. Run instructions are provided for independent reproduction; already completed compatible campaigns can proceed directly from their audited outputs.
+## Author execution
 
-Historical source recovery and old/new comparisons are in [historical/validation](../historical/validation/). Earlier bounded sensitivity examples remain separate from the manuscript's archived S11 population; `run_supplementary_cases.py --help` describes the portable implementation, and the older generic Slurm example is retained under `historical/examples/`.
+The authors ran these analyses on Stony Brook University's SeaWulf HPC system, which requires institutional access. [author_hpc/](author_hpc/README.md) preserves the actual Slurm scripts, recorded campaign paths and completion checks. These are examples to adapt to your own site's settings if you use an HPC system; they are not prerequisites for the commands above.

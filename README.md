@@ -8,7 +8,9 @@ Analysis code and reproducible workflows accompanying *Human and bats genome rob
 2. Follow the [manuscript reproduction guide](MANUSCRIPT_REPRODUCTION.md) in calculation order.
 3. Consult [data sources and availability](DATA_AVAILABILITY.md), [methods and validation](docs/validation_reference.md), and the [software manifest](software_manifest.json).
 
-Python workflows run on other computers using explicit paths. Files ending in `_seawulf.slurm` contain SeaWulf scheduler settings. Full calculations can be distributed over job-array shards and worker processes; smaller examples and integrity checks are provided before full submission.
+Each stage's README provides ordinary terminal/Python commands for your own computer. No SeaWulf account, scheduler or author pilot report is required. [Try the included synthetic example](02_run_sinabro/README.md#try-the-workflow-on-the-included-example) before choosing whether to perform the much larger manuscript calculations.
+
+The authors ran the full calculations on **Stony Brook University's SeaWulf HPC system**, which requires institutional access. Actual Slurm scripts, completed-run settings and pilot records are retained inside each stage's `author_hpc/` folder. They are reference examples for researchers who use an HPC system and must be adapted to that site's settings; [the author execution index](author_hpc/README.md) links these records.
 
 ## Analysis workflows
 

@@ -23,7 +23,7 @@ def load(name, filename):
 
 
 extractor = load('bat_extract_test_target', 'extract_bat_cds.py')
-pilot = load('bat_pilot_test_target', 'validate_bat_pilot.py')
+pilot = load('bat_pilot_test_target', 'author_hpc/validate_bat_pilot.py')
 
 
 class BatPreparationTests(unittest.TestCase):

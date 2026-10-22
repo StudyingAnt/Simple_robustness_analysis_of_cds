@@ -1,5 +1,7 @@
 # Full-cohort bat COSMIC execution, audit and table export
 
+> Author execution record: these commands and paths describe the authors’ SeaWulf setup. SeaWulf requires institutional access. For ordinary terminal/Python commands, use the stage README one level above. Researchers using an HPC system must adapt these examples to their own site.
+
 Continue here after the CDS extraction and serial/parallel pilot in
 HPC_REPRODUCTION.md have passed. The package and existing human runner/exporter
 are unchanged. Python scripts are portable; only Slurm wrappers target SeaWulf.
@@ -60,7 +62,7 @@ export SINABRO_BAT_PILOT="$PWD/runs/bat_cosmic_pilot_2324062"
 export SINABRO_N_TRAJ=1000
 export SINABRO_SEED=42
 
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/run_bat_cosmic_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/run_bat_cosmic_seawulf.slurm
 ```
 
 This single submission covers both species completely. **Do not submit later
@@ -128,7 +130,7 @@ versions should use a new SINABRO_BAT_RUN root. Earlier outputs remain intact.
 After all 50 allocation tasks complete (all 100 shards per species):
 
 ```bash
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/validate_bat_results_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/validate_bat_results_seawulf.slurm
 ```
 
 Default output: runs/bat_cosmic_audit_JOBID/. process_bat_results.py calls the
@@ -147,7 +149,7 @@ audit establishes completeness, including results from resumed invocations.
 ```bash
 # Replace AUDIT_JOB_ID with the successful audit's number.
 export SINABRO_BAT_AUDIT="$PWD/runs/bat_cosmic_audit_AUDIT_JOB_ID"
-sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/aggregate_bat_results_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/author_hpc/aggregate_bat_results_seawulf.slurm
 ```
 
 Default output: runs/bat_cosmic_export_JOBID/. Per species: four canonical metric

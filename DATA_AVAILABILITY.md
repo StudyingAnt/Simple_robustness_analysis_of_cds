@@ -16,7 +16,7 @@ Code and generated research data have different distribution requirements. Store
 
 ## References and prepared inputs
 
-[Human preparation](01_data_downloading_and_preprocessing/README.md) defines the CDS-plus sequence and historical rejection rules. [Bat preparation](06_Bat_genome/HPC_REPRODUCTION.md) uses the frozen transcript populations and source snapshots rather than substituting a newer annotation. Download manifests distinguish configured/preserved hashes from independently supplied publisher checksums.
+[Human preparation](01_data_downloading_and_preprocessing/README.md) defines the CDS-plus sequence and historical rejection rules. [Bat preparation](06_Bat_genome/author_hpc/PREPARATION.md) uses the frozen transcript populations and source snapshots rather than substituting a newer annotation. Download manifests distinguish configured/preserved hashes from independently supplied publisher checksums.
 
 The experimental source workbook is included with project-owner authorization. Conversion uses the 16 motif-average values per enzyme, normalized as per-opportunity weights; exact historical probability CSVs were not recovered. Raw assay reads and the upstream read-processing workflow are not included.
 

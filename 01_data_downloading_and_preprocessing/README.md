@@ -1,51 +1,32 @@
-# GENCODE v40 download and CDS-plus preprocessing
+# Prepare the human reference
 
-For the independent S12 observed-variant inputs, see [COSMIC variant download and verification](COSMIC_VARIANTS.md). It covers the candidate v101/GRCh38 archives, interactive account authentication and browser-download verification.
+Activate the [pinned environment](../CONDA_SETUP.md), then run these commands from the analysis repository root. `PROJECT` is an absolute directory on your own computer, outside this source checkout. No HPC account is required.
 
-Run these commands from the analysis repository root. Downloaded and generated data are excluded from Git. Each stage writes a provenance manifest and refuses to overwrite existing outputs.
-
-## 1. Download and unpack the transcript FASTA
+## Download GENCODE v40
 
 ```bash
+PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
+
 bash 01_data_downloading_and_preprocessing/download_gencode.sh \
-  --out-dir data/raw/gencode_v40 --release 40
+  --out-dir "$PROJECT/data/raw/gencode_v40" --release 40
 ```
 
-Source: [GENCODE human release 40](https://www.gencodegenes.org/human/release_40.html), GRCh38.p13 protein-coding transcript FASTA. The script uses the official EBI HTTPS endpoint, checks gzip integrity, unpacks the file, and records hashes, sizes, record count, URL, UTC timestamps, and source-script hash in `gencode.v40.pc_transcripts.fa.download.json`.
+Source: [GENCODE human release 40](https://www.gencodegenes.org/human/release_40.html), GRCh38.p13 protein-coding transcript FASTA. The script uses the official EBI HTTPS endpoint, validates gzip integrity and writes `gencode.v40.pc_transcripts.fa.download.json` with URL, hashes, sizes and record count. The expected source contains **108,573** transcripts. Use this fixed release for manuscript reproduction.
 
-The expected historical input contains 108,573 transcript records. This is a fixed historical release; do not substitute the latest GENCODE data when reproducing the manuscript.
-
-## 2. Extract CDS-plus
-
-Use Python 3.9.15 and Biopython 1.79 from the pinned environment. The preserved environment listing is the source of these recorded versions.
+## Extract CDS-plus
 
 ```bash
 python 01_data_downloading_and_preprocessing/extract_cds_plus.py \
-  --input data/raw/gencode_v40/gencode.v40.pc_transcripts.fa \
-  --out-dir data/processed/gencode_v40 --release 40
+  --input "$PROJECT/data/raw/gencode_v40/gencode.v40.pc_transcripts.fa" \
+  --out-dir "$PROJECT/data/processed/gencode_v40" --release 40
 ```
 
-The original selection rules are retained:
+Expected output: **73,214** records in `gencode.v40.pc_transcripts.nopary.cdsplus.fa`, plus `preprocessing_manifest.json` and rejected-record files. The coding sequence must have length divisible by three, start with ATG, end with TAA/TAG/TGA and retain one nucleotide on each side. PAR_Y transcripts are excluded. Accepted CDS is `sequence[1:-1]`; internal stop codons are retained and flagged rather than silently filtered.
 
-- CDS length is divisible by three.
-- CDS begins with ATG and ends with TAA, TAG, or TGA.
-- Records marked PAR_Y are excluded.
-- One transcript nucleotide is present on each side of the CDS.
+GENCODE header CDS coordinates are 1-based inclusive. For bounds `start` and `end`, coding sequence is `sequence[start-1:end]` and CDS-plus is `sequence[start-2:end+1]`. Failed-rule masks are 1: length, 2: start, 4: stop, 8: PAR_Y; missing flanks are recorded separately. Scripts refuse to overwrite completed output directories.
 
-GENCODE header coordinates are 1-based inclusive. For CDS bounds `start` and `end`, Python slices are `sequence[start-1:end]` for CDS and `sequence[start-2:end+1]` for CDS-plus. The header is parsed by its CDS field rather than by a fixed field position.
+Next: [human RUMS calculation](../02_run_sinabro/README.md). The independent supplementary BRCA1 observed-variant workflow uses [COSMIC download instructions](COSMIC_VARIANTS.md) and [breast-SNV coordinate mapping](COSMIC_BREAST_VARIANTS.md).
 
-The expected historical output is **73,214** CDS-plus records in `gencode.v40.pc_transcripts.nopary.cdsplus.fa`. Original filter failures are written to the fifteen `nopass.parity*.fa` files. Their bit masks are 1: length, 2: start, 4: stop, 8: PAR_Y; combined masks represent multiple failed rules. Otherwise-valid records lacking a flank are written separately to `nopass.missing_flank.fa`; the old script omitted these records without a separate file.
+## Author execution
 
-`preprocessing_manifest.json` records all output hashes, record counts, the input hash, environment versions, and rejection accounting. No new filter for ambiguous bases or internal stop codons is silently introduced.
-
-## 3. Inspect before simulation
-
-Verify the input/output counts, output hash against the historical reference when available, and the rejection accounting. Check that the accepted coding slice is `sequence[1:-1]`. The next stage is a small single-sequence simulation, handled separately from preprocessing.
-
-## Tests
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-Tests cover coding-coordinate boundaries, historical filter masks, both missing-flank cases, record accounting, invalid annotations, and preservation of existing output. The preserved original scripts remain on the backup branch and are used as an independent comparison for the fresh full dataset.
+The authors ran preparation on Stony Brook University's SeaWulf HPC system. It requires institutional access; the terminal commands above do not. Original site-specific settings and observed-variant execution records are in [author_hpc/](author_hpc/README.md). Adapt these examples to your own site if you use an HPC system.
