@@ -47,7 +47,33 @@ The author supplied the v101 MutantCensus popup instructions on 2026-10-21. They
      --output Cosmic_MutantCensus_Tsv_v101_GRCh38.tar
    ```
 
-The popup states that the temporary URL is valid for one hour. The placeholders above are deliberately not real credentials or live signed URLs. For actual terminal use, the Python downloader below avoids putting account credentials into command arguments or history. Classification follows the same workflow with its own archive path.
+The popup states that the temporary URL is valid for one hour. The placeholders above are deliberately not real credentials or live signed URLs. For actual terminal use, the Python downloader below avoids putting account credentials into command arguments or history.
+
+### Classification: official command-line example
+
+The author also supplied the **Cosmic_Classification_Tsv_v101_GRCh38.tar** popup instructions on 2026-10-21. Start at the [v101 Classification file-selection page](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification) and select that exact GRCh38 archive.
+
+1. Generate the Base64 authentication string from the registered email and password as described above. The same account authentication applies to both products; the downloader handles this in memory.
+2. Request the Classification archive's temporary URL using [the official Classification scripted-download API](https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_Classification_Tsv_v101_GRCh38.tar&bucket=downloads):
+
+   ```bash
+   # Template only; prefer the Python downloader's hidden credential prompts.
+   curl -H 'Authorization: Basic <BASE64_AUTHENTICATION_STRING>' \
+     'https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_Classification_Tsv_v101_GRCh38.tar&bucket=downloads'
+   ```
+
+3. Use the returned URL to save the Classification archive, without an account authentication header:
+
+   ```bash
+   curl '<TEMPORARY_CLASSIFICATION_DOWNLOAD_URL_FROM_STEP_2>' \
+     --output Cosmic_Classification_Tsv_v101_GRCh38.tar
+   ```
+
+The URL expires after one hour. Save this archive alongside MutantCensus under `PROJECT/data/raw/cosmic/v101/GRCh38/`. Its official SHA256 is `54f9e8d31a5cd768cff9c7762dc7e286881b0c9ea0bb05105f20a9522b188135`. The popup's Actionability example illustrates URL syntax for another product; use the Classification path and output filename shown here for this analysis.
+
+The existing Python downloader already includes both products. With a valid MutantCensus archive in the output directory, it verifies and reuses that file, then downloads only the missing Classification archive. After both files are present, `--verify-only` checks them without account authentication.
+
+### API configuration and portable downloader
 
 **API correction:** the official request uses `bucket=downloads`. This is the API alias, distinct from the public metadata's physical storage bucket `cosmic-downloads-production`. Both are now represented separately in the pinned manifest. Earlier preparation used the storage bucket in the API query; that unverified request returned HTTP 400. The alias is corrected; an authenticated run is still needed to establish end-to-end success.
 
