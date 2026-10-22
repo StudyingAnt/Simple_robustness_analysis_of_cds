@@ -6,7 +6,7 @@ This stage executes 1,000 fresh SBS2/BLOSUM paths for the original BRCA1-203 cas
 
 The author supplied a successful full HPC report on 2026-10-21: **1,000 complete paths, zero incomplete paths**, graph audit passed, **3,152 DNA states** and **3,623 single-substitution edges**. Mean neutral steps are **2.623**, median **2.0**. Reported elapsed time was **11.904 seconds**. The four scientific data files (path counts, graph nodes, chronological edges and reference FASTA) have exactly the same reported SHA256 values as the verified local run. The supplied report did not include its Slurm job ID or absolute run directory.
 
-HPC image-file hashes differ from the local image hashes; this check did not establish the cause or inspect the actual HPC artwork. Final plot review remains separate. The observed COSMIC annotation remains unavailable, and the full observed-variant panel is not marked reproduced. Existing successful simulations do not need resubmission for annotation or documentation updates.
+HPC image-file hashes differ from the local image hashes; this check did not establish the cause or inspect the actual HPC artwork. Final plot review remains separate. COSMIC observed inputs have since been downloaded and mapped as described below; graph annotation is the next step. The historical full panel is not marked reproduced. Existing successful simulations do not need resubmission for annotation or documentation updates.
 
 ## Submit one job on SeaWulf
 
@@ -14,7 +14,9 @@ For the independent observed-variant input, see [COSMIC v101/GRCh38 download ins
 
 **Observed-input update:** the author-reported HPC extraction passed for 1,984,965 source rows and retained 3,037 BRCA1 observations, all annotated on **ENST00000471181.7**. Local GENCODE v40 sequence checks show this source CDS is 5,655 nt, whereas the simulated **ENST00000357654.9** CDS is 5,592 nt. Source CDS coordinates cannot be reused directly. Classification-based breast selection and GRCh38 genomic-to-target-CDS mapping with reference-allele checks are required before graph annotation. These stages remain pending; the existing graph needs no new trajectories.
 
-The next [breast selection and coordinate-mapping job](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) is ready for the two raw TARs. It includes a frozen 22-segment GENCODE v40 coordinate map whose complete 5,592-nt CDS was independently verified against NC_000017.11 genomic sequence. Real COSMIC mapping results must still be reviewed before graph annotation.
+The completed [breast selection and coordinate-mapping stage](../01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) used the two raw TARs and a frozen 22-segment GENCODE v40 map whose complete 5,592-nt CDS was independently verified against NC_000017.11 genomic sequence.
+
+**Mapping completion update:** the author supplied a passing full report: 354 breast observations, 235 accepted mapped observations, **174 distinct target SNVs**, no attention reasons. Both official archive hashes, FASTA, map and code hashes matched. The [graph allele-matching job](BRCA1_OBSERVED_SNVS.md) is now ready and reuses the existing 1,000 paths. It marks exactly one-substitution allele matches and records component matches separately without claiming observed multi-mutant genotypes.
 
 ```bash
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub

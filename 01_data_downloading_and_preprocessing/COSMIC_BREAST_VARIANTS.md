@@ -59,7 +59,15 @@ python 01_data_downloading_and_preprocessing/build_brca1_coordinate_map.py \
   --validation-out /PATH/TO/NEW_VALIDATION.json
 ```
 
-Local synthetic tests cover both strands, coding-segment boundaries, terminal stop positions, alternative source-transcript coordinates, phenotype joins, duplicate sample observations, reference mismatches, conflicting annotations and existing-output preservation. Tests do not redistribute COSMIC observations. The real author TARs remain on HPC; full-data tissue/mapping counts must be checked from the submitted job before claiming this stage passed.
+Local synthetic tests cover both strands, coding-segment boundaries, terminal stop positions, alternative source-transcript coordinates, phenotype joins, duplicate sample observations, reference mismatches, conflicting annotations and existing-output preservation. Tests do not redistribute COSMIC observations. The real author TARs remain on HPC; the author subsequently supplied the successful full-data report below.
+
+### Completed author-reported HPC preparation
+
+The full-data report passed with no attention reasons at `2026-10-22T02:41:35.366043+00:00` (2026-10-21 in New York). Of 1,984,965 source rows, 3,037 were BRCA1. Classification selected **354 breast observations**, all source-annotated on ENST00000471181.7. Of these, **235 observations mapped as SNVs** to target ENST00000357654.9; they represent **174 distinct substitutions**. Exclusions: **74 non-SNV/unknown alleles** and **45 positions outside the target CDS**. The remaining 2,683 BRCA1 observations were from other primary sites. These are counts of catalog observations, not independent patients.
+
+Both official archive hashes, the pinned FASTA, processing code (`2cb3fee027803cdf8e78a91ec42c6cc312febc52da67e7f42f1b9f8e908436c1`) and coordinate map (`39b7ecca50d24fafca787121f9ec9079da03c7e051a1390e826255077160e89e`) matched. Reported `brca1_breast_target_snvs.tsv` SHA256: `48bdae70c6a2417a4545fe4ae7341cf4abf106b81b0decdca2a6f1f0419cf521`; observation audit SHA256: `c53b73468ccca61c5f1a7d00230b18217897c763b56a4fd1571a50d88194faa5`.
+
+No unresolved phenotype linkage, reference mismatch, genomic annotation conflict or invalid genomic coordinate was reported. The raw/processed observations remain on HPC and have not been inspected locally. The supplied report did not include its Slurm job ID/output-directory suffix. **Next: [match the SNVs to the existing graph](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md)**; the successful mapping job does not need resubmission.
 
 ## Outputs and result check
 
