@@ -1,6 +1,6 @@
 # Descriptive RUMS ranks and distribution figures
 
-Run this stage after the [audited table export](../02_run_sinabro/AGGREGATION.md) completes. analyze_signature_distributions.py reads the completed export, checks its integrity and descriptive statistics, then draws distribution figures. It uses the existing Python/NumPy/SciPy/Matplotlib revision environment; no R packages, Sinabro import, simulation or new environment are needed.
+Run this stage after the [audited table export](../02_run_sinabro/AGGREGATION.md) completes. analyze_signature_distributions.py reads the completed export, checks its integrity and descriptive statistics, then draws distribution figures. It uses the existing Python/NumPy/SciPy/Matplotlib pinned environment; no R packages, Sinabro import, simulation or new environment are needed.
 
 ## Portable execution
 

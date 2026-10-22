@@ -165,3 +165,8 @@ cython_debug/
 # Reproduction inputs and generated outputs.
 /data/
 /results/
+
+# Project-level generated campaign artifacts.
+/runs/
+/logs/
+/envs/

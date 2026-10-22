@@ -17,7 +17,7 @@ mkdir -p logs
 sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/analyze_s11_historical_seawulf.slurm
 ```
 
-This new job reuses the existing `sinabro-revision` environment and `data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa`. It requests one shared CPU, 4 GB and a 30-minute time limit; the time limit is not a runtime estimate. No new environment, HDF5 library, data transfer or mutation simulation is required. The two completed core validation jobs do not need resubmission.
+This job reuses the existing `sinabro-revision` environment and `data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa`. It requests one shared CPU, 4 GB and a 30-minute time limit; the time limit is not a runtime estimate. No new environment, HDF5 library, data transfer or mutation simulation is required. The two completed core validation jobs do not need resubmission.
 
 Output directory: `PROJECT/results/s11_historical_JOBID/`.
 
@@ -57,4 +57,4 @@ Choose a new output directory. The program checks the bundled values, input FAST
 
 The recovered original SVG contains 73,214 identity points and 3,740 BLOSUM points. This script deliberately uses the identity values for those same 3,740 transcripts, removing that population mismatch. The historical script specifies 1,000 paths per estimate, but exact historical random seeds and per-path counts for this result were not recovered. Matching transcript identities is not matching random paths; no Monte Carlo confidence interval or paired-path test is claimed.
 
-This establishes reproducible postprocessing of the historical numerical source. A fresh BLOSUM sensitivity run under the corrected package would be a separate calculation. The twelve-case illustrative reconstruction is also separate and is not substituted for this recovered original population. BLOSUM distance is an amino-acid alignment proxy, not measured biological functional loss. See [historical input recovery](HISTORICAL_SUPPLEMENTARY_INPUTS.md) for provenance.
+This establishes reproducible postprocessing of the historical numerical source. A fresh BLOSUM sensitivity run under the corrected package would be a separate calculation. The twelve-case illustrative reconstruction is also separate and is not substituted for this recovered original population. BLOSUM distance is an amino-acid alignment proxy, not measured biological functional loss. See [historical input recovery](../historical/validation/SUPPLEMENTARY_SOURCE_AUDIT.md) for provenance.

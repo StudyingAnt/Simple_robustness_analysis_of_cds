@@ -8,7 +8,7 @@ only the Slurm wrappers are specific to SeaWulf.
 
 ## 0. Update code and check prerequisites
 
-Use the existing revision environment and Sinabro 3.0.0 package checkout. The
+Use the pinned environment and Sinabro 3.0.0 package checkout. The
 environment setup is described in ../CONDA_SETUP.md. Scientific versions remain
 Python 3.9.15, NumPy 1.21.6 and Biopython 1.79. No extra dependency is required.
 
@@ -112,7 +112,7 @@ estimate. No new experimental-enzyme profile is used in this test.
 
 ## Portable local commands
 
-From the analysis repository root, with the revision environment active:
+From the analysis repository root, with the pinned environment active:
 
 ```bash
 python 06_Bat_genome/download_bat_inputs.py --out-dir /PATH/TO/PROJECT/data/raw/bat1k_pilot_2020

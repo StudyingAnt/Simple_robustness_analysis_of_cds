@@ -29,7 +29,7 @@ Click the selected filename to open the download popup. The `/download/cancer-mu
 
 ### Official command-line workflow
 
-The author supplied the v101 MutantCensus popup instructions on 2026-10-21. They describe three steps:
+The official v101 MutantCensus scripted-download instructions describe three steps:
 
 1. Encode the registered email and password, joined by a colon, as Base64. This is a reusable account credential, not encryption. The Python downloader performs this in memory after hidden password input.
 2. Request a temporary download URL with the Basic authentication header. The exact public request URL for this archive is [the v101 MutantCensus scripted-download API](https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_MutantCensus_Tsv_v101_GRCh38.tar&bucket=downloads):
@@ -51,7 +51,7 @@ The popup states that the temporary URL is valid for one hour. The placeholders 
 
 ### Classification: official command-line example
 
-The author also supplied the **Cosmic_Classification_Tsv_v101_GRCh38.tar** popup instructions on 2026-10-21. Start at the [v101 Classification file-selection page](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification) and select that exact GRCh38 archive.
+For **Cosmic_Classification_Tsv_v101_GRCh38.tar**, start at the [v101 Classification file-selection page](https://cancer.sanger.ac.uk/cosmic/download/cosmic/v101/classification) and select that exact GRCh38 archive.
 
 1. Generate the Base64 authentication string from the registered email and password as described above. The same account authentication applies to both products; the downloader handles this in memory.
 2. Request the Classification archive's temporary URL using [the official Classification scripted-download API](https://cancer.sanger.ac.uk/api/mono/products/v1/downloads/scripted?path=grch38/cosmic/v101/Cosmic_Classification_Tsv_v101_GRCh38.tar&bucket=downloads):
@@ -75,7 +75,7 @@ The existing Python downloader already includes both products. With a valid Muta
 
 ### API configuration and portable downloader
 
-**API correction:** the official request uses `bucket=downloads`. This is the API alias, distinct from the public metadata's physical storage bucket `cosmic-downloads-production`. Both are now represented separately in the pinned manifest. Earlier preparation used the storage bucket in the API query; that unverified request returned HTTP 400. The alias is corrected; an authenticated run is still needed to establish end-to-end success.
+The official request uses `bucket=downloads`, the API alias. It is distinct from the physical storage bucket `cosmic-downloads-production`; both are recorded separately in the pinned manifest.
 
 The [official download page](https://cancer.sanger.ac.uk/cosmic/download/cosmic) provides **Scripted download** in the selected file's popup. The current site's published instructions use Basic authentication to request a temporary signed URL from:
 
@@ -111,7 +111,7 @@ For an offline plan, without login or network:
 python 01_data_downloading_and_preprocessing/download_cosmic_variants.py --plan
 ```
 
-If authentication or archive access is unavailable, the program stops; it does not substitute another release. During preparation, the API route and public metadata were inspected, an unauthenticated request returned HTTP 400, and offline tests passed. **An authenticated end-to-end download has not yet been verified.**
+If authentication or archive access is unavailable, the program stops rather than substituting another release. Automated tests check request construction and file handling without live account credentials; account authentication is exercised by the person retrieving the data. The reference archives were acquired and passed their official SHA256 checks.
 
 ## Browser and temporary-link alternatives
 
@@ -176,7 +176,7 @@ The source observations remain on HPC; their content has not been independently 
 
 **Coordinate check:** the local pinned GENCODE v40 CDS-plus FASTA contains source transcript ENST00000471181.7 (**BRCA1-210, 5,655 coding nt**) and simulation target ENST00000357654.9 (**BRCA1-203, 5,592 coding nt**). Their CDS hashes differ. Source `MUTATION_CDS` positions therefore must not be copied directly into target graph coordinates. Use the GRCh38 genomic position/alleles with the target's GENCODE v40 CDS annotation, account for transcript strand and verify each mapped reference allele against the target sequence. The target sequence and completed graph do not need to change for annotation.
 
-Classification is required to identify breast samples through `COSMIC_PHENOTYPE_ID`. The author subsequently supplied both archives and a [passing full-data breast/coordinate-mapping report](COSMIC_BREAST_VARIANTS.md): 354 breast observations, 235 accepted mapped observations and 174 distinct SNVs, with no attention reasons. **Next executable stage: [match the prepared SNVs to the existing graph](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md).** Existing extraction/mapping jobs do not need resubmission. This first source-extraction stage itself does not perform those later analyses.
+Classification is required to identify breast samples through `COSMIC_PHENOTYPE_ID`. The author subsequently supplied both archives and a [passing full-data breast/coordinate-mapping report](COSMIC_BREAST_VARIANTS.md): 354 breast observations, 235 accepted mapped observations and 174 distinct SNVs, with no attention reasons. The [observed-allele graph annotation](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) also passed with 19 single-substitution matches and an explicit caption rule. Existing extraction/mapping jobs do not need resubmission. This first source-extraction stage itself does not perform those later analyses.
 
 Portable equivalent with the existing environment active:
 

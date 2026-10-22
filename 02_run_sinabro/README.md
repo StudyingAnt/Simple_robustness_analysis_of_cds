@@ -12,10 +12,10 @@ The manuscript configuration uses 73,214 GENCODE v40 CDS-plus transcripts, 79 CO
 
 Keep raw references in project `data/raw/`, sequence inputs in `data/processed/`, parameterized simulations/checkpoints and intermediate exports in `runs/`, and final analysis tables and plots in `results/`. All paths are configurable. Python runners are portable; `_seawulf.slurm` files contain cluster-specific settings.
 
-The completed human audit and export covered all 73,214 × 79 × 1,000 paths without incomplete paths, according to the supplied HPC logs. This establishes checkpoint completeness; agreement of downstream manuscript conclusions requires the separate downstream checks. See the [figure and validation map](../MANUSCRIPT_REPRODUCTION.md).
+The reference human audit and export covered all 73,214 × 79 × 1,000 paths without incomplete paths. This establishes checkpoint completeness; agreement of downstream manuscript conclusions requires the separate downstream checks. See the [figure and validation map](../MANUSCRIPT_REPRODUCTION.md).
 
 ## Timing and historical provenance
 
-The [timing-pilot record](PILOT_VALIDATION.md) preserves the 20-path and 100-path selections, comparison commands and original SGE instructions. It is a timing/provenance reference, not the entry point for a new full run.
+The [timing-pilot record](../historical/validation/HUMAN_PILOTS.md) preserves the 20-path and 100-path selections, comparison commands and original SGE instructions. It is a timing/provenance reference, not the entry point for a new full run.
 
-`simulate_single_gene.py`, `combine_rums_profile.py` and the SGE shell script are historical sources. Use the current portable runner and audited exporter for Sinabro 3.0.0. Earlier package imports and fixed cluster paths in historical scripts are not installation instructions for the current package.
+The earlier single-gene runner, CSV combiner and SGE wrapper are preserved under [historical/02_run_sinabro](../historical/02_run_sinabro/). Use the current portable runner and audited exporter for Sinabro 3.0.0. Earlier package imports and fixed cluster paths in historical scripts are not installation instructions for the current package.

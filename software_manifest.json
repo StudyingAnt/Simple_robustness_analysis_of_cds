@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "edition": "Manuscript reproduction workflows",
+  "package": {
+    "repository": "https://github.com/StudyingAnt/sinabro",
+    "version": "3.0.0",
+    "commit": "de379acd619a75fb13bd76876e1592214f3927a6",
+    "scientific_source_sha256": "70e82aff6eed1593e6ea2207f14b7b0b371029fb66795ec58ddb7c0528f62b07",
+    "validated_calculation_source_commit": "79b4bc866855d59ff801265fe951849665dfc4d6",
+    "scientific_source_unchanged_by_publication_cleanup": true
+  },
+  "environment": {
+    "python": "3.9.15",
+    "numpy": "1.21.6",
+    "biopython": "1.79",
+    "scipy": "1.8.1",
+    "matplotlib": "3.6.2"
+  },
+  "inputs": {
+    "human_cdsplus_sha256": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751",
+    "cosmic_v331_grch37_sbs_sha256": "9d9c212cc14aa660da1b7fd9e60e696c8e2c885a7606c27d20ad8997954554ea"
+  },
+  "provenance": {
+    "analysis_snapshot_before_publication_cleanup": "66f0733fd11f178a617983875aa8ec96bbf315b8",
+    "record_analysis_commit": "git rev-parse HEAD",
+    "historical_random_streams_recovered": false,
+    "s11_estimates": "archived matched-transcript postprocessing",
+    "s12_observed_rule": "new explicitly documented single-SNV allele matching"
+  },
+  "local_verification": {
+    "package_tests": 89,
+    "analysis_tests": 170,
+    "isolated_wheel_tests": 89
+  },
+  "reference": "docs/validation_reference.md"
+}

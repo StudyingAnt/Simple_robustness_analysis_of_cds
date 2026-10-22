@@ -1,6 +1,6 @@
 # Six experimental APOBEC profiles: simulation before plotting
 
-This workflow applies each of the six measured bat enzyme preferences to the same human, Molossus molossus and Myotis myotis CDS cohorts used by the revised COSMIC calculations. These are empirical NNC preferences, distinct from COSMIC SBS2/SBS13. Python programs are portable; only the Slurm wrappers contain SeaWulf settings.
+This workflow applies each of the six measured bat enzyme preferences to the same human, Molossus molossus and Myotis myotis CDS cohorts used by the COSMIC calculations. These are empirical NNC preferences, distinct from COSMIC SBS2/SBS13. Python programs are portable; only the Slurm wrappers contain SeaWulf settings.
 
 | Dataset | Transcripts | Enzyme profiles | Paths per combination | Total paths |
 | --- | ---: | ---: | ---: | ---: |
@@ -9,7 +9,7 @@ This workflow applies each of the six measured bat enzyme preferences to the sam
 | HLmyoMyo6 | 23,213 | 6 | 1,000 | 139,278,000 |
 | Total | 127,612 | 6 | 1,000 | 765,672,000 |
 
-The user reported successful full HPC archive audit on 2026-10-20 (job 2336448): all three populations and 765,672,000 paths passed, with zero invalid files and zero incomplete paths. The assistant reviewed the supplied log; the HPC archives have not been accessed directly. Existing COSMIC outputs are reused as separate controls and are not recomputed here. Table export below reads the existing experimental archives; agreement with historical biological results still requires a numerical comparison.
+The user reported successful full HPC archive audit on 2026-10-20 (job 2336448): all three populations and 765,672,000 paths passed, with zero invalid files and zero incomplete paths. Reference counts are based on the preserved audit/export reports; the full checkpoint store is external to Git. Existing COSMIC outputs are reused as separate controls and are not recomputed here. Table export below reads the existing experimental archives; agreement with historical biological results still requires a numerical comparison.
 
 ## Source workbook and reconstruction policy
 
@@ -36,7 +36,7 @@ This models relative sequence preference, not absolute enzyme activity or biolog
 
 ## SeaWulf: run one stage at a time
 
-Use the existing revision environment (Python 3.9.15, NumPy 1.21.6, Biopython 1.79), existing extracted CDS inputs, and the refactored Sinabro package source. All sbatch commands below are issued from the HPC project root so relative log paths resolve correctly.
+Use the pinned environment (Python 3.9.15, NumPy 1.21.6, Biopython 1.79), existing extracted CDS inputs, and the refactored Sinabro package source. All sbatch commands below are issued from the HPC project root so relative log paths resolve correctly.
 
 ### 1. Update code and source data
 
@@ -133,7 +133,7 @@ export SINABRO_SEED=42
 sbatch Simple_robustness_analysis_of_cds/06_Bat_genome/experimental_apobec/export_experimental_results_seawulf.slurm
 ```
 
-For another audited run, set `SINABRO_APOBEC_AUDIT` to its passing audit directory and retain matching input/run settings. The job uses eight shared CPUs, 8 GB and a requested two-hour limit, activates the revision environment, and performs no simulation or plotting. It requires the campaign audit, verifies each dataset's audit-summary hash, scientific settings and every checkpoint hash, and preserves full enzyme labels including APOBEC3A3. All three datasets must use the same simulation source, package, environment, seed and step cap. Partial or failed exports do not publish a completed output directory.
+For another audited run, set `SINABRO_APOBEC_AUDIT` to its passing audit directory and retain matching input/run settings. The job uses eight shared CPUs, 8 GB and a requested two-hour limit, activates the pinned environment, and performs no simulation or plotting. It requires the campaign audit, verifies each dataset's audit-summary hash, scientific settings and every checkpoint hash, and preserves full enzyme labels including APOBEC3A3. All three datasets must use the same simulation source, package, environment, seed and step cap. Partial or failed exports do not publish a completed output directory.
 
 Default output:
 
@@ -162,7 +162,7 @@ Require `stage_passed: true`, `total_transcripts: 127612`, `total_trajectories: 
 
 ## Other computers
 
-Activate the revision environment and use the portable programs directly, from the analysis repository root. Paths below are examples; supply the local copies of the same frozen FASTA inputs. The workbook is included in the checkout:
+Activate the pinned environment and use the portable programs directly, from the analysis repository root. Paths below are examples; supply the local copies of the same frozen FASTA inputs. The workbook is included in the checkout:
 
 ```bash
 python 06_Bat_genome/experimental_apobec/prepare_profiles.py \
@@ -179,7 +179,7 @@ python 06_Bat_genome/experimental_apobec/validate_experimental_pilot.py \
   --sinabro-source /PATH/TO/PROJECT/sinabro --workers 4 --n-traj 100
 ```
 
-`run_experimental_apobec.py --help` provides a single-dataset runner. `run_campaign.py --help` provides the allocation-independent task driver; call all task indices for the chosen plan. `export_results.py --help` provides the portable read-only three-dataset exporter; specify `--inputs-dir`, `--run-root`, `--audit-root`, `--out-root`, `--n-traj` and `--workers`. The exporter needs the revision numerical libraries but does not import Sinabro. Input manifests contain local absolute paths, so prepare them on each machine rather than copying a manifest with paths from another machine. Only a labelled bounded demonstration may use `--allow-subset`; the normal HPC export requires all three complete frozen populations.
+`run_experimental_apobec.py --help` provides a single-dataset runner. `run_campaign.py --help` provides the allocation-independent task driver; call all task indices for the chosen plan. `export_results.py --help` provides the portable read-only three-dataset exporter; specify `--inputs-dir`, `--run-root`, `--audit-root`, `--out-root`, `--n-traj` and `--workers`. The exporter needs the pinned numerical libraries but does not import Sinabro. Input manifests contain local absolute paths, so prepare them on each machine rather than copying a manifest with paths from another machine. Only a labelled bounded demonstration may use `--allow-subset`; the normal HPC export requires all three complete frozen populations.
 
 ## Local validation before handoff
 

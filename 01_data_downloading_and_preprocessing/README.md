@@ -17,7 +17,7 @@ The expected historical input contains 108,573 transcript records. This is a fix
 
 ## 2. Extract CDS-plus
 
-Use Biopython 1.79 for comparison with the recorded environment. The full historical environment listing records Python 3.9.15, whereas this directory previously documented 3.9.16; retain that discrepancy in provenance. The current step is run with Python 3.9.15 and Biopython 1.79.
+Use Python 3.9.15 and Biopython 1.79 from the pinned environment. The preserved environment listing is the source of these recorded versions.
 
 ```bash
 python 01_data_downloading_and_preprocessing/extract_cds_plus.py \

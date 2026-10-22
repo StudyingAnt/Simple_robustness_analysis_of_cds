@@ -54,7 +54,7 @@ The 100-shard full SeaWulf wrapper additionally passes --expected-records 73214.
 
 ## Validate saved results before downstream analysis
 
-After all simulation jobs have ended, audit the saved files on a compute node or your own computer. This performs no simulations and does not import Sinabro. NumPy and Biopython from the revision environment are sufficient. Keep the input FASTA and simulation output unchanged while the audit runs.
+After all simulation jobs have ended, audit the saved files on a compute node or your own computer. This performs no simulations and does not import Sinabro. NumPy and Biopython from the pinned environment are sufficient. Keep the input FASTA and simulation output unchanged while the audit runs.
 
 ~~~bash
 python 02_run_sinabro/validate_results.py \

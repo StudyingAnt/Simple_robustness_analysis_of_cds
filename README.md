@@ -1,40 +1,59 @@
 # Human and bat genome robustness under COSMIC mutational signatures
 
-This repository contains the manuscript-specific analysis scripts. The separate [Sinabro package](https://github.com/StudyingAnt/sinabro) provides the sequential mutation simulator.
+Analysis code and reproducible workflows accompanying *Human and bats genome robustness under COSMIC mutational signatures*. The separate [Sinabro package](https://github.com/StudyingAnt/sinabro) provides the sequential mutation simulator; this repository provides reference preparation, human/bat calculations, statistical analyses and figure generation.
 
-Start with [Conda environment setup](CONDA_SETUP.md), using the pinned [environment.yml](environment.yml). For the full human simulation on SeaWulf, see [Slurm submission and resume](02_run_sinabro/HPC_SUBMISSION.md).
+## Start here
 
-The [manuscript reproduction map](MANUSCRIPT_REPRODUCTION.md) connects the execution order, original figures, numerical checks and remaining source-data limits.
+1. [Install the pinned environment and Sinabro](CONDA_SETUP.md).
+2. Follow the [manuscript reproduction guide](MANUSCRIPT_REPRODUCTION.md) in calculation order.
+3. Consult [data sources and availability](DATA_AVAILABILITY.md), [methods and validation](docs/validation_reference.md), and the [software manifest](software_manifest.json).
 
-The [portable runner and parallel validation](02_run_sinabro/REPRODUCTION.md) run without Slurm. Python filenames describe the analysis; cluster names are reserved for scheduler-specific wrappers. The separate [small SeaWulf validation job](02_run_sinabro/validate_parallel_seawulf.slurm) compares one and eight workers before full submission.
+Python workflows run on other computers using explicit paths. Files ending in `_seawulf.slurm` contain SeaWulf scheduler settings. Full calculations can be distributed over job-array shards and worker processes; smaller examples and integrity checks are provided before full submission.
 
-## Reproduction status
+## Analysis workflows
 
-Reproduction is checked one stage at a time. The first stage, **GENCODE v40 download and CDS-plus preprocessing**, has been rerun from a fresh download. The new CDS-plus and fifteen historical rejection files match the preserved original preprocessing script byte for byte.
+| Stage | Entry point |
+| --- | --- |
+| Human reference download and CDS-plus preparation | [GENCODE v40](01_data_downloading_and_preprocessing/README.md) |
+| Human RUMS, checkpoint audit and table export | [Human calculation](02_run_sinabro/README.md) |
+| Signature distributions and summary ranks | [Distribution analysis](03_mean_std_analysis/README.md) |
+| PCA, sequence features and manuscript statistics | [Manuscript analyses](07_manuscript_validation/README.md) |
+| Bat CDS cohorts and COSMIC controls | [Bat workflows](06_Bat_genome/README.md) |
+| Six experimental APOBEC profiles across three species | [Experimental profiles](06_Bat_genome/experimental_apobec/README.md) |
+| Supplementary BLOSUM criterion comparison | [Archived S11 matched-transcript analysis](07_manuscript_validation/S11_HISTORICAL.md) |
+| BRCA1 mutation graph and reported SNV matches | [S12 graph](07_manuscript_validation/BRCA1_GRAPH.md) and [allele annotation](07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) |
 
-| Stage | Status |
-|---|---|
-| GENCODE v40 download and gzip integrity | Verified |
-| CDS-plus generation and rejection accounting | Verified |
-| Length-stratified pilot: 12 transcripts × 3 signatures × 20 paths | Verified; 720/720 complete |
-| Same pilot with 100 paths per combination | Verified; 3,600/3,600 complete; prior 720 paths reproduced |
-| Portable one-worker vs eight-worker smoke test | Verified locally; user-reported SeaWulf comparison also passed (3,600 paths per mode) |
-| Full human RUMS calculation and saved-output audit | User-reported full audit passed: 73,214 transcripts × 79 signatures × 1,000 paths, no incomplete paths |
-| Audited NPZ-to-table export | User-reported full export passed: 73,214 checksums matched; 19,309 genes and 73 internal-stop transcripts retained |
-| Descriptive signature ranks and distribution figures | Full HPC analysis passed (job 2308077); SBS2 leads mean and SD in all three signature groups |
-| Two-bat COSMIC calculation, audit and export | Passed: 31,185 Molossus and 23,213 Myotis transcripts × eight signatures × 1,000 paths |
-| Six experimental enzyme profiles on all three species | Full audit passed (job 2336448), 765,672,000 paths; 18 exported summary combinations checked |
-| Original PCA/features/statistical tables and species panels | Full HPC numerical report passed; [results and manuscript implications](07_manuscript_validation/VALIDATION_RESULTS.md). Figure 4's numerical loading comparison is complete; final artwork review remains. |
-| Original S1/S2 random-sequence signature validation | Full 79-signature validation passed: 790,000 substitutions, all conditional-oracle checks passed; mean original-profile cosine 0.97519. |
-| Original S11 BLOSUM subset | [Historical matched-transcript analysis](07_manuscript_validation/S11_HISTORICAL.md) passed on HPC (job 2345768); archived estimates are distinguished from fresh corrected-package simulation. |
-| S12 BRCA1 simulation and COSMIC allele-match reconstruction | [Fresh 1,000-path graph](07_manuscript_validation/BRCA1_GRAPH.md), [breast-variant mapping](01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md) and [graph annotation](07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) passed on HPC: 174 distinct SNVs, 19 single-substitution node matches. Author-screenshot content/layout review completed. Retain the new allele-matching rule in the caption; historical annotation semantics remain unconfirmed. |
+## Reproducibility
 
-The complete whole-genome checkpoints and exports are available from the checked human, bat COSMIC and experimental-enzyme runs. Preserve their audit reports and [exported tables](02_run_sinabro/AGGREGATION.md). The [manuscript downstream and sampler validation](07_manuscript_validation/README.md) reuses those calculations and reports the actual observed results without requiring the historical conclusions to hold. Existing passing campaigns do not need resubmission. Final artwork review, manuscript wording and release curation remain; exact historical random streams and S12 annotation semantics have not been recovered.
+The checked workflow uses **Python 3.9.15, NumPy 1.21.6, Biopython 1.79, SciPy 1.8.1 and Matplotlib 3.6.2**, with **Sinabro 3.0.0**. The reference campaigns comprise 5,783,906,000 human COSMIC paths, 435,184,000 bat COSMIC paths and 765,672,000 experimental-profile paths. Saved-output audits reported no incomplete paths. The [validation reference](docs/validation_reference.md) documents numerical comparisons, sampler checks, source fingerprints and the scope of supplementary reconstructions.
 
-Follow [the first-stage commands and checks](01_data_downloading_and_preprocessing/README.md). Reference counts and hashes are stored in [expected_gencode_v40.json](01_data_downloading_and_preprocessing/expected_gencode_v40.json).
+The present edition contains corrected package workflows. Historical random streams are not recovered; archived S11 estimates and the newly defined S12 allele-match panel are labelled explicitly. The [historical source archive](historical/README.md) preserves earlier scripts and methodological provenance separately from the current execution instructions.
 
-The original analysis code is preserved at commit `c2c271e36a0f478fd3b3464902a450c514f5b789` on [backup/before-cleanup-2026-10-14](https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds/tree/backup/before-cleanup-2026-10-14). Later-stage scripts still reflect the historical workflow and may require path and implementation corrections before execution. Preprocessing agreement alone does not establish reproduction of the manuscript figures.
+## Project data layout
 
-Downloaded input and generated output files under `data/` are excluded from Git. Each first-stage run generates manifests with counts and hashes. Historical results and outputs produced using a corrected Sinabro implementation must be distinguished during numerical validation.
+Keep generated files outside the source checkout:
 
-BSD-3-Clause; see [LICENSE](LICENSE).
+```text
+PROJECT/
+  sinabro/                              # package checkout
+  Simple_robustness_analysis_of_cds/     # this checkout
+  data/raw/                             # external source files
+  data/processed/                       # prepared inputs and variant tables
+  runs/                                 # parameterized calculations/checkpoints
+  results/                              # final tables and figures
+  logs/                                 # scheduler output
+```
+
+Raw references, COSMIC observations, generated outputs and environment exports are not distributed in Git. Frozen cohort IDs, historical S11 estimates, the coordinate reference and the experimental preference workbook are included where required; see [data availability](DATA_AVAILABILITY.md).
+
+## Tests and citation
+
+With the environment and package installed:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Tests cover preparation, deterministic sampling/parallelism, checkpoint audits, exports, statistics and supplementary matching rules. Large reference campaigns are separate from software tests. [CITATION.cff](CITATION.cff) provides software attribution; cite the manuscript and record both repository commits with scientific outputs.
+
+BSD-3-Clause. See [LICENSE](LICENSE).

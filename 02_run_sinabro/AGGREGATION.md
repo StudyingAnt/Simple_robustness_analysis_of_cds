@@ -1,6 +1,6 @@
 # Export audited results for manuscript analysis
 
-Use aggregate_results.py after validate_results.py has passed. This stage exports the stored, independently checked summary statistics. It does not simulate trajectories, fit PCA, draw figures or test manuscript conclusions. NumPy and Biopython from the existing revision environment are sufficient; pandas and a Sinabro import are not required.
+Use aggregate_results.py after validate_results.py has passed. This stage exports the stored, independently checked summary statistics. It does not simulate trajectories, fit PCA, draw figures or test manuscript conclusions. NumPy and Biopython from the existing pinned environment are sufficient; pandas and a Sinabro import are not required.
 
 ## Portable command
 
@@ -56,7 +56,7 @@ manuscript_signature_groups.json copies membership and order from the preserved 
 
 | Existing script | Input supplied by this stage | Work remaining before executing that script |
 | --- | --- | --- |
-| 03_mean_std_analysis/analyze_signature_distributions.py | Completed export directory with canonical/legacy matrices, annotations, summary and manifest. | Use the portable [descriptive analysis workflow](../03_mean_std_analysis/README.md) to check ranks and render distributions in the revision environment. |
+| 03_mean_std_analysis/analyze_signature_distributions.py | Completed export directory with canonical/legacy matrices, annotations, summary and manifest. | Use the portable [descriptive analysis workflow](../03_mean_std_analysis/README.md) to check ranks and render distributions in the pinned environment. |
 | 03_mean_std_analysis/draw_violin_plots_by_rank.R (historical reference) | all_gencode_rums_profile.csv | Original paths/layout are preserved; use the Python workflow above for the current analysis. |
 | 04_PCA_and_gc_contents/reduce_signatures.py | Its two outputs are already exported when the manuscript groups JSON is provided. | No need to rerun the historical reduction script. |
 | 04_PCA_and_gc_contents/run_pca.py | The full, noseqerr and aetiology matrices, with the expected names and column order. | Make paths portable, record the PCA fitting/standardization policy and check outputs before plotting. |
@@ -66,4 +66,4 @@ The historical combine_rums_profile.py is retained for its original trajectory-C
 
 ## SeaWulf command for the verified full run
 
-See [HPC_SUBMISSION.md](HPC_SUBMISSION.md#export-audited-analysis-tables). The wrapper activates the revision environment and calls the portable Python file on one compute node with eight CPUs. It requires SINABRO_AGGREGATE_VALIDATION to identify the passing audit directory explicitly. No environment recreation or package reinstall is required for this stage.
+See [HPC_SUBMISSION.md](HPC_SUBMISSION.md#export-audited-analysis-tables). The wrapper activates the pinned environment and calls the portable Python file on one compute node with eight CPUs. It requires SINABRO_AGGREGATE_VALIDATION to identify the passing audit directory explicitly. No environment recreation or package reinstall is required for this stage.

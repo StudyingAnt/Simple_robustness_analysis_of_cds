@@ -1,0 +1,21 @@
+name: Analysis tests
+on: [push, pull_request]
+jobs:
+  recorded-environment:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: analysis
+      - uses: actions/checkout@v4
+        with:
+          repository: StudyingAnt/sinabro
+          ref: de379acd619a75fb13bd76876e1592214f3927a6
+          path: sinabro
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9.15'
+      - run: python -m pip install numpy==1.21.6 biopython==1.79 scipy==1.8.1 matplotlib==3.6.2 setuptools wheel
+      - run: python -m pip install --no-deps --no-build-isolation ./sinabro
+      - run: python -m unittest discover -s tests -v
+        working-directory: analysis

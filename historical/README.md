@@ -1,0 +1,17 @@
+# Historical analysis sources
+
+This directory preserves earlier analysis and plotting sources, reference-validation records and exploratory examples. Current execution starts in the [manuscript reproduction guide](../MANUSCRIPT_REPRODUCTION.md). These archived scripts may use old package imports, fixed paths, SGE or a separate R environment; they are method provenance rather than the current command-line interface.
+
+| Directory | Preserved material |
+| --- | --- |
+| `02_run_sinabro/` | Earlier single-gene runner, CSV combiner and SGE wrapper |
+| `03_mean_std_analysis/`, `04_PCA_and_gc_contents/` | Earlier plotting, PCA and sequence-feature scripts |
+| `05_Cancer_census_genes/` | Earlier Cancer Gene Census extraction sources |
+| `06_Bat_genome/` | Earlier bat extraction, combination and R plotting scripts |
+| `99_Supplementary/` | Earlier supporting analyses and graph plotting |
+| `validation/` | Detailed pilot, source-recovery and old/new numerical comparison records |
+| `examples/` | Earlier bounded supplementary Slurm example |
+
+The original analysis snapshot is commit `c2c271e36a0f478fd3b3464902a450c514f5b789`. The complete pre-publication checkout is preserved on [backup/before-paper-release-2026-10-21](https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds/tree/backup/before-paper-release-2026-10-21). The preceding public main is preserved separately on [backup/main-before-paper-release-2026-10-21](https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds/tree/backup/main-before-paper-release-2026-10-21).
+
+The frozen signature-subset manifest retains its original `04_PCA_and_gc_contents/reduce_signatures.py` source path and checksum. That small source remains at its original location for independent membership/order checks. Current PCA is implemented in `07_manuscript_validation/validate_manuscript_results.py`.

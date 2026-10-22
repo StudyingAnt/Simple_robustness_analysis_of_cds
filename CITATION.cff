@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "Please cite the associated manuscript and record both analysis and Sinabro commits."
+type: software
+title: "Human and bat genome robustness under COSMIC mutational signatures: analysis workflows"
+authors:
+  - family-names: Song
+    given-names: Joon-Hyun
+repository-code: "https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds"
+url: "https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds"
+license: BSD-3-Clause

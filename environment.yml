@@ -1,4 +1,4 @@
-# Scientific-library versions used for the checked manuscript-revision pilots.
+# Scientific-library versions used by the manuscript reproduction workflows.
 # Install Sinabro separately from the sibling Git checkout; see CONDA_SETUP.md.
 name: sinabro-revision
 channels:

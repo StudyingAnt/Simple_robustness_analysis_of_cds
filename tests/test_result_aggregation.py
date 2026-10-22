@@ -157,7 +157,7 @@ class ManuscriptGroupsTests(unittest.TestCase):
         data = json.loads((SCRIPTS / 'manuscript_signature_groups.json').read_text())
         original = SCRIPTS.parent / data['source']
         self.assertEqual(data['source_sha256'], validator.digest_file(original))
-        for script in (original, SCRIPTS.parent / '04_PCA_and_gc_contents/run_pca.py'):
+        for script in (original, SCRIPTS.parent / 'historical/04_PCA_and_gc_contents/run_pca.py'):
             for node in ast.parse(script.read_text()).body:
                 if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name):
                     name = node.targets[0].id

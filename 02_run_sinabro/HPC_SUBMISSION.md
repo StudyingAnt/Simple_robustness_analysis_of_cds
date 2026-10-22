@@ -56,7 +56,7 @@ mkdir -p logs
 sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/run_rums_seawulf.slurm
 ```
 
-The wrapper loads anaconda/3 and activates the revision environment inside each array job. Adjust the module name to the one available on your cluster if necessary. It does not install packages. Recorded core versions: Python 3.9.15, NumPy 1.21.6, Biopython 1.79.
+The wrapper loads anaconda/3 and activates the pinned environment inside each array job. Adjust the module name to the one available on your cluster if necessary. It does not install packages. Recorded core versions: Python 3.9.15, NumPy 1.21.6, Biopython 1.79.
 
 Optional exported variables:
 
@@ -120,7 +120,7 @@ export SINABRO_VALIDATE_RUN="$PWD/runs/hpc_gencode_v40_n1000_seed42"
 sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/validate_results_seawulf.slurm
 ```
 
-The wrapper requests one node / eight CPUs, 8 GB RAM, and at most four hours on short-96core-shared. It activates PROJECT/sinabro-revision regardless of the submit shell's active Conda environment. It reads every checkpoint and recomputes statistics; it does not launch simulations. Runtime depends on filesystem throughput and is not yet measured for the full dataset.
+The wrapper requests one node / eight CPUs, 8 GB RAM, and at most four hours on short-96core-shared. It activates PROJECT/sinabro-revision regardless of the submit shell's active Conda environment. It reads every checkpoint and recomputes statistics; it does not launch simulations. Runtime depends on filesystem throughput and available I/O.
 
 Default output: PROJECT/runs/results_check_JOBID. Override with SINABRO_VALIDATE_OUTPUT, which must name a new directory outside the simulation directory. SINABRO_VALIDATE_RUN explicitly selects the existing simulation; it is independent of previously exported simulation/test output variables. PROJECT, ANALYSIS_DIR, SINABRO_ENV, SINABRO_FASTA and SINABRO_PYTHON have their usual meanings. The wrapper asserts 73,214 input transcripts; use the portable Python CLI without that assertion for a custom dataset.
 
@@ -145,7 +145,7 @@ export SINABRO_AGGREGATE_VALIDATION="$PWD/runs/results_check_2304985"
 sbatch Simple_robustness_analysis_of_cds/02_run_sinabro/aggregate_results_seawulf.slurm
 ```
 
-The job uses one shared node, eight CPUs, 8 GB RAM, and a four-hour walltime limit. This limit is not a runtime estimate. It activates the revision environment, compares every NPZ hash with the passing audit, and writes the matrices, annotation mapping and descriptive signature summary described in [AGGREGATION.md](AGGREGATION.md). No trajectories or figures are generated. The existing runner, validator and package sources remain unchanged.
+The job uses one shared node, eight CPUs, 8 GB RAM, and a four-hour walltime limit. This limit is not a runtime estimate. It activates the pinned environment, compares every NPZ hash with the passing audit, and writes the matrices, annotation mapping and descriptive signature summary described in [AGGREGATION.md](AGGREGATION.md). No trajectories or figures are generated. The existing runner, validator and package sources remain unchanged.
 
 Default output: PROJECT/runs/aggregation_JOBID; override with SINABRO_AGGREGATE_OUTPUT to select another new directory. SINABRO_AGGREGATE_VALIDATION is required and has no guessed default. SINABRO_AGGREGATE_RUN explicitly selects the saved simulation independently of other output variables. PROJECT, ANALYSIS_DIR, SINABRO_ENV, SINABRO_FASTA and SINABRO_PYTHON have their usual meanings.
 
@@ -159,4 +159,4 @@ Expected: aggregation_passed=true, transcripts=73214, checkpoint_hashes_matched=
 
 The user reported successful full export (job 2305071): 73,214 checkpoint hashes matched, 79 signatures, 1,000 paths per combination, 19,309 genes and 73 retained internal-stop transcripts. For the next job, checking descriptive ranks and drawing distribution figures, follow [03_mean_std_analysis/README.md](../03_mean_std_analysis/README.md). It reads the completed export rather than the original simulation NPZ files.
 
-Local tests cover preprocessing, resume/checkpoint safety, full archive auditing, exported ID correspondence and signature subsets, distinct path/across-transcript dispersion, source-hash mismatches, output preservation and spawned workers. The user reported successful bounded parallel validation and a full audit of all 73,214 transcript files / 5,783,906,000 paths on 2026-10-16 (job 2304985): no missing, invalid or incomplete results, validation_passed=true. Full-workload distribution plotting, PCA and subsequent manuscript analyses remain pending.
+Local tests cover preprocessing, resume/checkpoint safety, full archive auditing, exported ID correspondence and signature subsets, distinct path/across-transcript dispersion, source-hash mismatches, output preservation and spawned workers. The reference campaign passed bounded parallel validation and a full audit of all 73,214 transcript files / 5,783,906,000 paths (job 2304985): no missing, invalid or incomplete results. Distribution, PCA/statistical and supplementary workflows also have passing reference reports; see [the validation reference](../docs/validation_reference.md).
