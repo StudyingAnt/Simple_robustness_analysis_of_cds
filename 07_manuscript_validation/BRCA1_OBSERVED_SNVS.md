@@ -27,7 +27,13 @@ The executable SHA256 (`5221bce3f3df771f62692b86c7d88ad8e3607848106712d43ca4a29b
 - `figureS12_cosmic_single_snv_matches.png`: `02b2652cdfee9478b4fea2cd12b2ba11d7e4f7fe69c40e252650266b54f8dcd8`.
 - `figureS12_cosmic_single_snv_matches.pdf`: `b928a6ca2760c77337cd86835f4b2d6ff355e1c043c6dcecf7fca9344c3343b0`.
 
-These new observed-data artifacts remain on HPC and have not been independently opened locally. Final artwork review remains. This successful reconstruction creates a new, explicitly defined allele-match panel; the historical exact panel, release and node-matching rule remain unconfirmed.
+The author subsequently supplied an HPC screenshot, which was visually reviewed alongside the recovered manuscript S12 image. Its legend (`n=19`), red single-substitution marks, reference star, BLOSUM80 colour scale and radial axes agree with the declared analysis. This completes the screenshot-based content/layout review of the reconstructed S12 panel. The original exported PDF/PNG bytes were not opened locally; final publication-scale typography can be checked during manuscript assembly.
+
+The overall layered graph structure resembles the historical panel, but its red-point meaning differs: the original image has red points across multiple layers, whereas the regenerated panel deliberately restricts red marks to the first Hamming-distance layer. This is a consequence of the new matching definition, not independent evidence that observed cancer variants concentrate near the reference. Retain that definition in the final caption. No additional trajectories or expanded supplementary analysis are required for this declared illustrative panel. Exact historical semantics remain unconfirmed.
+
+### Concise manuscript caption draft
+
+Simulated BRCA1-203 (ENST00000357654.9) mutation paths under SBS2. Nodes represent DNA states from 1,000 trajectories stopped at a BLOSUM80 alignment-score distance of at least 20. Node colour indicates BLOSUM80 distance, and radius indicates reference DNA Hamming distance. Red nodes have exactly one reference-relative substitution matching an SNV in COSMIC v101 records with primary site breast (n=19). These allele matches do not establish complete tumour genotypes.
 
 ## Submit one job on SeaWulf
 
