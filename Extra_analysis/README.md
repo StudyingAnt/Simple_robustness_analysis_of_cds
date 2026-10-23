@@ -8,6 +8,7 @@ here and write results to a new external output directory.
 | Analysis | Inputs | Main outputs |
 |---|---|---|
 | [01_statistics_and_sequence_features](01_statistics_and_sequence_features/README.md) | Audited exported means, authenticated annotations and the original CDS-plus FASTAs | Human Friedman/paired Wilcoxon results, paired effect sizes and median CIs, three-cohort GC3 distributions, outlier annotations, descriptive species comparisons |
+| [02_bat_assay_figure](02_bat_assay_figure/README.md) | Existing authenticated six-enzyme motif means | Figure 6 with a common percentage axis, draft caption and provenance; no new assay or RUMS calculation |
 
 Start with the portable instructions in the analysis folder. The authors' SeaWulf
 submission example is stored separately in `author_hpc/`; it requires the authors'
