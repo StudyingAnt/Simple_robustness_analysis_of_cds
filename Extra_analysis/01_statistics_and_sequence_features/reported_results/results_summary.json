@@ -1,0 +1,133 @@
+{
+  "analysis_passed": true,
+  "stage": "additional_statistics_and_sequence_features",
+  "fresh_simulation": false,
+  "bounded_subset": false,
+  "n_trajectories": 1000,
+  "human_transcripts": 73214,
+  "human_genes": 19309,
+  "human_signature_count": 79,
+  "representative_rule": "longest retained CDS per stable gene ID; versioned transcript ID lexical tie-break",
+  "paired_test": "two-sided Wilcoxon normal approximation; zeros dropped; average ties; no continuity correction",
+  "multiple_testing": "Holm across all unordered pairs among the supplied human signatures",
+  "confidence_interval": "pointwise 95% binomial/order-statistic CI for median of within-gene differences; not simultaneous",
+  "signed_rank_caution": "Signed-rank inference assumes a symmetric distribution of differences under its null; not a general median test.",
+  "uncertainty_scope": "Conditional sequence/gene sampling summaries; no population/phylogenetic or Monte Carlo-error claim.",
+  "friedman": {
+    "test": "Friedman, tie-corrected chi-square approximation",
+    "n_blocks": 19309,
+    "signatures": 79,
+    "statistic": 1018044.2264738311,
+    "df": 78,
+    "p": 0.0,
+    "p_underflow": true,
+    "p_display": "numeric underflow; exact value not represented",
+    "kendall_W": 0.6759464010231917,
+    "asymptotic_size_guidance_met": true
+  },
+  "paired_comparisons": 3081,
+  "sbs2_vs_sbs13": {
+    "group1": "SBS2",
+    "group2": "SBS13",
+    "n_paired": 19309,
+    "median_group1": 0.727,
+    "median_group2": 0.212,
+    "paired_median_difference": 0.503,
+    "ci_low": 0.498,
+    "ci_high": 0.509,
+    "ci_confidence": 0.95,
+    "ci_coverage_bound": 0.9513744134102201,
+    "n_nonzero": 19309,
+    "n_zero": 0,
+    "W_min": 22.5,
+    "z": 120.34169498777607,
+    "rank_biserial": 0.9999997586204612,
+    "p": 0.0,
+    "p_log10": -3146.9316785984506,
+    "p_underflow": true,
+    "p_display": "10^(-3146.93)",
+    "p_holm": 0.0,
+    "p_holm_log10": -3143.4458152688535,
+    "p_holm_underflow": true,
+    "p_holm_display": "10^(-3143.45)",
+    "holm_family_size": 3081,
+    "reject_holm_0_05": true
+  },
+  "highest_gene_median_signature": "SBS19",
+  "species_analysis": {
+    "shared_cosmic_profiles": [
+      "SBS1",
+      "SBS2",
+      "SBS3",
+      "SBS4",
+      "SBS6",
+      "SBS9",
+      "SBS13",
+      "SBS18"
+    ],
+    "fixed_experimental_profiles": [
+      "HLmolMol2_APOBEC3A",
+      "HLmolMol2_APOBEC3C",
+      "HLmolMol2_APOBEC1",
+      "HLmyoMyo6_APOBEC3A3",
+      "HLmyoMyo6_APOBEC3C",
+      "HLmyoMyo6_APOBEC1"
+    ],
+    "comparisons": 45,
+    "biological_species_inference": false,
+    "species_confidence_intervals_completed": false,
+    "reason": "No verified bat gene grouping or independent species replication; no transcript bootstrap CI claimed."
+  },
+  "elapsed_seconds": 97.49930304599911,
+  "source_sha256": {
+    "run_analysis.py": "9fb3c4a81d2f966eaceb321f271c1089c7d9ea8bba36d684e40bd52c194be1ba",
+    "statistics_utils.py": "89b406d9528b1c01857599db311cd543b8f2a66530ae84a0a02f930cb9bdc53d",
+    "validate_manuscript_results.py": "c4847612066dc84ccd21d362e08a7338b07fbf82223ee59447a9d1eabde05533"
+  },
+  "runtime": {
+    "python": "3.9.15",
+    "numpy": "1.21.6",
+    "scipy": "1.8.1"
+  },
+  "verified_rankings": {
+    "gene": {
+      "mean": {
+        "leader": "SBS2",
+        "sbs2": 0.8336748666424983,
+        "sbs19": 0.755543839660262
+      },
+      "median": {
+        "leader": "SBS19",
+        "sbs2": 0.727,
+        "sbs19": 0.73
+      }
+    },
+    "transcript": {
+      "mean": {
+        "leader": "SBS2",
+        "sbs2": 0.7891060043161146,
+        "sbs19": 0.7196138853224793
+      },
+      "median": {
+        "leader": "SBS19",
+        "sbs2": 0.679,
+        "sbs19": 0.683
+      }
+    },
+    "authenticated_csvs_recovered_from_pasted_text": true
+  },
+  "provenance": {
+    "full_execution_report_sha256": "c816199985ce0164f7b818cde15ef83039c58b2f3eca2732cd8c632c0fdd6602",
+    "analysis_code_commit": "9dbb7689cd6098504b51ae283db3201ac0357f32",
+    "sequence_sha256": {
+      "human": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751",
+      "molMol2": "39886ea9c0c5a648269aa562482ccb8eb3cd11050b26d06674dd33302392c574",
+      "myoMyo6": "db33d7406fdd4cc587bd1b81c6f87d400b614f98d98c9597ce3b5db0402f3c98"
+    },
+    "included_files_sha256": {
+      "human_gene_signature_summary.csv": "f05bd661d059165033ecd20857585d47dfd7febac3902ff4ed5de14029db5f31",
+      "human_transcript_signature_summary.csv": "c14439a7ba914ebc20f862fcfca084a8d515bac0f821b4901dd37cc07d1e8826"
+    },
+    "not_included": "Full 3081-row paired comparisons, representative mapping, outlier tables and species tables remain in the full job output; they are not bundled here."
+  }
+}

@@ -116,6 +116,12 @@ Reviewer 1 concerns. They do not supply a synonymous-recoding null, a numerical
 comparison with earlier robustness measures/simulators, a species-by-process
 orthologue model, assay replicate metadata, or a phylogenetic lifespan test.
 
+The [verified human summary tables and placement note](reported_results/README.md)
+record the full additional run: SBS2 remains the highest-mean profile, whereas
+SBS19 has the highest median. That directory distinguishes the small verified
+summary deposit from the full execution output and proposes locations in Results,
+Methods, the Table S1 replacement package and the reviewer response.
+
 ## Verification and author execution
 
 ```bash
