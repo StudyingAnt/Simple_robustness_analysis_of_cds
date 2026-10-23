@@ -1,0 +1,95 @@
+{
+  "analysis_passed": true,
+  "stage": "one_step_baselines",
+  "fresh_simulation": false,
+  "bounded_subset": false,
+  "representative_genes": 19309,
+  "signatures": 79,
+  "input_export_manifest_sha256": "3132c0f51f168f75268d7e1adb6c6068d0182cb21f9746d5f5886b54501fd115",
+  "fasta_sha256": "c2f30678cb9f2252bd4717d1f0b8fef9e9575b4be843aa64478c4b1e0422a751",
+  "signature_sha256": "9d9c212cc14aa660da1b7fd9e60e696c8e2c885a7606c27d20ad8997954554ea",
+  "script_sha256": "683d76f739da0dab5868b7f4631dfb07e8f92bdf997c2e7f2bb7861797ffdb71",
+  "common_sha256": "006ac9b1102e1b0cb091f447521e1058a39d7881cfd7ea6836c7681bddaf5142",
+  "uniform_definition": "Synonymous single-base neighbours / (3 * CDS nt), equal event weights",
+  "weighted_definition": "Initial synonymous event weight / initial total event weight, both strands equal",
+  "criterion": "Standard genetic code protein identity; terminal/internal stop symbols retained",
+  "sequence_contexts_updated_in_baseline": false,
+  "baseline_is_rums_or_fixed_n_robustness": false,
+  "genetic_code_and_codon_usage_adjusted_causal_inference": false,
+  "interpretation": "Exact first-step baselines, not a functional assay, adaptation null, n-robustness or multivariable causal test.",
+  "across_signature_mean_spearman": 0.9988558909444986,
+  "focal_profiles": [
+    {
+      "Signature": "SBS2",
+      "n_genes": 19309,
+      "mean_rums": 0.8336748666424983,
+      "mean_weighted_one_step_probability": 0.42971973176412054,
+      "spearman_uniform_vs_rums": 0.5241292299015309,
+      "spearman_weighted_vs_rums": 0.9950876491162306,
+      "median_absolute_rank_shift": 317.0,
+      "top5_rums_count": 966,
+      "top5_baseline_count": 966,
+      "top5_intersection": 890,
+      "top5_union": 1042
+    },
+    {
+      "Signature": "SBS13",
+      "n_genes": 19309,
+      "mean_rums": 0.23285483453311928,
+      "mean_weighted_one_step_probability": 0.1820277313671534,
+      "spearman_uniform_vs_rums": 0.6403317210941992,
+      "spearman_weighted_vs_rums": 0.9895671418040348,
+      "median_absolute_rank_shift": 461.0,
+      "top5_rums_count": 975,
+      "top5_baseline_count": 966,
+      "top5_intersection": 866,
+      "top5_union": 1075
+    },
+    {
+      "Signature": "SBS19",
+      "n_genes": 19309,
+      "mean_rums": 0.755543839660262,
+      "mean_weighted_one_step_probability": 0.4203793917917572,
+      "spearman_uniform_vs_rums": 0.4733686539558612,
+      "spearman_weighted_vs_rums": 0.9898036689537643,
+      "median_absolute_rank_shift": 473.0,
+      "top5_rums_count": 967,
+      "top5_baseline_count": 966,
+      "top5_intersection": 843,
+      "top5_union": 1090
+    }
+  ],
+  "elapsed_seconds": 42.241386527999566,
+  "outputs": [
+    {
+      "filename": "baseline_correlations_by_signature.csv",
+      "sha256": "cfcabcac0ed1d8d5bf5392464eb5a4b03b6e355aff24a8e55c0a6715d72c26df",
+      "bytes": 9175
+    },
+    {
+      "filename": "one_step_baseline_comparison.pdf",
+      "sha256": "390adf9236c89e5392849f0304400d01bf7323645596ff1df68d7a929d631050",
+      "bytes": 20052
+    },
+    {
+      "filename": "one_step_baseline_comparison.png",
+      "sha256": "8a4016e390c59a874489b9ee15f304d98ffa48485c968ddeb9a6c6698721686a",
+      "bytes": 94556
+    },
+    {
+      "filename": "rank_discordant_examples.csv",
+      "sha256": "b21c43ee0b668df148a15b426cb141ed3a1901e26aef5a7c0ceb05444624f5ca",
+      "bytes": 111088
+    },
+    {
+      "filename": "uniform_one_step_baseline.csv",
+      "sha256": "bfb1f0d58a32d9ab9f14e8e08852f77af4a8afbc6f51c1ff69ac303e69f8ef88",
+      "bytes": 1382786
+    },
+    {
+      "filename": "weighted_one_step_baseline.csv",
+      "sha256": "ce25fa7f7b7bbf7dd0bfdb5e4111dcfe266e1a3b41cc56542208d7e6322c9d47",
+      "bytes": 30187067
+    }
+  ]
+}

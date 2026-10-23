@@ -4,6 +4,11 @@ These two checks complete the selected additional computational scope. Both read
 existing inputs/results and generate no new RUMS trajectories. The existing
 package, original-paper workflows and their outputs are not edited.
 
+The authors' completed run and its interpretation are recorded in
+[reported_results/README.md](reported_results/README.md). Both checks passed;
+the weighted one-step baseline closely tracks RUMS, and the saved-path check
+characterizes numerical precision in 183 metadata-selected CDSs.
+
 Use the repository's pinned Conda environment. From the repository root:
 
 ```bash

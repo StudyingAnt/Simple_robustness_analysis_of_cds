@@ -1,0 +1,17 @@
+{
+  "source": "JSON content copied from the authors' pasted HPC console output; job 2350953",
+  "source_console_sha256": "e6f8db5577f6984d6ef1f07c8e14c6893f9fa98e1777b32b9b0cb5a88b8995fa",
+  "hpc_output_root": "results/extra_analysis/baselines_stability_2350953",
+  "script_hashes_match_repository": true,
+  "input_manifest_matches_previous_report": true,
+  "reported_hpc_checks_passed": true,
+  "hpc_files_accessed_directly_from_this_pc": false,
+  "raw_csvs_and_figures_transferred": false,
+  "report_json_content_preserved": true,
+  "original_hpc_report_file_bytes_independently_verified": false,
+  "copied_report_sha256": {
+    "one_step_summary.json": "f96d080e3ab5d9e775456744327b2052d7589f30e6f5de5e161e879293d1a1f3",
+    "stability_summary.json": "8fac684e68eafcb5c164059818e3822443adf665c470b2d6652155f6310051c3"
+  },
+  "other_output_hashes": "Recorded by the HPC scripts; full CSV and figure bytes remain on the authors' HPC."
+}
