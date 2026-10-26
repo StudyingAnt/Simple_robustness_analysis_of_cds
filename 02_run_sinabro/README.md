@@ -45,7 +45,7 @@ Omitting `--signatures` selects all 79 COSMIC v3.3.1 GRCh37 SBS profiles. The fu
 
 The stopping criterion is the first amino-acid sequence change. RUMS counts accepted neutral steps before that event. The 10,000-step cap is a safety limit; capped or unavailable-event paths are incomplete and must not be interpreted as complete robustness estimates.
 
-Audit and export the completed full calculation using [AGGREGATION.md](AGGREGATION.md). Then follow [distribution analysis](../03_mean_std_analysis/README.md) and [manuscript analyses](../07_manuscript_validation/README.md). [REPRODUCTION.md](REPRODUCTION.md) explains input format, resume and execution settings.
+Audit and export the completed full calculation using [AGGREGATION.md](AGGREGATION.md). Then follow [distribution analysis](../03_mean_std_analysis/README.md) and [manuscript analyses](../07_robustness_analysis/README.md). [REPRODUCTION.md](REPRODUCTION.md) explains input format, resume and execution settings.
 
 ## How the authors ran this stage
 

@@ -1,4 +1,4 @@
-# Manuscript analyses and supplementary panels
+# Robustness analyses and supplementary figures
 
 These programs use the [pinned Python environment](../CONDA_SETUP.md) and ordinary terminal commands. No HPC account is required. Run from the analysis repository root and provide your own audited upstream exports. The original full calculations were performed on the authors' HPC system; scheduler details are kept separately.
 
@@ -10,24 +10,24 @@ After completing [human table export](../02_run_sinabro/AGGREGATION.md), [bat CO
 PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
 SINABRO_SOURCE=/ABSOLUTE/PATH/TO/YOUR/sinabro
 
-python 07_manuscript_validation/validate_manuscript_results.py \
+python 07_robustness_analysis/analyze_robustness_results.py \
   --human-export "$PROJECT/runs/human_export" \
   --bat-export "$PROJECT/runs/bat_cosmic_export" \
   --apobec-export "$PROJECT/runs/experimental_apobec_export" \
   --signatures "$SINABRO_SOURCE/sinabro/data/COSMIC_v3.3.1_SBS_GRCh37.txt" \
-  --out-dir "$PROJECT/results/manuscript_analysis" --n-traj 1000
+  --out-dir "$PROJECT/results/robustness_analysis" --n-traj 1000
 ```
 
 Choose a new output directory. The program verifies manifests, populations, signature identity and compatible inputs, then writes `analysis_summary.json`, statistical/feature/PCA tables and PDF/PNG panels. It reuses completed trajectories; it does not rerun the genome simulations. The full manuscript analysis expects the full cohorts, not the synthetic usage example.
 
-PCA uses mean-centered full SVD without standardization and the historical sign convention. All 79-, 60- and 41-signature groups are retained; Figure 4 fits the 60-signature model and displays 41 known-aetiology signatures. Statistical comparisons include Kruskal–Wallis, median-centered Levene, Dunn/Bonferroni and asymptotic Mann–Whitney tests with documented family corrections. Transcript observations are not independent biological replicates. See [methods and reference results](../docs/validation_reference.md).
+PCA uses mean-centered full SVD without standardization and the historical sign convention. All 79-, 60- and 41-signature groups are retained; Figure 4 fits the 60-signature model and displays 41 known-aetiology signatures. Statistical comparisons include Kruskal–Wallis, median-centered Levene, Dunn/Bonferroni and asymptotic Mann–Whitney tests with documented family corrections. Transcript observations are not independent biological replicates. For paired gene-level statistics and additional sequence-feature analyses, see [Extra_analysis](../Extra_analysis/README.md). See [methods and reference results](../docs/validation_reference.md).
 
 ## Signature sampler figures (S1/S2)
 
 This independent calculation uses random sequences rather than the genome exports:
 
 ```bash
-python 07_manuscript_validation/validate_signature_sampler.py \
+python 07_robustness_analysis/validate_signature_sampler.py \
   --sinabro-source "$SINABRO_SOURCE" \
   --out-dir "$PROJECT/results/signature_sampler" \
   --workers 1 --n-sequences 10000 --length 2200 --gc 0.4 --seed 42

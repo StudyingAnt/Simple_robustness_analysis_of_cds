@@ -14,9 +14,9 @@ import unittest
 import numpy as np
 from scipy import stats
 
-PAPER = Path(__file__).resolve().parents[1] / '07_manuscript_validation'
+PAPER = Path(__file__).resolve().parents[1] / '07_robustness_analysis'
 sys.path.insert(0, str(PAPER))
-import validate_manuscript_results as paper
+import analyze_robustness_results as paper
 import validate_signature_sampler as sampler
 
 

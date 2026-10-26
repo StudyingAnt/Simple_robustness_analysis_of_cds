@@ -13,7 +13,7 @@ import sys
 import tempfile
 import time
 
-from validate_manuscript_results import digest, require, save_plot
+from analyze_robustness_results import digest, require, save_plot
 from run_supplementary_cases import audit_graph
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection

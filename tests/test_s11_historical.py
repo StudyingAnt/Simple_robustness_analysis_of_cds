@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 
-PAPER = Path(__file__).resolve().parents[1]/'07_manuscript_validation'
+PAPER = Path(__file__).resolve().parents[1]/'07_robustness_analysis'
 sys.path.insert(0, str(PAPER))
 import analyze_s11_historical as s11
 

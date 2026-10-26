@@ -1,4 +1,4 @@
-# Manuscript analyses and supplementary workflows
+# Robustness analyses and supplementary workflows
 
 > Author execution record: these commands and paths describe the authors’ SeaWulf setup. SeaWulf requires institutional access. For ordinary terminal/Python commands, use the stage README one level above. Researchers using an HPC system must adapt these examples to their own site.
 
@@ -10,15 +10,15 @@ After the human, bat COSMIC and experimental-profile tables have been exported a
 
 ```bash
 mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/validate_manuscript_results_seawulf.slurm
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/validate_signature_sampler_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/analyze_robustness_results_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/validate_signature_sampler_seawulf.slurm
 ```
 
-The two jobs are independent. Each requests eight CPUs, 8 GB and four hours as allocation limits. Wrappers activate the configured `SINABRO_ENV`; Python entry points accept explicit paths on other computers.
+The two jobs are independent. Each requests eight CPUs and four hours; memory limits are specified in the individual scripts. Wrappers activate the configured `SINABRO_ENV`; Python entry points accept explicit paths on other computers.
 
 | Program | Calculation | Main output |
 | --- | --- | --- |
-| `validate_manuscript_results.py` | PCA, GC3, signature features, statistical and species comparisons | `analysis_summary.json`, tables and PDF/PNG panels |
+| `analyze_robustness_results.py` | PCA, GC3, signature features, statistical and species comparisons | `analysis_summary.json`, tables and PDF/PNG panels |
 | `validate_signature_sampler.py` | 10,000 random 2,200-bp sequences per each of 79 signatures | `sampler_validation_summary.json`, channel counts, cosine summaries and plots |
 
 The downstream job reads the human export, both bat exports and all three experimental-profile exports. It verifies file manifests, expected populations, signature identity and input compatibility. Default wrapper paths identify the reference campaign; override `SINABRO_PAPER_HUMAN`, `SINABRO_PAPER_BATS`, `SINABRO_PAPER_APOBEC` and `SINABRO_PAPER_OUTPUT` for another project. Output locations must be new.

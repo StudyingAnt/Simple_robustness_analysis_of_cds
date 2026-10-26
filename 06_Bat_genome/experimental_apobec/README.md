@@ -62,7 +62,7 @@ python 06_Bat_genome/experimental_apobec/export_results.py \
   --n-traj 1000 --workers "$WORKERS"
 ```
 
-Inspect `experimental_audit_manifest.json` and `export_manifest.json`; both should report `stage_passed=true`. The export includes `human/`, `molMol2/`, `myoMyo6/` and `profile_comparison_summary.csv` (18 dataset/profile rows). Continue with [manuscript statistics and panels](../../07_manuscript_validation/README.md). Output directories must be new; full audit/export uses the full frozen populations.
+Inspect `experimental_audit_manifest.json` and `export_manifest.json`; both should report `stage_passed=true`. The export includes `human/`, `molMol2/`, `myoMyo6/` and `profile_comparison_summary.csv` (18 dataset/profile rows). Continue with [manuscript statistics and panels](../../07_robustness_analysis/README.md). Output directories must be new; full audit/export uses the full frozen populations.
 
 ## Source workbook and reconstruction policy
 

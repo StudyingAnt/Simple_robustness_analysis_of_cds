@@ -25,5 +25,5 @@ set -u
 PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID on $(hostname); historical S11 matched-transcript analysis"
-"$PYTHON_BIN" "$ANALYSIS_DIR/07_manuscript_validation/analyze_s11_historical.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/07_robustness_analysis/analyze_s11_historical.py" \
   --input "$INPUT" --out-dir "$OUTPUT"

@@ -14,7 +14,7 @@ Choose a new output directory. This reads the verified TARs directly, joins tiss
 
 Inspect `cosmic_breast_variants_summary.json`: `preparation_passed=true`, no attention reasons, correct target transcript, and passing strand/reference checks. With the pinned inputs, reference counts are 354 breast BRCA1 observations, 235 accepted mapped observations and 174 distinct SNVs; 74 non-SNV/unknown-allele and 45 outside-CDS observations are excluded. Source observations are not independent patients.
 
-Outputs include `brca1_observation_audit.tsv` (per-observation inclusion/exclusion audit), `brca1_breast_target_snvs.tsv` (deduplicated target substitutions) and the summary with source/code hashes. Keep raw and processed COSMIC observations outside Git. Next: [annotate the saved BRCA1 graph](../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md).
+Outputs include `brca1_observation_audit.tsv` (per-observation inclusion/exclusion audit), `brca1_breast_target_snvs.tsv` (deduplicated target substitutions) and the summary with source/code hashes. Keep raw and processed COSMIC observations outside Git. Next: [annotate the saved BRCA1 graph](../07_robustness_analysis/BRCA1_OBSERVED_SNVS.md).
 
 ## Selection and coordinate rules
 

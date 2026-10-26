@@ -13,6 +13,6 @@ This directory preserves earlier analysis and plotting sources, exploratory exam
 
 The original analysis snapshot is commit `c2c271e36a0f478fd3b3464902a450c514f5b789`. The complete pre-publication checkout is preserved on [backup/before-paper-release-2026-10-21](https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds/tree/backup/before-paper-release-2026-10-21). The preceding public main is preserved separately on [backup/main-before-paper-release-2026-10-21](https://github.com/StudyingAnt/Simple_robustness_analysis_of_cds/tree/backup/main-before-paper-release-2026-10-21).
 
-The frozen signature-subset manifest retains its original `04_PCA_and_gc_contents/reduce_signatures.py` source path and checksum. That small source remains at its original location for independent membership/order checks. Current PCA is implemented in `07_manuscript_validation/validate_manuscript_results.py`.
+The frozen signature-subset manifest retains its original `04_PCA_and_gc_contents/reduce_signatures.py` source path and checksum. That small source remains at its original location for independent membership/order checks. Current PCA is implemented in `07_robustness_analysis/analyze_robustness_results.py`.
 
 Author pilot, source-recovery and completed-run validation records are retained inside each stage’s `author_hpc/records/` folder; see the [author execution index](../author_hpc/README.md).

@@ -27,6 +27,6 @@ set -u
 PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID on $(hostname); BRCA1 SBS2/BLOSUM80 graph, 1000 fresh paths"
-"$PYTHON_BIN" "$ANALYSIS_DIR/07_manuscript_validation/run_supplementary_cases.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/07_robustness_analysis/run_supplementary_cases.py" \
   --stage s12 --input "$INPUT" --sinabro-source "$PACKAGE" --out-dir "$OUTPUT" \
   --n-traj 1000 --workers "$SLURM_CPUS_PER_TASK" --seed 42 --max-steps 10000

@@ -4,7 +4,7 @@ First complete the [BRCA1 graph](BRCA1_GRAPH.md) and [COSMIC breast-SNV mapping]
 
 ```bash
 PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
-python 07_manuscript_validation/annotate_brca1_graph.py \
+python 07_robustness_analysis/annotate_brca1_graph.py \
   --graph-dir "$PROJECT/runs/brca1_sbs2_blosum20_n1000" \
   --variants-dir "$PROJECT/data/processed/cosmic_v101_grch38/brca1_breast" \
   --out-dir "$PROJECT/results/brca1_cosmic_snv_matches"

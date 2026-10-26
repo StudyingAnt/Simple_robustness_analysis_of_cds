@@ -16,7 +16,7 @@ From the project root:
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
 mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/analyze_s11_historical_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/analyze_s11_historical_seawulf.slurm
 ```
 
 This job reuses the existing `sinabro-revision` environment and `data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa`. It requests one shared CPU, 4 GB and a 30-minute time limit; the time limit is not a runtime estimate. No new environment, HDF5 library, data transfer or mutation simulation is required. The two completed core validation jobs do not need resubmission.
@@ -48,7 +48,7 @@ The historical matched-population means are approximately **0.8116874332** under
 With the analysis environment active, from the repository root:
 
 ```bash
-python 07_manuscript_validation/analyze_s11_historical.py \
+python 07_robustness_analysis/analyze_s11_historical.py \
   --input /PATH/TO/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
   --out-dir /PATH/TO/PROJECT/results/s11_historical
 ```

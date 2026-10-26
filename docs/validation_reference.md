@@ -1,6 +1,6 @@
 # Methods and reference validation
 
-This record summarizes the checked manuscript workflows and their scientific scope. Reference-campaign counts and numerical results come from preserved HPC manifests and author-supplied complete reports; large checkpoint stores and generated figures are maintained outside Git. Source/input hashes connect those reports to the checked code. Detailed development comparisons remain in the [historical validation record](../07_manuscript_validation/author_hpc/records/DEVELOPMENT_VALIDATION_RECORD.md).
+This record summarizes the checked manuscript workflows and their scientific scope. Reference-campaign counts and numerical results come from preserved HPC manifests and author-supplied complete reports; large checkpoint stores and generated figures are maintained outside Git. Source/input hashes connect those reports to the checked code. Detailed development comparisons remain in the [historical validation record](../07_robustness_analysis/author_hpc/records/DEVELOPMENT_VALIDATION_RECORD.md).
 
 ## Software and inputs
 

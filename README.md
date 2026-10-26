@@ -8,8 +8,8 @@ Analysis code and reproducible workflows accompanying *Human and bats genome rob
 2. Follow the [manuscript reproduction guide](MANUSCRIPT_REPRODUCTION.md) in calculation order.
 3. Consult [data sources and availability](DATA_AVAILABILITY.md), [methods and validation](docs/validation_reference.md), and the [software manifest](software_manifest.json).
 
-**Download the calculated values directly:** [supplementary Tables S1–S6 and
-audited human/bat RUMS matrices](00_supporting_information/README.md), including
+**Download the calculated values directly:** [supplementary Tables S1–S6](00_supporting_information/paper_tables/README.md) and
+[audited human/bat RUMS matrices](00_supporting_information/README.md), including
 19,309 human gene representatives and all six experimental NNC preferences.
 No new calculation or HPC access is needed to inspect these data.
 
@@ -24,11 +24,11 @@ The authors ran the full calculations on **Stony Brook University's SeaWulf HPC 
 | Human reference download and CDS-plus preparation | [GENCODE v40](01_data_downloading_and_preprocessing/README.md) |
 | Human RUMS, checkpoint audit and table export | [Human calculation](02_run_sinabro/README.md) |
 | Signature distributions and summary ranks | [Distribution analysis](03_mean_std_analysis/README.md) |
-| PCA, sequence features and manuscript statistics | [Manuscript analyses](07_manuscript_validation/README.md) |
+| PCA, sequence features and robustness comparisons | [Robustness analyses](07_robustness_analysis/README.md) |
 | Bat CDS cohorts and COSMIC controls | [Bat workflows](06_Bat_genome/README.md) |
 | Six experimental APOBEC profiles across three species | [Experimental profiles](06_Bat_genome/experimental_apobec/README.md) |
-| Supplementary BLOSUM criterion comparison | [Archived S11 matched-transcript analysis](07_manuscript_validation/S11_HISTORICAL.md) |
-| BRCA1 mutation graph and reported SNV matches | [S12 graph](07_manuscript_validation/BRCA1_GRAPH.md) and [allele annotation](07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) |
+| Supplementary BLOSUM criterion comparison | [Archived S11 matched-transcript analysis](07_robustness_analysis/S11_HISTORICAL.md) |
+| BRCA1 mutation graph and reported SNV matches | [S12 graph](07_robustness_analysis/BRCA1_GRAPH.md) and [allele annotation](07_robustness_analysis/BRCA1_OBSERVED_SNVS.md) |
 
 ## Reproducibility
 

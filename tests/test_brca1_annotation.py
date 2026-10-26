@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "07_manuscript_validation"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "07_robustness_analysis"))
 import annotate_brca1_graph as annotation
 
 

@@ -34,5 +34,5 @@ else
 fi
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID on $(hostname); matching COSMIC breast SNVs to the existing BRCA1 graph"
-"$PYTHON_BIN" "$ANALYSIS_DIR/07_manuscript_validation/annotate_brca1_graph.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/07_robustness_analysis/annotate_brca1_graph.py" \
   "${GRAPH_ARGS[@]}" "${VARIANT_ARGS[@]}" --out-dir "$OUTPUT"

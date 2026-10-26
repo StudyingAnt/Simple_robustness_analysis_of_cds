@@ -69,7 +69,7 @@ The full-data report passed with no attention reasons at `2026-10-22T02:41:35.36
 
 Both official archive hashes, the pinned FASTA, processing code (`2cb3fee027803cdf8e78a91ec42c6cc312febc52da67e7f42f1b9f8e908436c1`) and coordinate map (`39b7ecca50d24fafca787121f9ec9079da03c7e051a1390e826255077160e89e`) matched. Reported `brca1_breast_target_snvs.tsv` SHA256: `48bdae70c6a2417a4545fe4ae7341cf4abf106b81b0decdca2a6f1f0419cf521`; observation audit SHA256: `c53b73468ccca61c5f1a7d00230b18217897c763b56a4fd1571a50d88194faa5`.
 
-No unresolved phenotype linkage, reference mismatch, genomic annotation conflict or invalid genomic coordinate was reported. The raw/processed observations remain on HPC and have not been inspected locally. The supplied report did not include its Slurm job ID/output-directory suffix. **Next: [match the SNVs to the existing graph](../../07_manuscript_validation/BRCA1_OBSERVED_SNVS.md)**; the successful mapping job does not need resubmission.
+No unresolved phenotype linkage, reference mismatch, genomic annotation conflict or invalid genomic coordinate was reported. The raw/processed observations remain on HPC and have not been inspected locally. The supplied report did not include its Slurm job ID/output-directory suffix. **Next: [match the SNVs to the existing graph](../../07_robustness_analysis/BRCA1_OBSERVED_SNVS.md)**; the successful mapping job does not need resubmission.
 
 ## Outputs and result check
 

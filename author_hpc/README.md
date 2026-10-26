@@ -9,7 +9,7 @@ These folders preserve the actual Slurm scripts, recorded paths/job settings, co
 | Human/COSMIC input preparation | [01 author_hpc](../01_data_downloading_and_preprocessing/author_hpc/README.md) |
 | Human RUMS, audit and export | [02 author_hpc](../02_run_sinabro/author_hpc/README.md) |
 | Signature distributions | [03 author_hpc](../03_mean_std_analysis/author_hpc/README.md) |
-| PCA and manuscript analyses | [07 author_hpc](../07_manuscript_validation/author_hpc/README.md) (shared downstream job) |
+| PCA and manuscript analyses | [07 author_hpc](../07_robustness_analysis/author_hpc/README.md) (shared downstream job) |
 | Bat extraction and COSMIC | [06 author_hpc](../06_Bat_genome/author_hpc/README.md) |
 | Experimental profiles | [experimental author_hpc](../06_Bat_genome/experimental_apobec/author_hpc/README.md) |
 

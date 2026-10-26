@@ -6,7 +6,7 @@ Run from the analysis repository root with the pinned environment and package ch
 PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
 SINABRO_SOURCE=/ABSOLUTE/PATH/TO/YOUR/sinabro
 
-python 07_manuscript_validation/run_supplementary_cases.py \
+python 07_robustness_analysis/run_supplementary_cases.py \
   --stage s12 \
   --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
   --sinabro-source "$SINABRO_SOURCE" \

@@ -56,7 +56,7 @@ python 06_Bat_genome/process_bat_results.py \
   --out-root "$PROJECT/runs/bat_cosmic_export" --n-traj 1000 --workers "$WORKERS"
 ```
 
-Read `audit_manifest.json` and `export_manifest.json`: both should have `stage_passed=true`, with both full populations and no incomplete paths. Each species export contains signature summaries and transcript matrices. Then prepare the [six experimental enzyme profiles](experimental_apobec/README.md) and run the [cross-species manuscript analyses](../07_manuscript_validation/README.md).
+Read `audit_manifest.json` and `export_manifest.json`: both should have `stage_passed=true`, with both full populations and no incomplete paths. Each species export contains signature summaries and transcript matrices. Then prepare the [six experimental enzyme profiles](experimental_apobec/README.md) and run the [cross-species manuscript analyses](../07_robustness_analysis/README.md).
 
 ## Method and interpretation
 

@@ -43,7 +43,7 @@ Simulated BRCA1-203 (ENST00000357654.9) mutation paths under SBS2. Nodes represe
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
 mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/annotate_brca1_graph_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/annotate_brca1_graph_seawulf.slurm
 ```
 
 Allocation: one CPU, 4 GB, 30 minutes. The existing `PROJECT/sinabro-revision` environment is activated.
@@ -60,7 +60,7 @@ It checks the manifests and input-file hashes. Multiple equivalent runs are acce
 ```bash
 SINABRO_BRCA1_GRAPH_DIR=/ABSOLUTE/PATH/TO/EXISTING_GRAPH \
 COSMIC_BREAST_DIR=/ABSOLUTE/PATH/TO/EXISTING_MAPPED_VARIANTS \
-  sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/annotate_brca1_graph_seawulf.slurm
+  sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/annotate_brca1_graph_seawulf.slurm
 ```
 
 No previous successful job needs resubmission. Source directories are read-only inputs to this program. The figure layout and simulation counts remain those of the checked full graph.
@@ -102,7 +102,7 @@ An end-to-end local software check also generated annotated tables, summary, cap
 On another computer with the pinned analysis environment, run from the analysis checkout:
 
 ```bash
-python 07_manuscript_validation/annotate_brca1_graph.py \
+python 07_robustness_analysis/annotate_brca1_graph.py \
   --graph-dir /PATH/TO/EXISTING_FULL_GRAPH \
   --variants-dir /PATH/TO/EXISTING_PREPARED_VARIANTS \
   --out-dir /PATH/TO/NEW_RESULTS_DIRECTORY

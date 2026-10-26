@@ -14,7 +14,7 @@ import numpy as np
 import Bio
 from Bio import SeqIO
 
-from validate_manuscript_results import digest,require,write_csv,save_plot
+from analyze_robustness_results import digest,require,write_csv,save_plot
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 

@@ -18,7 +18,7 @@ PCA/features/statistics were computed in the combined downstream job; there was 
 - [analyze_s11_historical_seawulf.slurm](analyze_s11_historical_seawulf.slurm)
 - [annotate_brca1_graph_seawulf.slurm](annotate_brca1_graph_seawulf.slurm)
 - [run_brca1_graph_seawulf.slurm](run_brca1_graph_seawulf.slurm)
-- [validate_manuscript_results_seawulf.slurm](validate_manuscript_results_seawulf.slurm)
+- [analyze_robustness_results_seawulf.slurm](analyze_robustness_results_seawulf.slurm)
 - [validate_signature_sampler_seawulf.slurm](validate_signature_sampler_seawulf.slurm)
 
 Commands in the execution records are issued from the authors' project root. Full raw/checkpoint data are external to Git. See the [author archive index](../../author_hpc/README.md) for the site/environment context and layout change.

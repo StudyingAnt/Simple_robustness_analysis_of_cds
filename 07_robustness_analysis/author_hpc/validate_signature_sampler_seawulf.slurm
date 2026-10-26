@@ -26,6 +26,6 @@ set -u
 PYTHON_BIN="${SINABRO_PYTHON:-$CONDA_PREFIX/bin/python}"
 cd -- "$PROJECT"
 echo "Job $SLURM_JOB_ID on $(hostname); original S1/S2 sampler validation"
-"$PYTHON_BIN" "$ANALYSIS_DIR/07_manuscript_validation/validate_signature_sampler.py" \
+"$PYTHON_BIN" "$ANALYSIS_DIR/07_robustness_analysis/validate_signature_sampler.py" \
   --sinabro-source "$PACKAGE" --out-dir "$OUTPUT" --workers "$SLURM_CPUS_PER_TASK" \
   --n-sequences 10000 --length 2200 --gc 0.4 --seed 42

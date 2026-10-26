@@ -51,7 +51,7 @@ NNC APOBEC preferences use two upstream bases relative to C, whereas the COSMIC 
 
 The two bat COSMIC runs contain 435,184,000 paths in total. Applying all six experimental enzyme profiles to human and both bats contains 765,672,000 paths. Full HPC audit logs for both campaigns report no invalid or incomplete paths. These counts describe completed simulation scope, not biological replicates or evidence of agreement with every manuscript claim.
 
-Use [the manuscript analysis workflow](../../07_manuscript_validation/README.md) to compare the audited exports, generate PCA/statistical tables and plot the species panels. The native-process panel compares human COSMIC SBS2 with Molossus APOBEC3A and Myotis APOBEC3A3; applying a single fixed enzyme profile to all three genomes is a different comparison. Both are reported explicitly.
+Use [the manuscript analysis workflow](../../07_robustness_analysis/README.md) to compare the audited exports, generate PCA/statistical tables and plot the species panels. The native-process panel compares human COSMIC SBS2 with Molossus APOBEC3A and Myotis APOBEC3A3; applying a single fixed enzyme profile to all three genomes is a different comparison. Both are reported explicitly.
 
 The owner-authorized source workbook is included under `experimental_apobec/source_data/`. Preparation stages a verified copy into project `data/raw/`, preserves its motif-average values and normalizes per-site NNC preferences. The exact historical probability CSV was not recovered, so the generated profiles are labelled as a documented reconstruction. See [profile preparation and execution](../experimental_apobec/README.md) for the conversion policy, profile names, checksums and commands.
 

@@ -26,7 +26,7 @@ import statistics_utils as paired
 
 # Reuse the existing checked reader and sequence-coordinate definition unchanged.
 _spec = importlib.util.spec_from_file_location('sinabro_original_postprocessing',
-    REPO / '07_manuscript_validation/validate_manuscript_results.py')
+    REPO / '07_robustness_analysis/analyze_robustness_results.py')
 paper = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(paper)
 require, digest, write_csv = paper.require, paper.digest, paper.write_csv
@@ -192,7 +192,7 @@ def analyze(args):
         input_manifests={str(d['folder']): d['manifest_sha256'] for d in all_data},
         fasta_inputs={s: dict(path=str(d['fasta']), sha256=digest(d['fasta'])) for s, d in datasets.items()},
         source_sha256={p.name: digest(p) for p in [Path(__file__), HERE / 'statistics_utils.py',
-                                                 REPO / '07_manuscript_validation/validate_manuscript_results.py']},
+                                                 REPO / '07_robustness_analysis/analyze_robustness_results.py']},
         runtime=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__),
         reviewer_coverage={'R2.2.4': 'paired statistics/effects/CI on human genes',
                           'R2.3': 'GC3 and CDS-length distributions; does not standardize orthologues',

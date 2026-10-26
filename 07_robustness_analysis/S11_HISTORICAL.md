@@ -6,7 +6,7 @@ From the analysis repository root with the environment active:
 
 ```bash
 PROJECT=/ABSOLUTE/PATH/TO/YOUR/sinabro_project
-python 07_manuscript_validation/analyze_s11_historical.py \
+python 07_robustness_analysis/analyze_s11_historical.py \
   --input "$PROJECT/data/processed/gencode_v40/gencode.v40.pc_transcripts.nopary.cdsplus.fa" \
   --out-dir "$PROJECT/results/s11_historical"
 ```

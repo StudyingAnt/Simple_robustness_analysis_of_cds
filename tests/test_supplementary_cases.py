@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import unittest
 
-PAPER=Path(__file__).resolve().parents[1]/'07_manuscript_validation'
+PAPER=Path(__file__).resolve().parents[1]/'07_robustness_analysis'
 sys.path.insert(0,str(PAPER))
 import run_supplementary_cases as supplement
 

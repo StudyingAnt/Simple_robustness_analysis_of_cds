@@ -11,9 +11,9 @@ This repository supplies analysis workflows for *Human and bats genome robustnes
 | 3 | [Signature distributions](03_mean_std_analysis/README.md) | Rank tables, full-data distributions and plots |
 | 4 | [Bat reference preparation and COSMIC controls](06_Bat_genome/README.md) | Frozen Molossus/Myotis cohorts and audited results |
 | 5 | [Six experimental APOBEC profiles](06_Bat_genome/experimental_apobec/README.md) | Profile tables and audited results on all three species |
-| 6 | [Manuscript statistics and sampler checks](07_manuscript_validation/README.md) | PCA, GC3/signature features, statistical tables and panels |
-| 7 | [Historical S11 matched-transcript comparison](07_manuscript_validation/S11_HISTORICAL.md) | Postprocessing of 3,740 archived paired estimates |
-| 8 | [BRCA1 graph](07_manuscript_validation/BRCA1_GRAPH.md), [COSMIC breast-SNV preparation](01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md), [allele annotation](07_manuscript_validation/BRCA1_OBSERVED_SNVS.md) | Audited 1,000-path graph, observed-allele matches and supplementary panel |
+| 6 | [Manuscript statistics and sampler checks](07_robustness_analysis/README.md) | PCA, GC3/signature features, statistical tables and panels |
+| 7 | [Historical S11 matched-transcript comparison](07_robustness_analysis/S11_HISTORICAL.md) | Postprocessing of 3,740 archived paired estimates |
+| 8 | [BRCA1 graph](07_robustness_analysis/BRCA1_GRAPH.md), [COSMIC breast-SNV preparation](01_data_downloading_and_preprocessing/COSMIC_BREAST_VARIANTS.md), [allele annotation](07_robustness_analysis/BRCA1_OBSERVED_SNVS.md) | Audited 1,000-path graph, observed-allele matches and supplementary panel |
 
 Run each linked stage from the analysis repository root using its direct Python/terminal commands. To try the workflow without genome downloads, start with the [included synthetic example](02_run_sinabro/README.md#try-the-workflow-on-the-included-example). Full manuscript campaigns are large calculations. Existing audited exports can be reused to regenerate plots.
 
@@ -23,7 +23,7 @@ Run each linked stage from the analysis repository root using its direct Python/
 | --- | --- | --- |
 | Figures 1 / S10 | Package algorithm and conceptual artwork | Software behavior is checked by package tests |
 | Figure 2 and rank/distribution panels | `03_mean_std_analysis/analyze_signature_distributions.py` | All human transcript observations and preserved signature groups |
-| Figures 3–5 and related panels | `07_manuscript_validation/validate_manuscript_results.py` | Mean-centered PCA, GC3, signature features and original statistical comparisons |
+| Figures 3–5 and related panels | `07_robustness_analysis/analyze_robustness_results.py` | Mean-centered PCA, GC3, signature features and original statistical comparisons |
 | Figure 6 | Six-enzyme workbook and `prepare_profiles.py` | Motif-average preferences; upstream wet-lab/read processing is outside this workflow |
 | Figure 7 / S8 / S9 | Human, bat and experimental-profile exports | Transcript-level comparisons; not independent biological replicates or an orthologue-matched design |
 | S1 / S2 | `validate_signature_sampler.py` | 79 signatures, 790,000 single-substitution samples and an independent conditional oracle |

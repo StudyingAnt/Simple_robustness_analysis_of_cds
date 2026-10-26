@@ -24,7 +24,7 @@ The completed [breast selection and coordinate-mapping stage](../../01_data_down
 cd /gpfs/projects/DamaghiGroup/projects/sinabro_pub
 git -C Simple_robustness_analysis_of_cds pull --ff-only
 mkdir -p logs
-sbatch Simple_robustness_analysis_of_cds/07_manuscript_validation/author_hpc/run_brca1_graph_seawulf.slurm
+sbatch Simple_robustness_analysis_of_cds/07_robustness_analysis/author_hpc/run_brca1_graph_seawulf.slurm
 ```
 
 The job requests eight shared CPUs, 8 GB and a two-hour limit and activates the existing `PROJECT/sinabro-revision` environment. The requested limit is not an execution-time estimate. No new dependency installation is needed. Only BRCA1 is simulated, not the full human or bat datasets.
@@ -79,7 +79,7 @@ The diagnostic layout uses deterministic angles and a radius equal to actual ref
 From the analysis repository root with the pinned environment active:
 
 ```bash
-python 07_manuscript_validation/run_supplementary_cases.py \
+python 07_robustness_analysis/run_supplementary_cases.py \
   --stage s12 \
   --input /PATH/TO/gencode.v40.pc_transcripts.nopary.cdsplus.fa \
   --sinabro-source /PATH/TO/sinabro \

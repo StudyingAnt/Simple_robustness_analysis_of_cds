@@ -18,7 +18,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / '02_run_sinabro'))
 import run_rums as package_helpers
-from validate_manuscript_results import digest, require, write_csv, save_plot
+from analyze_robustness_results import digest, require, write_csv, save_plot
 import matplotlib.pyplot as plt
 
 

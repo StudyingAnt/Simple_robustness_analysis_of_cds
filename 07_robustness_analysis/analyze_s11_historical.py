@@ -10,7 +10,7 @@ import platform
 import tempfile
 import time
 
-from validate_manuscript_results import digest, require, save_plot, write_csv
+from analyze_robustness_results import digest, require, save_plot, write_csv
 import matplotlib.pyplot as plt
 import numpy as np
 from Bio import SeqIO
