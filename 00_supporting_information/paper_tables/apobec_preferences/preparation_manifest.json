@@ -1,0 +1,18 @@
+{
+  "preparation_passed": true,
+  "profiles": 6,
+  "motifs_per_profile": 16,
+  "workbook_sha256": "af2e8dad39b7ebb3e36d4e55d388c7550967610398b7361dc06cdddaae5add5a",
+  "script_sha256": "8b186df69e32200a7f476d072622aaca59412a1ace4fbef18f0a565db416355d",
+  "historical_probability_csv_recovered": false,
+  "outputs": [
+    {
+      "filename": "profiles.json",
+      "sha256": "2e2fd3bcee8d40fc66f9af76ee5157365a5b0238564183a98cadb8500f0eb1a9"
+    },
+    {
+      "filename": "source_values.csv",
+      "sha256": "df293c4580ab20bac99e4aa4553308b6b6f345680b9ccd9c8c28df2c189bb7f4"
+    }
+  ]
+}
