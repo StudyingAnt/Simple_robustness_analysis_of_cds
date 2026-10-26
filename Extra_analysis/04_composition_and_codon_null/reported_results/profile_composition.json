@@ -1,0 +1,27 @@
+[
+  {
+    "Signature": "SBS2",
+    "transition_fraction": 0.9907340423898757,
+    "C_to_T_fraction": 0.9896229102992692
+  },
+  {
+    "Signature": "SBS13",
+    "transition_fraction": 0.041239683804325855,
+    "C_to_T_fraction": 0.036177706733795605
+  },
+  {
+    "Signature": "SBS19",
+    "transition_fraction": 0.9313641050900526,
+    "C_to_T_fraction": 0.9137352850367724
+  },
+  {
+    "Signature": "SBS1",
+    "transition_fraction": 0.9637163921994657,
+    "C_to_T_fraction": 0.9382509738702915
+  },
+  {
+    "Signature": "SBS4",
+    "transition_fraction": 0.13580372829055185,
+    "C_to_T_fraction": 0.09248832346915202
+  }
+]

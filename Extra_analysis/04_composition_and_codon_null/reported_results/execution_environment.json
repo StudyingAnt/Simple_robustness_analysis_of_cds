@@ -1,0 +1,10 @@
+{
+  "Python": "3.9.15",
+  "NumPy": "1.21.6",
+  "Biopython": "1.79",
+  "SciPy": "1.8.1",
+  "operating_system": "Linux",
+  "workers": 8,
+  "simulation_seed": 20261025,
+  "source_base_commit": "d0ffd7a251fb53aa5ab3a5bd1c83622cd5886bc0"
+}

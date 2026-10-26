@@ -1,0 +1,186 @@
+{
+  "analysis_passed": true,
+  "stage": "synonymous_codon_recoding_null",
+  "genes": 96,
+  "profiles": [
+    "SBS2",
+    "SBS13",
+    "SBS19",
+    "SBS1",
+    "SBS4"
+  ],
+  "recodings_per_gene": 20,
+  "trajectories_per_sequence": 500,
+  "total_trajectories": 5040000,
+  "complete_paths": 5040000,
+  "incomplete_paths": 0,
+  "protein_preserving_variants": 2016,
+  "first_step_oracle_audit": {
+    "passed": true,
+    "aggregate_z_by_profile": {
+      "SBS2": 0.8583677288592788,
+      "SBS13": 0.628235653183713,
+      "SBS19": -1.445406401221549,
+      "SBS1": -0.2805205511235372,
+      "SBS4": 0.21009064210039724
+    },
+    "threshold_abs_z": 6
+  },
+  "timing_to_production_seed_replay_variants": 16,
+  "summary": [
+    {
+      "Signature": "SBS2",
+      "n_genes": 96,
+      "recodings_per_gene": 20,
+      "trajectories_per_sequence": 500,
+      "stratified_weighted_original_mean": 0.7959761596492136,
+      "stratified_weighted_null_mean": 0.5116882766240269,
+      "mean_excess": 0.2842878830251868,
+      "gene_bootstrap_ci_low": 0.24879473893866422,
+      "gene_bootstrap_ci_high": 0.3211963983979837,
+      "conditional_path_and_recoding_mc_se": 0.006082969295405992,
+      "unweighted_original_mean": 0.7960833333333334,
+      "unweighted_null_mean": 0.5093197916666666,
+      "fraction_genes_positive_excess": 0.6979166666666666,
+      "original_vs_saved_mean_difference": 0.008738317192328275
+    },
+    {
+      "Signature": "SBS13",
+      "n_genes": 96,
+      "recodings_per_gene": 20,
+      "trajectories_per_sequence": 500,
+      "stratified_weighted_original_mean": 0.2140302449634885,
+      "stratified_weighted_null_mean": 0.14596262019438258,
+      "mean_excess": 0.06806762476910594,
+      "gene_bootstrap_ci_low": 0.058638622080377026,
+      "gene_bootstrap_ci_high": 0.0782441918708029,
+      "conditional_path_and_recoding_mc_se": 0.0025279379585216827,
+      "unweighted_original_mean": 0.2147916666666667,
+      "unweighted_null_mean": 0.14588229166666666,
+      "fraction_genes_positive_excess": 0.6875,
+      "original_vs_saved_mean_difference": -0.004238403507863344
+    },
+    {
+      "Signature": "SBS19",
+      "n_genes": 96,
+      "recodings_per_gene": 20,
+      "trajectories_per_sequence": 500,
+      "stratified_weighted_original_mean": 0.7594237229616587,
+      "stratified_weighted_null_mean": 0.5682026455711497,
+      "mean_excess": 0.19122107739050875,
+      "gene_bootstrap_ci_low": 0.16973036755312723,
+      "gene_bootstrap_ci_high": 0.21299855604899265,
+      "conditional_path_and_recoding_mc_se": 0.005604255992382949,
+      "unweighted_original_mean": 0.7605416666666667,
+      "unweighted_null_mean": 0.5672864583333334,
+      "fraction_genes_positive_excess": 0.7083333333333334,
+      "original_vs_saved_mean_difference": -0.005095585823536528
+    },
+    {
+      "Signature": "SBS1",
+      "n_genes": 96,
+      "recodings_per_gene": 20,
+      "trajectories_per_sequence": 500,
+      "stratified_weighted_original_mean": 0.4649488666770245,
+      "stratified_weighted_null_mean": 0.6087865900184716,
+      "mean_excess": -0.143837723341447,
+      "gene_bootstrap_ci_low": -0.16807661962470005,
+      "gene_bootstrap_ci_high": -0.11896631042087456,
+      "conditional_path_and_recoding_mc_se": 0.00416131888916465,
+      "unweighted_original_mean": 0.46412499999999995,
+      "unweighted_null_mean": 0.608278125,
+      "fraction_genes_positive_excess": 0.1875,
+      "original_vs_saved_mean_difference": 0.000562837709530961
+    },
+    {
+      "Signature": "SBS4",
+      "n_genes": 96,
+      "recodings_per_gene": 20,
+      "trajectories_per_sequence": 500,
+      "stratified_weighted_original_mean": 0.30843744713173477,
+      "stratified_weighted_null_mean": 0.255808316501804,
+      "mean_excess": 0.05262913062993078,
+      "gene_bootstrap_ci_low": 0.046134552173425165,
+      "gene_bootstrap_ci_high": 0.05900937757867661,
+      "conditional_path_and_recoding_mc_se": 0.0029820474313967268,
+      "unweighted_original_mean": 0.3098958333333333,
+      "unweighted_null_mean": 0.256065625,
+      "fraction_genes_positive_excess": 0.8125,
+      "original_vs_saved_mean_difference": 0.0028032955271289715
+    }
+  ],
+  "sbs2_excess_comparisons": [
+    {
+      "profile_1": "SBS2",
+      "profile_2": "SBS13",
+      "n_genes": 96,
+      "difference_in_mean_excess": 0.21622025825608093,
+      "pointwise_ci_low": 0.18399241506551342,
+      "pointwise_ci_high": 0.24981095995822328,
+      "bonferroni_ci_low": 0.17594555971308712,
+      "bonferroni_ci_high": 0.2596613671733389
+    },
+    {
+      "profile_1": "SBS2",
+      "profile_2": "SBS19",
+      "n_genes": 96,
+      "difference_in_mean_excess": 0.09306680563467812,
+      "pointwise_ci_low": 0.055625423830856106,
+      "pointwise_ci_high": 0.13119461580955333,
+      "bonferroni_ci_low": 0.04594281768972151,
+      "bonferroni_ci_high": 0.14158600333717436
+    },
+    {
+      "profile_1": "SBS2",
+      "profile_2": "SBS1",
+      "n_genes": 96,
+      "difference_in_mean_excess": 0.4281256063666339,
+      "pointwise_ci_low": 0.38699806776201084,
+      "pointwise_ci_high": 0.46974846584925845,
+      "bonferroni_ci_low": 0.37733503550805325,
+      "bonferroni_ci_high": 0.48067184970954824
+    },
+    {
+      "profile_1": "SBS2",
+      "profile_2": "SBS4",
+      "n_genes": 96,
+      "difference_in_mean_excess": 0.2316587523952561,
+      "pointwise_ci_low": 0.1967920080446078,
+      "pointwise_ci_high": 0.2676865938810916,
+      "bonferroni_ci_low": 0.1877295694689005,
+      "bonferroni_ci_high": 0.27877328598926226
+    }
+  ],
+  "bootstrap_replicates": 10000,
+  "bootstrap_scope": "Genes resampled within 16 selection strata; finite simulation estimates treated as the gene-level observations",
+  "precision_scope": "Separate conditional MC SE includes original path sampling and finite null recoding/path sampling; not a biological CI",
+  "design": "6 genes per length-quartile x GC3-quartile stratum; no RUMS-based selection; strata weighted by the full representative-cohort proportions",
+  "interpretation": "A limited human protein-preserving uniform-codon null; GC, codon usage and context frequencies may change. Differences do not identify selection or establish adaptation; coverage is 96 genes and 5 profiles.",
+  "historical_results_replaced": false,
+  "input_manifest_sha256": "a0905a2b36732ea399bb17d387a5e65c5efd4b6c971698b50b8e3516c3eb67d4",
+  "simulation_summary_sha256": "774357364419b89bd6ecb9897cb38d4bb299f14eb853821c26ccd303adba61bf",
+  "script_sha256": "8a7ad2cbd2f5cb810a83fa2f32a00cf62d0146de8ee698fee2d9293e1b9f5d50",
+  "elapsed_seconds": 1.3329912170302123,
+  "outputs": [
+    {
+      "filename": "codon_null_summary.csv",
+      "sha256": "1002dc330cbabbff437d36a834f13eddec3ae2005f86c121c30c962c10613216"
+    },
+    {
+      "filename": "gene_level_null_results.csv",
+      "sha256": "b53e5e5fea7df6551b334bdbcd5da512050a864ae2c99878012b1e53035c4ae3"
+    },
+    {
+      "filename": "sbs2_excess_comparisons.csv",
+      "sha256": "21e0ebc7f8963061de875c2d561fe4ef1465c72db2cf136a787f9bdb1e87af73"
+    },
+    {
+      "filename": "synonymous_codon_null.pdf",
+      "sha256": "84e20721198904f44a7ee8f957d97c6dcd2a9b4b5494da8074536206f7e21417"
+    },
+    {
+      "filename": "synonymous_codon_null.png",
+      "sha256": "6b674545db3d93214b303725833e96df1cfb8fa623c9430d2535bf190ecbb420"
+    }
+  ]
+}
