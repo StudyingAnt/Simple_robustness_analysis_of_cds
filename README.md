@@ -8,7 +8,7 @@ Analysis code and reproducible workflows accompanying *Human and bats genome rob
 2. Follow the [manuscript reproduction guide](MANUSCRIPT_REPRODUCTION.md) in calculation order.
 3. Consult [data sources and availability](DATA_AVAILABILITY.md), [methods and validation](docs/validation_reference.md), and the [software manifest](software_manifest.json).
 
-**Download the calculated values directly:** [supplementary Tables S1–S6](00_supporting_information/paper_tables/README.md) and
+**Download the calculated values directly:** [supplementary Tables S1–S6](00_supporting_information/README.md#supplementary-tables) and
 [audited human/bat RUMS matrices](00_supporting_information/README.md), including
 19,309 human gene representatives and all six experimental NNC preferences.
 No new calculation or HPC access is needed to inspect these data.

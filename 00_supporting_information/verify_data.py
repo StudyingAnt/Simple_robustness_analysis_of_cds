@@ -49,7 +49,7 @@ def main():
         require(a == b, 'Transcript cohorts differ across processes')
         with gzip.open(ROOT / 'data_matrices' / (species + '_transcript_annotations.csv.gz'), 'rt', newline='') as stream:
             require(a == {r['transcript_id'] for r in csv.DictReader(stream)}, 'Annotation identifiers differ')
-    source = ROOT / 'paper_tables/apobec_preferences'
+    source = ROOT / 'apobec_preferences'
     profiles = json.loads((source / 'profiles.json').read_text())
     with (source / 'source_values.csv').open(newline='') as stream:
         values = {(r['profile_id'], r['motif']): r for r in csv.DictReader(stream)}
@@ -60,7 +60,7 @@ def main():
             require(math.isclose(float(values[profile['id'], motif[:2] + 'C']['relative_per_site_weight']), weight, abs_tol=1e-15), 'Weight differs from source')
     ns = {'s': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
     def sheet(number, index):
-        with ZipFile(ROOT / 'paper_tables' / ('Table_S%d.xlsx' % number)) as archive:
+        with ZipFile(ROOT / ('Table_S%d.xlsx' % number)) as archive:
             return archive.read('xl/worksheets/sheet%d.xml' % index)
     require(sheet(3, 4) == sheet(4, 4), 'S3/S4 shared SBS2 rows differ')
     require(len(E.fromstring(sheet(1, 2)).findall('s:sheetData/s:row', ns)) == 3082, 'Expected 3081 human paired comparisons')

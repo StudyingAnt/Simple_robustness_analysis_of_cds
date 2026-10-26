@@ -16,8 +16,8 @@ outside the Git checkout.
 | Human protein-coding transcripts | [GENCODE release 40](https://www.gencodegenes.org/human/release_40.html), GRCh38.p13 | Download/preprocessing code, expected counts and hashes; FASTA downloaded separately |
 | COSMIC SBS profiles | v3.3.1; GRCh37 profile used by the reference campaigns | Tables packaged in the separate Sinabro repository; profile hashes recorded per run |
 | Bat genome and gene annotations | [Bat1K Pilot Project](https://bds.mpi-cbg.de/hillerlab/Bat1KPilotProject/), HLmolMol2 and HLmyoMyo6 | URL/checksum manifest, extraction code and frozen transcript IDs; large genomes downloaded separately |
-| Six bat APOBEC motif preferences | Experimental C-to-T motif-average workbook | Original workbook and conversion code; [Table S6 and exact prepared weights](00_supporting_information/paper_tables/apobec_preferences/) |
-| Current supplementary tables | [Tables S1–S6](00_supporting_information/paper_tables/) | Paired human statistics, descriptive cohort statistics, outlier annotations and experimental preferences |
+| Six bat APOBEC motif preferences | Experimental C-to-T motif-average workbook | Original workbook and conversion code; [Table S6 and exact prepared weights](00_supporting_information/apobec_preferences/) |
+| Current supplementary tables | [Tables S1–S6](00_supporting_information/) | Paired human statistics, descriptive cohort statistics, outlier annotations and experimental preferences |
 | Calculated RUMS matrices | [Eight compressed CSV matrices](00_supporting_information/data_matrices/) | Three transcript cohorts under COSMIC/experimental profiles, plus fixed human gene representatives for both models |
 | S11 historical estimates | 3,740 paired transcript estimates | Compressed estimate table and source manifest under `07_robustness_analysis/source_data/` |
 | BRCA1 coordinate reference | GENCODE v40 CDS/stop-codon features | Small coordinate/provenance JSON and independent reference validation; no full genome/GTF transfer needed for the standard job |
@@ -31,9 +31,9 @@ outside the Git checkout.
 The experimental source workbook is included with project-owner authorization. Conversion uses the 16 motif-average values per enzyme, normalized as per-opportunity weights; exact historical probability CSVs were not recovered. Raw assay reads and the upstream read-processing workflow are not included.
 
 The archived S11 table contains historical simulation estimates, not fresh
-corrected-package trajectories. Old top-level workbooks retain their bytes and
-legacy names. Current manuscript numbering and regenerated outputs are clearly
-separated in `00_supporting_information/paper_tables/`. Bat transcript matrices
+corrected-package trajectories. Earlier source workbooks are preserved in
+`00_supporting_information/historical_source_tables/`. Current Tables S1–S6 are
+directly in `00_supporting_information/`. Bat transcript matrices
 are not presented as orthologue-standardized gene matrices.
 
 ## COSMIC observation access

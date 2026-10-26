@@ -9,12 +9,12 @@ transcript/profile combination and master seed 42.
 
 | File | Contents |
 | --- | --- |
-| [Table S1](paper_tables/Table_S1.xlsx) | Human repeated-measures analysis: 19,309 fixed gene representatives, 79 profiles, 3,081 paired Wilcoxon contrasts/Holm correction, medians, paired median differences/pointwise 95% intervals and rank effects |
-| [Table S2](paper_tables/Table_S2.xlsx) | SBS aetiology categories, with corrected internal title |
-| [Table S3](paper_tables/Table_S3.xlsx) | Descriptive human/bat CDS-cohort distributions and contrasts under eight fixed COSMIC profiles |
-| [Table S4](paper_tables/Table_S4.xlsx) | Descriptive cohort distributions and contrasts under six experimental APOBEC profiles and cohort-specific profiles |
-| [Table S5](paper_tables/Table_S5.xlsx) | High-RUMS transcript outliers, gene annotations, CDS length, total GC and GC3 |
-| [Table S6](paper_tables/Table_S6.xlsx) | All six experimental NNC preferences: absolute motif-average percentages and normalized per-opportunity weights |
+| [Table S1](Table_S1.xlsx) | Human repeated-measures analysis: 19,309 fixed gene representatives, 79 profiles, 3,081 paired Wilcoxon contrasts/Holm correction, medians, paired median differences/pointwise 95% intervals and rank effects |
+| [Table S2](Table_S2.xlsx) | SBS aetiology categories, with corrected internal title |
+| [Table S3](Table_S3.xlsx) | Descriptive human/bat CDS-cohort distributions and contrasts under eight fixed COSMIC profiles |
+| [Table S4](Table_S4.xlsx) | Descriptive cohort distributions and contrasts under six experimental APOBEC profiles and cohort-specific profiles |
+| [Table S5](Table_S5.xlsx) | High-RUMS transcript outliers, gene annotations, CDS length, total GC and GC3 |
+| [Table S6](Table_S6.xlsx) | All six experimental NNC preferences: absolute motif-average percentages and normalized per-opportunity weights |
 
 Tables S3 and S4 were regenerated from the same audited exports. Their
 `Shared_SBS2` sheets are identical. These revised tables replace the old
@@ -25,10 +25,9 @@ verified one-to-one orthologue sets. Table S1 instead uses a paired human gene
 design. Numeric p-value underflow is identified with log-scale/display columns;
 a stored zero does not mean an exactly zero probability.
 
-The older top-level [Table_S1.xlsx](Table_S1.xlsx) and
-[Table_S2.xlsx](Table_S2.xlsx) remain historical source workbooks for SBS
-categories and component/feature annotations. **Their legacy names are not the
-current manuscript numbering. Use `paper_tables/` for Tables S1–S6.**
+The current Tables S1–S6 are directly in this directory. Earlier source
+workbooks are preserved in [historical_source_tables/](historical_source_tables/)
+and do not use the current manuscript numbering.
 
 ## Download the calculated matrices
 
@@ -72,8 +71,8 @@ with gzip.open(
 
 ## Six NNC preferences
 
-[Table S6](paper_tables/Table_S6.xlsx) has a sheet per enzyme.
-[profile_weights.csv](paper_tables/apobec_preferences/profile_weights.csv) gives
+[Table S6](Table_S6.xlsx) has a sheet per enzyme.
+[profile_weights.csv](apobec_preferences/profile_weights.csv) gives
 all 16 × 6 normalized weights together. `source_values.csv` and `profiles.json`
 retain absolute percentages and exact simulation inputs. Weights sum to one per
 profile and are applied per eligible site, followed by normalization over events

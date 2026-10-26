@@ -29,7 +29,7 @@ Run each linked stage from the analysis repository root using its direct Python/
 | S1 / S2 | `validate_signature_sampler.py` | 79 signatures, 790,000 single-substitution samples and an independent conditional oracle |
 | S11 | `analyze_s11_historical.py` | Matched archived estimates, not a fresh corrected-package simulation of the full cohort |
 | S12 | `run_supplementary_cases.py`, coordinate preparation and `annotate_brca1_graph.py` | Fresh simulations with an explicit current single-SNV allele-matching rule |
-| Supporting tables | `00_supporting_information/` | Preserved source workbooks; newly generated tables are separate outputs |
+| Supporting tables | `00_supporting_information/` | Current Tables S1–S6 and calculated matrices; earlier source workbooks are preserved separately |
 
 See [methods and reference results](docs/validation_reference.md) for quantitative agreement and differences. The current computations use corrected package behavior and explicit seeds. Exact historical random streams are unavailable, and historical estimates are not relabelled as fresh simulation outputs.
 
